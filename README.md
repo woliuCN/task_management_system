@@ -19,16 +19,13 @@
 3.2 操作日志
     用户操作（包括但不限于登录操作、任务操作等），可记录操作者ip、操作时间、操作内容等。
 
-
-
-
+```js
 表：
 部门 apartment
 用户表 users
 项目 projects
 任务 task
 日志 log
-
 
 apartment:
 _id  -- 部门id type:String
@@ -69,8 +66,11 @@ createTime -- 创建时间 type:String
 updateTime -- 修改时间 type:String
 remarks -- 备注 type:String
 
-
 Log:
 _id -- 日志id type:String
 content -- 日志内容 type: String
 createTime -- 生成时间 type: String
+```
+
+
+
