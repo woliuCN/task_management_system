@@ -1,7 +1,7 @@
 import user from './user';
 
-let  controllers = {
-    controllers:[
+let controllers = {
+    controllers: [
         user,
     ]
 }

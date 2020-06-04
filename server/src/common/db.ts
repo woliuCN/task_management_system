@@ -5,7 +5,7 @@ import mysql from 'mysql';
 const config = require('../config/index');
 const pool = mysql.createPool(config.MYSQL);//建立数据连接池
 
-export default{
+export default {
 
     /**
      * @description: 查询操作
@@ -14,12 +14,12 @@ export default{
      * @param {string} where 查询条件  
      * @return: []
      * @example: Find([],User);
-     */    
-    async Find(arr:string[],tbName:string,where:string = ''){
-        let field:string = "";
-        if(arr.length==0){
+     */
+    async Find(arr: string[], tbName: string, where: string = '') {
+        let field: string = "";
+        if (arr.length == 0) {
             field = "*";
-        }else{
+        } else {
             field = arr.join(" ");
         }
         let sqlStr = `select ${field} from ${tbName} where ${where}`;
@@ -32,19 +32,19 @@ export default{
      * @param {T} tbName  表名
      * @return: true / false
      * @example: 
-     */    
-    async Insert<T>(obj:T,tbName:string){
-        let keys :string = "";
-        let values : string = "";
-        for (let  key in obj) {
-            keys += ","+key;
-            values += typeof (obj[key]) ==='string'? ",'"+obj[key]+"'": ","+obj[key]; 
+     */
+    async Insert<T>(obj: T, tbName: string) {
+        let keys: string = "";
+        let values: string = "";
+        for (let key in obj) {
+            keys += "," + key;
+            values += typeof (obj[key]) === 'string' ? ",'" + obj[key] + "'" : "," + obj[key];
         }
         let sqlStr = `insert into ${tbName} (${keys.slice(1)}) values (${values.slice(1)})`;
         console.log(sqlStr);
-        let res:any = await this.sql(sqlStr);
+        let res: any = await this.sql(sqlStr);
         return res;
-    },    
+    },
 
     /**
      * @description: 更新操作
@@ -53,16 +53,16 @@ export default{
      * @param {string} conditions 条件
      * @return: true/false
      * @example: 
-     */    
+     */
 
-    async Update(obj:any,tbName:string,conditions:string){
+    async Update(obj: any, tbName: string, conditions: string) {
         let values = "";
-        for(let key in obj){
-           values +=","+`${key}=${typeof obj[key]==='string' ?"'"+obj[key]+"'" :obj[key]}`; 
+        for (let key in obj) {
+            values += "," + `${key}=${typeof obj[key] === 'string' ? "'" + obj[key] + "'" : obj[key]}`;
         }
-        
+
         let sqlStr = `update ${tbName} set ${values.slice(1)} where ${conditions}`;
-        let res :any = await this.sql(sqlStr);
+        let res: any = await this.sql(sqlStr);
         return res;
     },
 
@@ -75,40 +75,40 @@ export default{
     * @example delete('User',"id=21") 删除单条记录
     *          delete('Users',"id in(1,2,3)") 删除多条记录
     */
-    async Delete(tbName:string,conditions:string){
+    async Delete(tbName: string, conditions: string) {
         let sqlStr = `delete from  ${tbName} where ${conditions}`;
-        let res :any = await this.sql(sqlStr);
+        let res: any = await this.sql(sqlStr);
         return res;
     },
 
-    
+
     /**
      * @description: 执行sql语句
      * @param {string} sql
      * @return: 
      * @example: sql('select * from xxxx')
-     */     
-    async sql (sql:string,args:any=''){
-        let res :any //返回值
-        await new Promise((resolve,reject)=>{
-            pool.getConnection((err:any,connection:any)=>{
-                 if(err){
-                    reject("连接错误"+err);
-                }else{
-                    connection.query(sql,args,(err:any,result:any)=>{
-                        if(err){
-                            reject("执行sql语句出错"+err)
-                        }else{
+     */
+    async sql(sql: string, args: any = '') {
+        let res: any //返回值
+        await new Promise((resolve, reject) => {
+            pool.getConnection((err: any, connection: any) => {
+                if (err) {
+                    reject("连接错误" + err);
+                } else {
+                    connection.query(sql, args, (err: any, result: any) => {
+                        if (err) {
+                            reject("执行sql语句出错" + err)
+                        } else {
                             resolve(result)
                         }
                         connection.release()  //释放当前操作的连接
                     });
-                }   
+                }
             })
-        }).then((data:any)=>{
-            res = data    
+        }).then((data: any) => {
+            res = data
         })
-        return res  
+        return res
     }
 
 }
