@@ -1,6 +1,7 @@
 /*
  * @Description:  部门表对应字段
  */
+
 //表名
 const tbName = "Apartments";
 
