@@ -2,7 +2,9 @@ import {
   Table,
   TableColumn,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  Row,
+  Col
 } from 'element-ui'
 import Vue from 'vue'
 
@@ -10,7 +12,9 @@ const components = {
   Table,
   TableColumn,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  Row,
+  Col
 }
 
 for (const key in components) {
