@@ -1,6 +1,7 @@
 /*
  * @Description: 用户表对应字段
  */
+
 //表名
 const tbName = "Users";
 
@@ -8,7 +9,7 @@ const tbName = "Users";
 interface User {
     id: string, //用户id
     jobNo: string,  //工号
-    apartmentId: string,  //分组id
+    apartment: string,  //分组id+分组名称
     name: string,   //姓名
     sex: string,    //性别
     state: number,  //状态 ps:1-在职 2-离职

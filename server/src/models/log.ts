@@ -1,6 +1,7 @@
 /*
  * @Description: 日志表对应字段
  */
+
 //表名
 const tbName = "Logs";
 
