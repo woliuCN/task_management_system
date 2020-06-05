@@ -7,9 +7,16 @@
         :type="item.type"
         :size="item.size"
         :icon="item.icon"
-        @click="handleFunc(scope.$index, scope.row, item.event)"
+        @click="handleFunc(selectedData, item.event)"
       >
       {{ item.text }}
+      </el-button>
+      <el-button
+        v-if="selectedData.length > 0"
+        @click="toggleSelection()"
+        size="mini"
+      >
+        取消选择
       </el-button>
     </div>
     <el-table
@@ -18,6 +25,7 @@
       :max-height="maxHeight"
       style="width: 100%;"
       fit
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
         v-if="isSelection"
@@ -34,18 +42,16 @@
       >
       </el-table-column>
     </el-table>
-    <div
-      style="margin-top: 20px"
-      v-if="isSelection"
-    >
-      <el-button @click="toggleSelection()"></el-button>
-      <el-button @click="toggleSelection()">取消选择</el-button>
-    </div>
   </div>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      selectedData: []
+    }
+  },
   props: {
     // 表单的首行，格式为[{prop, label, id, width, fixed}]，其中width和fixed为必填，prop必须与tableData对应
     tableTitle: Array,
@@ -53,7 +59,7 @@ export default {
     tableData: Array,
     // 表单的最高高度
     maxHeight: Number,
-    // 是否在右边显示选择框
+    // 是否在左边显示选择框
     isSelection: Boolean,
     // 自定义操作按钮组
     buttonList: {
@@ -66,13 +72,18 @@ export default {
   methods: {
     /**
      * 用于获取触发事件的列表行数据，并且将数据分发给父组件，由父组件来进行相应的处理
-     * @param {Number} index: 当前被点击行的行数
      * @param {Array} row: 当前被点击的列表行数据
      * @param {String} event: 分发给父组件的事件名
      */
-    handleFunc (index, row, event) {
-      this.$emit(event, row)
+    handleFunc (data, event) {
+      this.$emit(event, data)
     },
+
+    // 选中的表单内容，并将内容地址赋值给selectedData，用于传数据给父组件
+    handleSelectionChange (val) {
+      this.selectedData = val
+    },
+
     // 当出现选择框时，用来进行选中、取消操作
     toggleSelection (rows) {
       if (rows) {
@@ -83,7 +94,6 @@ export default {
         this.$refs.table.clearSelection()
       }
     }
-
   }
 }
 </script>
@@ -93,6 +103,6 @@ export default {
     display: flex;
     align-items: center;
     overflow: auto;
-    margin-bottom: 20px;;
+    margin-bottom: 20px;
   }
 </style>
