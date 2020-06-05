@@ -57,7 +57,7 @@ remarks -- 备注 type:String
 users：
 id -- 用户id type:String
 jobNo -- 工号 type:String
-apartmentId	-- 分组id type:String
+apartment	-- 部门信息 type:String str({id, name})
 name -- 姓名 type:String
 sex -- 性别 type:String
 state -- 状态 1-在职 2-离职 type:String
@@ -69,7 +69,7 @@ projects:
 id -- 项目id type:String
 name -- 项目名称 type:String
 state -- 状态 1-运行 2-挂起 3-完成 4-取消 type:String
-apartment -- 负责的部门 type:String
+apartment	-- 部门信息 type:String str({id, name})
 createTime -- 创建时间 type:String
 updateTime -- 修改时间 type:String
 remarks -- 备注 type:String
@@ -77,8 +77,8 @@ remarks -- 备注 type:String
 task:
 id -- 任务id兼编号 type:String
 name -- 任务名 type:String
-projectId -- 所属项目（项目的id） type:String
-belongerId -- 负责人员(负责人的id) type:String
+projectInfo -- 所属项目（项目的id+名字） type:String str({id, name})
+belonger -- 负责人员(负责人的id+名字) type:String str({id, name})
 state -- 1-未启动 2-进行中 3-挂起 4-完成 5-取消 type:String
 workingHours -- 工时 type:String
 startTime -- 计划开始时间 type:String（YYYY-MM-DD hh:mm:ss） (默认时间为本周一)
