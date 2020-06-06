@@ -62,4 +62,63 @@ buttonList(选填，默认[])：
             icon: 'el-icon-search'
             }
          ]
+
+src/components/Chart.vue
+【功能】 用于系统内图表展示
+
+【使用说明】
+domName(必填):
+    ECharts图表标识，同一页面使用多个Chart组件，每个domName是必须唯一值。
+    demo: 
+          <chart domName="_one">
+          <chart domName="_two">
+
+options(选填，默认{}):
+    ECharts展示配置对象, 组件内初始化了options，包括grid、tooltip、yAxis、series属性。
+    demo： options: {
+            title: {
+              show: true,
+              text: '过去一年项目情况',
+              textStyle: {
+                // color: 'pick',
+                fontStyle: 'solid',
+                fontSize: 20
+              },
+              left: 'center',
+              bottom: 0
+            },
+            xAxis: {
+              type: 'category'
+            },
+            yAxis: {
+              splitLine: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              axisTick: {
+                show: false
+              },
+              axisLabel: {
+                formatter: function() {
+                  return '';
+                }
+              }
+            },
+            series: [{
+              data: [120, 200, 150, 80, 70, 110, 130, 0, 0, 0, 0, 0, 0],
+              type: 'bar',
+              itemStyle: {
+                normal: {
+                  color: '#2486b9',
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }]
+          }
+
+minHeight(选填，默认高度200px)
+    图表最小高度
+
 ```

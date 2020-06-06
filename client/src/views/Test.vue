@@ -11,7 +11,7 @@
         <chart :options="options" domName="three"></chart>
       </el-col>
       <el-col :span="12" class="account-item">
-        <chart :options="options" domName="four"></chart>
+        <chart :options="options" minHeight="400px" domName="four"></chart>
       </el-col>
     </el-row>
   </div>
@@ -32,8 +32,8 @@ export default {
   created() {
     this.getOptions();
   },
-  destroyed() {
-    window.removeEventListener('resize');
+  mounted() {
+    window.$op = this.options
   },
   methods: {
     getOptions() {
@@ -74,7 +74,6 @@ export default {
           itemStyle: {
             normal: {
               color: '#2486b9',
-              // shadowBlur: 200,
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
           }
@@ -89,8 +88,8 @@ export default {
 .account {
   width: 100%;
   height: 100%;
-  .account-item {
-    height: 200px;
-  }
+  // .account-item {
+  //   height: 200px;
+  // }
 }
 </style>

@@ -19,8 +19,9 @@ module.exports = {
       {
         "anonymous": "never",
         "named": "never",
-        "asyncArrow": "always"
+        "asyncArrow": "always",
       }
-    ]
+    ],
+    'no-unneeded-ternary': "warn",
   }
 }
