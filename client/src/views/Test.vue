@@ -5,13 +5,13 @@
         <chart :options="options" domName="one"></chart>
       </el-col>
       <el-col :span="12" class="account-item">
-        <chart :options="options" domName="two"></chart>
+        <chart :options="options" domName="one"></chart>
       </el-col>
       <el-col :span="12" class="account-item">
-        <chart :options="options" domName="three"></chart>
+        <chart :options="options" domName="one"></chart>
       </el-col>
       <el-col :span="12" class="account-item">
-        <chart :options="options" minHeight="400px" domName="four"></chart>
+        <chart :options="options" minHeight="400px" domName="one"></chart>
       </el-col>
     </el-row>
   </div>
@@ -33,7 +33,7 @@ export default {
     this.getOptions();
   },
   mounted() {
-    window.$op = this.options
+    window.$op = this.options1
   },
   methods: {
     getOptions() {
@@ -78,7 +78,7 @@ export default {
             }
           }
         }]
-      }
+      };
     }
   }
 }

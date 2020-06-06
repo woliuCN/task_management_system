@@ -50,7 +50,9 @@ export default {
           }
         },
         legend: {},
-        xAxis: {},
+        xAxis: {
+          type: 'category'
+        },
         yAxis: {
           axisLine: {
             show: false
@@ -82,7 +84,6 @@ export default {
             this.initOptions();
             this.firstLoad = false;
           } else {
-            console.log(this.firstLoad, options);
             this.setOptions();
           }
           this.hasData = true;
