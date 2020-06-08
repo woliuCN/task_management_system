@@ -9,7 +9,18 @@ import {
   Timeline,
   TimelineItem,
   DatePicker,
-  Dialog
+  Dialog,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
 } from 'element-ui'
 import Vue from 'vue'
 
@@ -24,7 +35,18 @@ const components = {
   Timeline,
   TimelineItem,
   DatePicker,
-  Dialog
+  Dialog,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
 }
 
 for (const key in components) {

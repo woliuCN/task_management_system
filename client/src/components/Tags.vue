@@ -8,7 +8,7 @@
       :to="{path: tag.path, query: tag.query}"
     >
       {{tag.title}}
-      <span v-if="isFixed(tag)" class="el-icon-close"></span>
+      <span v-if="isFixed(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"></span>
     </router-link>
   </div>
 </template>
@@ -43,11 +43,20 @@ export default {
   },
   computed: {},
   methods: {
+
+    // 是否是选中状态
     isActive (route) {
       return route.path === this.$route.path
     },
+
+    // 是否是固定的标签
     isFixed (tag) {
       return true
+    },
+
+    // 关闭标签
+    closeSelectedTag (tag) {
+
     }
   }
 }

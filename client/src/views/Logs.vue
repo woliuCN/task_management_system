@@ -35,7 +35,7 @@
       trigger="hover"
       content="点击查看日志详情">
     </el-popover>
-
+    <!-- <el-button v-popover:tip>okk</el-button> -->
     <!-- 日志详情 -->
     <el-dialog :visible.sync="isShowLogs">
       <el-date-picker
@@ -102,6 +102,33 @@ export default {
       }, {
         content: '创建成功',
         timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
       }]
     }
   }
@@ -109,6 +136,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .el-dialog__body {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  align-items: center;
+  max-height: 670px;
+  overflow: hidden;
+  overflow-y: auto;
+  ul {
+    padding: 0;
+  }
+}
 .time-line {
   margin-top: 30px;
 }

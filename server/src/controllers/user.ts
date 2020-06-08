@@ -3,7 +3,8 @@
  */
 import server from '../common/index';
 import { User, tbName } from '../models/user';
-
+const fs = require('fs');
+const path = require('path');
 export default {
     routerName: 'user',
 
@@ -37,6 +38,21 @@ export default {
         let updateFieldObj: object = params.updateFieldObj; //更新的字段对象
         let condition: string = params.condition; //更新条件 
         return await server.db.Update(updateFieldObj, tbName, condition);
+    },
+
+
+    async search(params: any,ctx: any){
+        let fsPath = path.resolve(__dirname,'../../../data/projectInfo.txt');
+        let res :any;
+        await new Promise((resolve, reject) => {
+            fs.readFile(fsPath,'utf8',(err: any,data: any)=>{     
+                if(err) throw err;
+                resolve(data);
+            });
+        }).then((data: any) => {
+            res = data
+        })
+        return res;
     }
 
 }

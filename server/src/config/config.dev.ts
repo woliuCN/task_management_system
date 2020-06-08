@@ -2,7 +2,7 @@
  * @Description: 开发环境配置
  */
 const development = {
-    SERVER_PORT: 3000,
+    SERVER_PORT: 30,
     MYSQL: {
         host: '127.0.0.1',
         user: 'root',
