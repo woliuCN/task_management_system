@@ -4,9 +4,22 @@ import {
   Button,
   ButtonGroup,
   Row,
-  Col
-} from 'element-ui'
-import Vue from 'vue'
+  Col,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Input
+} from 'element-ui';
+import Vue from 'vue';
 
 const components = {
   Table,
@@ -14,11 +27,24 @@ const components = {
   Button,
   ButtonGroup,
   Row,
-  Col
-}
+  Col,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Input
+};
 
 for (const key in components) {
-  Vue.use(components[key])
+  Vue.use(components[key]);
 }
 // Vue.use(Loading.directive);
 // Vue.prototype.$loading = Loading.service;

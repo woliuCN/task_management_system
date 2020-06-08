@@ -8,14 +8,14 @@
       :to="{path: tag.path, query: tag.query}"
     >
       {{tag.title}}
-      <span v-if="isFixed(tag)" class="el-icon-close"></span>
+      <span v-if="isFixed(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"></span>
     </router-link>
   </div>
 </template>
 <script>
 export default {
   props: {},
-  data () {
+  data() {
     return {
       visitedViews: [
         {
@@ -39,18 +39,27 @@ export default {
           title: '项目管理'
         }
       ]
-    }
+    };
   },
   computed: {},
   methods: {
-    isActive (route) {
-      return route.path === this.$route.path
+
+    // 是否是选中状态
+    isActive(route) {
+      return route.path === this.$route.path;
     },
-    isFixed (tag) {
-      return true
+
+    // 是否是固定的标签
+    isFixed(tag) {
+      return true;
+    },
+
+    // 关闭标签
+    closeSelectedTag(tag) {
+
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .tags-view-container {

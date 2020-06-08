@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       options: {}
-    }
+    };
   },
   created() {
     this.getOptions();
@@ -79,10 +79,10 @@ export default {
             }
           }
         }]
-      }
+      };
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

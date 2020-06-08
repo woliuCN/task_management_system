@@ -14,7 +14,7 @@ export default {
     options: {
       type: Object,
       default: () => {
-        return {}
+        return {};
       }
     }
   },
@@ -49,7 +49,7 @@ export default {
           data: []
         }]
       }
-    }
+    };
   },
   watch: {
     options: {
@@ -72,16 +72,16 @@ export default {
       this.addEventListenerResizeECharts();
     },
     setOptions() {
-      Object.assign(this.defaultOptions, this.options)
+      Object.assign(this.defaultOptions, this.options);
       this.chart.setOption(this.defaultOptions);
     },
     addEventListenerResizeECharts() {
       window.addEventListener('resize', () => {
         this.chart.resize();
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style>
