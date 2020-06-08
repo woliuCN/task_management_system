@@ -31,28 +31,28 @@
   </div>
 </template>
 <script>
-import HeaderSearch from './HeaderSearch';
+import HeaderSearch from './HeaderSearch'
 export default {
   components: {
     HeaderSearch
   },
   props: {
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   computed: {
-    isFold() {
-      return this.$store.state.menu.foldState;
+    isFold () {
+      return this.$store.state.menu.foldState
     }
   },
   methods: {
     // 切换菜单栏隐藏与否
-    toggleFold(flag) {
-      this.$store.commit('setFoldState', flag);
+    toggleFold (flag) {
+      this.$store.commit('setFoldState', flag)
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .nav-container {
