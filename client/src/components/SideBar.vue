@@ -50,17 +50,17 @@
 <script>
 export default {
   props: {},
-  data () {
+  data() {
     return {
-    }
+    };
   },
   computed: {
-    isFold () {
-      return this.$store.state.menu.foldState
+    isFold() {
+      return this.$store.state.menu.foldState;
     }
   },
   methods: {}
-}
+};
 </script>
 <style lang="scss" scoped>
 /deep/.el-menu {

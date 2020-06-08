@@ -18,7 +18,7 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       options: [
         {
@@ -36,7 +36,6 @@ export default {
       ],
       search: '',
       isShow: false
-<<<<<<< HEAD
     };
   },
   methods: {
@@ -52,23 +51,6 @@ export default {
     }
   }
 };
-=======
-    }
-  },
-  methods: {
-    // 关键词搜索
-    querySearch (query) {},
-
-    // 选中值改变的时候
-    selectChange () {},
-
-    // 切换搜索框状态
-    toggleShow () {
-      this.isShow = !this.isShow
-    }
-  }
-}
->>>>>>> 7734365e10d6e1728210aab430a9aff0f8fc4251
 </script>
 <style lang="scss" scoped>
 .header-search {

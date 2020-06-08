@@ -59,7 +59,7 @@ export default {
     return {
       selectedData: [],
       that: this,
-      searchContent: ""
+      searchContent: ''
     };
   },
   props: {
@@ -103,7 +103,7 @@ export default {
       return data.filter(item => {
         item = JSON.stringify(item);
         return !that.searchContent || item.toLowerCase().includes(that.searchContent.toLowerCase());
-      })
+      });
     }
   }
 };

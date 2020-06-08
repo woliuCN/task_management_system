@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   publicPath: './',
@@ -17,4 +17,4 @@ module.exports = {
     },
     devtool: 'source-map'
   }
-}
+};

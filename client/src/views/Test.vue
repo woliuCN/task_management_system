@@ -33,7 +33,7 @@ export default {
     this.getOptions();
   },
   mounted() {
-    window.$op = this.options1
+    window.$op = this.options1;
   },
   methods: {
     getOptions() {

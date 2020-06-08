@@ -6,10 +6,6 @@
     <div class="main-container">
       <nav-bar/>
       <tags/>
-<<<<<<< HEAD
-      <task-list class="task-list"></task-list>
-=======
->>>>>>> 7734365e10d6e1728210aab430a9aff0f8fc4251
       <!-- app-main -->
     </div>
   </div>
@@ -17,35 +13,19 @@
 
 <script>
 // @ is an alias to /src
-<<<<<<< HEAD
 import SideBar from '@/components/SideBar.vue';
 import Tags from '@/components/Tags.vue';
 import NavBar from '@/components/NavBar.vue';
-import TaskList from './TaskList';
-=======
-import SideBar from '@/components/SideBar.vue'
-import Tags from '@/components/Tags.vue'
-import NavBar from '@/components/NavBar.vue'
->>>>>>> 7734365e10d6e1728210aab430a9aff0f8fc4251
 export default {
   name: 'Home',
   components: {
     SideBar,
     Tags,
-<<<<<<< HEAD
-    NavBar,
-    TaskList
+    NavBar
   },
   computed: {
     isFold() {
       return this.$store.state.menu.foldState;
-=======
-    NavBar
-  },
-  computed: {
-    isFold () {
-      return this.$store.state.menu.foldState
->>>>>>> 7734365e10d6e1728210aab430a9aff0f8fc4251
     }
   }
 };
@@ -73,12 +53,5 @@ export default {
     .main-container{
       flex: 1;
     }
-<<<<<<< HEAD
-    .task-list {
-      margin: 1vw;
-      padding: 1vw;
-    }
-=======
->>>>>>> 7734365e10d6e1728210aab430a9aff0f8fc4251
   }
 </style>

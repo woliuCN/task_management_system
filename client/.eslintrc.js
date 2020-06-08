@@ -13,15 +13,15 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'semi': ["warn", "always"],
+    semi: ['warn', 'always'],
     'space-before-function-paren': [
-      "warn",
+      'warn',
       {
-        "anonymous": "never",
-        "named": "never",
-        "asyncArrow": "always",
+        anonymous: 'never',
+        named: 'never',
+        asyncArrow: 'always'
       }
     ],
-    'no-unneeded-ternary': "warn",
+    'no-unneeded-ternary': 'warn'
   }
-}
+};
