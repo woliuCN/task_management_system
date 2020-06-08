@@ -14,19 +14,44 @@
         <chart :options="options" minHeight="400px" domName="one"></chart>
       </el-col>
     </el-row>
+    <cards :cardList="cardList"></cards>
   </div>
 </template>
 
 <script>
 import Chart from '../components/Chart.vue';
+import Cards from '../components/Cards.vue';
 export default {
   name: 'Test',
   components: {
-    Chart
+    Chart,
+    Cards
   },
   data() {
     return {
-      options: {}
+      options: {},
+      cardList: [
+        {
+          num: 98,
+          name: '本周任务',
+          icon: '**'
+        },
+        {
+          num: 98,
+          name: '本周任务',
+          icon: '**'
+        },
+        {
+          num: 98,
+          name: '本周任务',
+          icon: '**'
+        },
+        {
+          num: 98,
+          name: '本周任务',
+          icon: '**'
+        }
+      ]
     }
   },
   created() {

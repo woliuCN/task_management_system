@@ -4,7 +4,12 @@ import {
   Button,
   ButtonGroup,
   Row,
-  Col
+  Col,
+  Popover,
+  Timeline,
+  TimelineItem,
+  DatePicker,
+  Dialog
 } from 'element-ui'
 import Vue from 'vue'
 
@@ -14,7 +19,12 @@ const components = {
   Button,
   ButtonGroup,
   Row,
-  Col
+  Col,
+  Popover,
+  Timeline,
+  TimelineItem,
+  DatePicker,
+  Dialog
 }
 
 for (const key in components) {
