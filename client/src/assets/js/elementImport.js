@@ -2,7 +2,18 @@ import {
   Table,
   TableColumn,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
 } from 'element-ui'
 import Vue from 'vue'
 
@@ -10,7 +21,18 @@ const components = {
   Table,
   TableColumn,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  Menu,
+  Submenu,
+  MenuItemGroup,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Select,
+  Option,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
 }
 
 for (const key in components) {
