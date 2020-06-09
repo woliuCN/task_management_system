@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="options">
+      <slot name="tmp_search"></slot>
       <el-button
         v-for="(item,index) in buttonList"
         :key="index"
@@ -23,6 +24,7 @@
       :data="tableData|dataFilter(that)"
       :max-height="maxHeight"
       style="width: 100%;"
+      :row-class-name="'data-item'"
       fit
       @selection-change="handleSelectionChange"
     >
@@ -38,6 +40,7 @@
         :label="title.label"
         :fixed="title.fixed"
         :width="title.width?title.width:120"
+        :sortable="title.sortable"
       >
       </el-table-column>
     </el-table>
@@ -65,12 +68,16 @@ export default {
   props: {
     // 表单的首行，格式为[{prop, label, id, width, fixed}]，其中width和fixed为必填，prop必须与tableData对应
     tableTitle: Array,
+
     // 表单数据，其中数据的键名需与对应title 的prop对应
     tableData: Array,
+
     // 表单的最高高度
     maxHeight: Number,
+
     // 是否在左边显示选择框
     isSelection: Boolean,
+
     // 自定义操作按钮组
     buttonList: {
       type: Array,
@@ -119,5 +126,8 @@ export default {
   .searchButton {
     width: 20vw;
     margin-left: 1vw;
+  }
+  /deep/.data-item:nth-child(2n) {
+    background-color: rgba($color: #eeeeeea9, $alpha: 1.0)
   }
 </style>

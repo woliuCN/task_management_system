@@ -3,6 +3,12 @@ import {
   TableColumn,
   Button,
   ButtonGroup,
+  Row,
+  Col,
+  Popover,
+  Timeline,
+  TimelineItem,
+  Dialog,
   Menu,
   Submenu,
   MenuItemGroup,
@@ -15,7 +21,8 @@ import {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Input
+  Input,
+  DatePicker
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -24,6 +31,12 @@ const components = {
   TableColumn,
   Button,
   ButtonGroup,
+  Row,
+  Col,
+  Popover,
+  Timeline,
+  TimelineItem,
+  Dialog,
   Menu,
   Submenu,
   MenuItemGroup,
@@ -36,7 +49,8 @@ const components = {
   DropdownMenu,
   DropdownItem,
   Pagination,
-  Input
+  Input,
+  DatePicker
 };
 
 for (const key in components) {
