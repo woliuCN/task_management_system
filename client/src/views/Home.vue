@@ -6,7 +6,13 @@
     <div class="main-container">
       <nav-bar/>
       <tags/>
-      <!-- app-main -->
+      <main class="app-main">
+        <transition class="fade-transform" mode="out-in">
+          <keep-alive :include="cachedViews">
+            <router-view :key="nowPath" />
+          </keep-alive>
+        </transition>
+      </main>
     </div>
   </div>
 </template>
@@ -26,6 +32,16 @@ export default {
   computed: {
     isFold() {
       return this.$store.state.menu.foldState;
+    },
+
+    // 当前已经打开过的页面
+    cachedViews() {
+      return [];
+    },
+
+    // 当前的路径
+    nowPath() {
+      return this.$route.path;
     }
   }
 };
@@ -42,16 +58,24 @@ export default {
       height: 100vh;
       background: $side-bar-color;
       &.isFold{
-        width: 0;
-        transition: all 0.5s;
+        width: 65px;
+        transition: all 0.3s;
         /deep/.el-menu{
-          display: none;
+          .el-submenu{
+            width :65px !important;
+          }
         }
       }
-      transition: all 0.5s;
+      transition: all 0.3s;
     }
     .main-container{
       flex: 1;
+      overflow: auto;
+      overflow-x: hidden;
+      .app-main{
+        padding: 15px;
+        box-sizing: border-box;
+      }
     }
   }
 </style>

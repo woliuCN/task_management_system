@@ -1,48 +1,22 @@
 <template>
   <div >
     <el-menu
-      default-active="2"
+      :default-active="defaultActive"
       class="el-menu-vertical-demo"
       background-color="rgb(48, 65, 86)"
       text-color="#fff"
       active-text-color="#1890f"
       unique-opened
+      :collapse="isFold"
     >
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="fa fa-home"></i>
-          <span>首页</span>
+      <el-submenu v-for="menu in menuLists"  :index="menu.index" :key="menu.index">
+        <template slot="title" >
+          <i class="fa " :class="menu.icon"></i>
+          <span slot="title">{{menu.title}}</span>
         </template>
-        <el-menu-item-group>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
+        <el-menu-item-group v-if="menu.children.length>0">
+          <el-menu-item v-for="item in menu.children" :key="item.path" :index="item.path" @click="changeViews(item)">{{item.title}}</el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="fa fa-gears"></i>
-          <span>系统管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="fa fa-group"></i>
-          <span>人员管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="3-1">选项1</el-menu-item>
-          <el-menu-item index="3-2">选项2</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="4">
-        <template slot="title">
-          <i class="fa fa-file-text"></i>
-          <span slot="title">项目管理</span>
-        </template>
       </el-submenu>
     </el-menu>
   </div>
@@ -52,6 +26,8 @@ export default {
   props: {},
   data() {
     return {
+      menuLists: [],
+      defaultActive: '/'
     };
   },
   computed: {
@@ -59,32 +35,54 @@ export default {
       return this.$store.state.menu.foldState;
     }
   },
-  methods: {}
+  methods: {
+    // 跳转页面 iten:跳转的相关信息
+    changeViews(item) {
+      if (item.path === this.$route.path) {
+        return;
+      }
+      this.defaultActive = item.path;
+      this.$store.commit('addCachedViews', item);
+      this.$router.push(item.path);
+    }
+  },
+  mounted() {
+    this.menuLists = this.$store.state.menu.menuLists;
+  }
 };
 </script>
 <style lang="scss" scoped>
 /deep/.el-menu {
+  border-right:none;
   .el-menu-item-group__title {
     padding: 0 !important;
   }
   .el-submenu {
     width: $side-bar-width !important;
+    &:first-child{
+      .fa-home{
+        font-size: 20px!important;
+      }
+      .el-submenu__icon-arrow{
+        display: none;
+      }
+    }
     .el-submenu__title {
       text-align: left;
+      font-size: 14px !important;
       &:hover {
         background: #263443 !important;
+      }
+      .fa {
+        font-size: 16px;
+        color: #bbb;
+        width: 20px;
+        margin: 0 10px 0 5px;
       }
     }
     .el-menu-item {
       min-width: 0px;
-    }
-    .el-submenu__title {
-      font-size: 14px !important;
-      .fa {
-        font-size: 16px;
-        color: #bbb;
-        margin: 0 10px 0 5px;
-      }
+      padding-left: 50px !important;
     }
     &.is-opened {
       .el-menu-item {

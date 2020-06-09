@@ -2,10 +2,10 @@
   <div class="tags-view-container">
     <router-link
       class="tags-item"
-      v-for="(tag,index) in visitedViews"
+      v-for="(tag,index) in cachedViews"
       :key="index"
       :class="isActive(tag) ? 'active' :''"
-      :to="{path: tag.path, query: tag.query}"
+      :to="{path: tag.path}"
     >
       {{tag.title}}
       <span v-if="isFixed(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"></span>
@@ -17,31 +17,13 @@ export default {
   props: {},
   data() {
     return {
-      visitedViews: [
-        {
-          path: '/home',
-          query: '',
-          title: '首页'
-        },
-        {
-          path: '/log',
-          query: '',
-          title: '系统日志'
-        },
-        {
-          path: '/group',
-          query: '',
-          title: '用户分组'
-        },
-        {
-          path: '/task',
-          query: '',
-          title: '项目管理'
-        }
-      ]
     };
   },
-  computed: {},
+  computed: {
+    cachedViews() {
+      return this.$store.state.tags.cachedViews;
+    }
+  },
   methods: {
 
     // 是否是选中状态
@@ -51,12 +33,22 @@ export default {
 
     // 是否是固定的标签
     isFixed(tag) {
+      if (tag.path === '/dashboard') {
+        return false;
+      }
       return true;
     },
 
     // 关闭标签
     closeSelectedTag(tag) {
-
+      this.$store.commit('delCachedViews', tag);
+      if (tag.path === this.$route.path) {
+        this.$nextTick(() => {
+          const cachedViews = this.$store.state.tags.cachedViews;
+          const length = cachedViews.length;
+          this.$router.push(cachedViews[length - 1].path);
+        });
+      }
     }
   }
 };
