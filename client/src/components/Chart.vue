@@ -79,7 +79,7 @@ export default {
   watch: {
     options: {
       handler(options) {
-        if (options.series.some((serie) => { return serie.data.length > 0 })) {
+        if (options.series.some((serie) => { return serie.data.length > 0; })) {
           if (this.firstLoad) {
             this.initOptions();
             this.firstLoad = false;
@@ -134,7 +134,7 @@ export default {
       window.removeEventListener('resize', this.ResizeECharts);
     }
   }
-}
+};
 </script>
 
 <style>

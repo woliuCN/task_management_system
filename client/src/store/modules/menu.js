@@ -4,10 +4,10 @@ const store = {
   },
 
   mutations: {
-    setFoldState (state, flag) {
-      state.foldState = flag
+    setFoldState(state, flag) {
+      state.foldState = flag;
     }
   }
-}
+};
 
-export default store
+export default store;

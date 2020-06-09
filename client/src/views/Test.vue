@@ -15,17 +15,26 @@
       </el-col>
     </el-row>
     <cards :cardList="cardList"></cards>
+    <el-button @click="()=>{isShowDialog=!isShowDialog}">切换</el-button>
+    <my-dialog
+      :visible.sync="isShowDialog"
+      :titleName="titleName"
+      :tableData="infoList"
+      @success="success"
+    ></my-dialog>
   </div>
 </template>
 
 <script>
 import Chart from '../components/Chart.vue';
 import Cards from '../components/Cards.vue';
+import MyDialog from '../components/MyDialog.vue';
 export default {
   name: 'Test',
   components: {
     Chart,
-    Cards
+    Cards,
+    MyDialog
   },
   data() {
     return {
@@ -51,14 +60,64 @@ export default {
           name: '本周任务',
           icon: '**'
         }
-      ]
-    }
+      ],
+      infoList: [
+        {
+          label: '名称',
+          type: 'input',
+          value: '',
+          rules: { required: true, message: '请输入名称', trigger: 'blur' }
+        },
+        {
+          label: '选择项目',
+          type: 'select',
+          options: ['视频汇聚平台'],
+          value: '',
+          rules: { required: true, message: '请选择项目', trigger: 'blur' }
+        },
+        {
+          label: '选择分组',
+          type: 'select',
+          options: ['yy_group'],
+          value: ''
+        },
+        {
+          label: '选择人员',
+          type: 'select',
+          options: ['罗淋铭'],
+          value: '罗淋铭'
+        },
+        {
+          label: '计划日期',
+          type: 'date',
+          value: [new Date(), new Date()]
+        },
+        {
+          label: '完成',
+          type: 'checkbox',
+          value: false
+        },
+        {
+          label: '工时',
+          type: 'input',
+          value: 8
+        },
+        {
+          label: '备注',
+          type: 'select',
+          options: ['计划任务', '新增任务'],
+          value: '计划任务'
+        }
+      ],
+      isShowDialog: false,
+      titleName: '任务信息'
+    };
   },
   created() {
     this.getOptions();
   },
   mounted() {
-    window.$op = this.options1
+    window.$op = this.options1;
   },
   methods: {
     getOptions() {
@@ -104,9 +163,12 @@ export default {
           }
         }]
       };
+    },
+    success(value) {
+      console.log(value);
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

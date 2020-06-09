@@ -11,13 +11,13 @@
 </template>
 
 <script>
-import DataTable from '../components/DataTable'
+import DataTable from '../components/DataTable';
 
 export default {
   components: {
     DataTable
   },
-  data () {
+  data() {
     return {
       buttonList: [
         {
@@ -91,12 +91,12 @@ export default {
         address: '上海市普陀区金沙江路 1518 弄',
         zip: 200333
       }]
-    }
+    };
   },
   methods: {
-    handlDelete (row) {
-      console.log(row)
+    handlDelete(row) {
+      console.log(row);
     }
   }
-}
+};
 </script>

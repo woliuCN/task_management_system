@@ -13,9 +13,9 @@
 
 <script>
 // @ is an alias to /src
-import SideBar from '@/components/SideBar.vue'
-import Tags from '@/components/Tags.vue'
-import NavBar from '@/components/NavBar.vue'
+import SideBar from '@/components/SideBar.vue';
+import Tags from '@/components/Tags.vue';
+import NavBar from '@/components/NavBar.vue';
 export default {
   name: 'Home',
   components: {
@@ -24,11 +24,11 @@ export default {
     NavBar
   },
   computed: {
-    isFold () {
-      return this.$store.state.menu.foldState
+    isFold() {
+      return this.$store.state.menu.foldState;
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
   .home{

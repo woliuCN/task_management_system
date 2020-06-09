@@ -82,7 +82,7 @@ export default {
         timestamp: '2018-04-11'
       }],
       value1: ''
-    }
+    };
   },
   created() {},
   mounted() {},
@@ -129,10 +129,10 @@ export default {
       }, {
         content: '创建成功',
         timestamp: '2018-04-11'
-      }]
+      }];
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -20,9 +20,14 @@ import {
   Option,
   Dropdown,
   DropdownMenu,
-  DropdownItem
-} from 'element-ui'
-import Vue from 'vue'
+  DropdownItem,
+  Pagination,
+  Input,
+  Form,
+  FormItem,
+  Checkbox
+} from 'element-ui';
+import Vue from 'vue';
 
 const components = {
   Table,
@@ -46,11 +51,16 @@ const components = {
   Option,
   Dropdown,
   DropdownMenu,
-  DropdownItem
-}
+  DropdownItem,
+  Pagination,
+  Input,
+  Form,
+  FormItem,
+  Checkbox
+};
 
 for (const key in components) {
-  Vue.use(components[key])
+  Vue.use(components[key]);
 }
 // Vue.use(Loading.directive);
 // Vue.prototype.$loading = Loading.service;

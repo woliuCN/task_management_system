@@ -15,7 +15,7 @@
 <script>
 export default {
   props: {},
-  data () {
+  data() {
     return {
       visitedViews: [
         {
@@ -39,27 +39,27 @@ export default {
           title: '项目管理'
         }
       ]
-    }
+    };
   },
   computed: {},
   methods: {
 
     // 是否是选中状态
-    isActive (route) {
-      return route.path === this.$route.path
+    isActive(route) {
+      return route.path === this.$route.path;
     },
 
     // 是否是固定的标签
-    isFixed (tag) {
-      return true
+    isFixed(tag) {
+      return true;
     },
 
     // 关闭标签
-    closeSelectedTag (tag) {
+    closeSelectedTag(tag) {
 
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .tags-view-container {

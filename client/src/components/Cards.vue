@@ -35,10 +35,10 @@ export default {
   data() {
     return {
       bgColors: ['#2bae85', '#f6c430', '#b5aa90', '#f19790']
-    }
+    };
   }
 
-}
+};
 </script>
 
 <style lang='scss' scoped>
