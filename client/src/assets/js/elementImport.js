@@ -8,7 +8,6 @@ import {
   Popover,
   Timeline,
   TimelineItem,
-  DatePicker,
   Dialog,
   Menu,
   Submenu,
@@ -25,7 +24,8 @@ import {
   Input,
   Form,
   FormItem,
-  Checkbox
+  Checkbox,
+  DatePicker
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -39,7 +39,6 @@ const components = {
   Popover,
   Timeline,
   TimelineItem,
-  DatePicker,
   Dialog,
   Menu,
   Submenu,
@@ -56,7 +55,8 @@ const components = {
   Input,
   Form,
   FormItem,
-  Checkbox
+  Checkbox,
+  DatePicker
 };
 
 for (const key in components) {
