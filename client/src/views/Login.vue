@@ -88,7 +88,7 @@ export default {
         type: 'success',
         duration: 800,
         onClose: () => {
-          this.$router.push('/')
+          this.$router.push('/');
         }
       });
     }

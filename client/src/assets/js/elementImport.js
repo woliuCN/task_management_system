@@ -26,7 +26,8 @@ import {
   FormItem,
   Checkbox,
   DatePicker,
-  Message
+  Message,
+  MessageBox
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -66,4 +67,5 @@ for (const key in components) {
 // Vue.use(Loading.directive);
 // Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
-// Vue.prototype.$messageBox = MessageBox;
+Vue.prototype.$messageBox = MessageBox;
+Vue.prototype.$confirm = MessageBox.confirm;
