@@ -1,118 +1,95 @@
 ## 任务管理系统
 
 
-
 ### 功能分析
 
-```js
-【需求背景】
-1. 人员管理
-  人员以部门（apartment）作为分组，并且可以对部门及人员进行相应的管理。
-2. 项目管理
-  可以对当前公司已有的项目进行管理，并且可以列出负责项目的主要部门、项目状态等信息。
-3. 任务管理
-  可以给每一个在职员工分配任务，任务可以是某个项目的子任务，也可以是其他工作内容。
-  在任务管理界面可以按周/月来显示本周/本月的所有任务list，并显示任务的所属项目、任务负责人、任务完成情况等。
+#### 功能模块结构图
+![](https://github.com/woliuCN/photos/blob/master/%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97%E7%BB%93%E6%9E%84%E5%9B%BE.png?raw=true)
 
-【功能分析】
-1. 用户功能
-1.1 用户登录
-  根据账号密码进行登录，默认管理员账号为admin/admin。
+#### 功能模块列表
 
-2. 系统功能
-2.1 首页
-  周任务完成情况/进度、月/季/年总结（以图表形式展示）。
-2.2 项目管理
-  项目的增删改查操作，项目工作细分（分解为多个子任务给不同员工）。
-  在项目管理界面可以查看项目的主要负责部门、项目的完成情况等内容。
-2.3 周任务管理（用于周会展示）
-  分配给每一个员工的每周任务，任务内容可以是项目的子任务，可以debug，也可以是其他工作内容。
-  每一项任务都可以具体到它的负责人，启动时间，结束时间，完成情况等等。
-  同时也可以具体查看某一周、某一月的任务list，方便统计本周/本月的任务完成情况。
+##### 通用功能：
 
-3. 后台管理
-3.1 部门管理
-  对部门进行增删改查操作等。
-3.2 成员管理
-  对员工信息进行操作。
-3.2 操作日志
-  用户操作（包括但不限于登录操作、任务操作等），可记录操作者ip、操作时间、操作内容等。
+- **登录**
+- **修改密码**
+- **退出**
+- **服务端，异常日志**
 
-【数据库设计】
-需要建立的表：
-部门 apartment
-用户表 users
-项目 projects
-任务 task
-日志 log
+##### 项目管理模块
 
+- **添加项目**，管理员/小组管理员，添加项目，字段（项目名，创建时间）；
+- **编辑项目**，管理员/小组管理员，编辑项目；
+- **修改状态**，管理员/小组管理员，修改项目状态，启动，挂起，完成；
+- **删除项目**，管理员/小组管理员，删除项目；
 
-apartment:
-id  -- 部门id type:String
-name -- 部门名称 type:String
-createTime -- 创建时间 type:String
-updateTime -- 修改时间 type:String
-remarks -- 备注 type:String
+##### 成员管理模块
 
-users：
-id -- 用户id type:String
-jobNo -- 工号 type:String
-apartment	-- 部门信息 type:String str({id, name})
-name -- 姓名 type:String
-sex -- 性别 type:String
-state -- 状态 1-在职 2-离职 type:String
-createTime -- 创建时间 type:String
-updateTime -- 修改时间 type:String
-remarks -- 备注 type:String
+- **添加成员**，管理员/小组管理员，添加成员，字段（工号，姓名，创建时间）；
+- **编辑成员**，管理员/小组管理员，编辑成员；
+- **修改成员**，管理员/小组管理员，修改项目状态，在职，离职，删除；
+- **删除成员**，管理员/小组管理员，删除项目；
+- **角色分配**，管理员，分配 小组管理员、成员角色；
+- **初始化密码**，管理员/小组管理员，初始化成员密码；
 
-projects:
-id -- 项目id type:String
-name -- 项目名称 type:String
-state -- 状态 1-运行 2-挂起 3-完成 4-取消 type:String
-apartment	-- 部门信息 type:String str({id, name})
-createTime -- 创建时间 type:String
-updateTime -- 修改时间 type:String
-remarks -- 备注 type:String
- 
-task:
-id -- 任务id兼编号 type:String
-name -- 任务名 type:String
-projectInfo -- 所属项目（项目的id+名字） type:String str({id, name})
-belonger -- 负责人员(负责人的id+名字) type:String str({id, name})
-state -- 1-未启动 2-进行中 3-挂起 4-完成 5-取消 type:String
-workingHours -- 工时 type:String
-startTime -- 计划开始时间 type:String（YYYY-MM-DD hh:mm:ss） (默认时间为本周一)
-endTime -- 计划结束时间 type:String（YYYY-MM-DD hh:mm:ss） (默认时间为本周五)
-createTime -- 创建时间 type:String
-updateTime -- 修改时间 type:String
-remarks -- 备注 type:String
+  
 
+##### 任务管理模块
 
-log:
-id -- 日志id type:String
-content -- 日志内容 type: String
-createTime -- 生成时间 type: String
+- **默认显示**
+  成员显示自己最近一周工作任务；
+  小组管理员显示小组最近一周工作任务；
+  管理员显示最近部门一周工作任务；
 
-【设计语言】
-客户端：vue-cli
-服务端：node + mysql
-```
+- **过滤检索**，根据开始时间/结束时间，负责人，项目，状态过滤任务；
+
+- **添加计划任务**：
+  成员自己添加多任务，字段（任务编号，任务内容，项目，计划开始、结束时间，工时，任务性质《计划》），任务编号生成规则 工号+日期 例如，U00154920200608，项目运行中，负责人在职中；
+
+- **添加新增任务**
+管理员/小组管理员，添加成语新增项目，字段（任务编号，任务内容，项目，负责人，计划开始、结束时间，工时，任务性质《新增》）；
+  
+- **删除任务**
+  成员删除自己任务；
+
+- **编辑任务**
+  成员编辑自己任务；
+  管理员/小组管理员，编辑自己/成员任务；
+
+- **导出 excel**
+  管理员/小组管理员，导出本周资源计划，上周任务完成情况，参考附件；
+  管理员/小组管理员，导出个人月绩效，按时间范围，个人/周任务完成情况，参考附件；
+
+- **状态更改**
+  管理员/小组管理员，修改任务为，启动、挂起、完成 状态；
 
 
 
+#### 用户角色权限
 
+角色类型：管理员、小组管理员、成员；
 
-### 数据库设计图
-
-> 其中红色为主键、粉色为外键。
-
-![](https://github.com/woliuCN/photos/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200603160342.png?raw=true)
-
-
-
-### 用户活动图
+- 管理员，所有功能模块；
+- 小组管理员，项目管理模块，成员管理模块（除角色分配）；
+- 成员，添加、编辑、删除 自己任务；
 
 
 
-![](https://github.com/woliuCN/photos/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200603160354.png?raw=true)
+### 数据库设计
+
+![](https://github.com/woliuCN/photos/blob/master/er.png)
+
+
+### 技术选型
+
+#### 前端开发
+Vue + Element
+
+#### 后端开发
+Node + koa2
+
+#### 数据库
+MySQL
+
+#### 代码管理工具
+	Github
 
