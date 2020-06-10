@@ -2,7 +2,14 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/views/Login.vue';
+import store from '@/store/index';
 Vue.use(VueRouter);
+
+// 因为使用了element ui menu的router 属性，无法自定义push的时候过滤重复的相同路径，会抛出警告，这里是捕获异常。
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 
 const routes = [
   {
@@ -15,37 +22,37 @@ const routes = [
         path: 'dashboard',
         component: () => import('@/views/DashBoard'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', affix: true }
+        meta: { title: '首页', affix: true }
       },
       {
         path: 'group',
         component: () => import('@/views/GroupManage'),
         name: 'GroupManage',
-        meta: { title: 'GroupManage', affix: true }
+        meta: { title: '分组管理', affix: true }
       },
       {
         path: 'member',
         component: () => import('@/views/MemberManage'),
         name: 'MemberManage',
-        meta: { title: 'MemberManage', affix: true }
+        meta: { title: '成员管理', affix: true }
       },
       {
         path: 'project',
         component: () => import('@/views/ProjectManage'),
         name: 'ProjectManage',
-        meta: { title: 'ProjectManage', affix: true }
+        meta: { title: '项目管理', affix: true }
       },
       {
         path: 'task',
         component: () => import('@/views/TaskList'),
         name: 'TaskManage',
-        meta: { title: 'TaskManage', affix: true }
+        meta: { title: '任务管理', affix: true }
       },
       {
         path: 'log',
         component: () => import('@/views/AbnormalLog'),
         name: 'AbnormalLog',
-        meta: { title: 'AbnormalLog', affix: true }
+        meta: { title: '异常日志', affix: true }
       }
     ]
   },
@@ -60,6 +67,14 @@ const router = new VueRouter({
   mode: 'hash',
   base: process.env.BASE_URL,
   routes
+});
+
+// 每次重定向的时候需要重新修改tags标签的值
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/' || to.path !== '/dashboard') {
+    store.commit('addCachedViews', { path: to.path, title: to.meta.title });
+  }
+  next();
 });
 
 export default router;

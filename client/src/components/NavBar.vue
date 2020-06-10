@@ -7,22 +7,27 @@
       </div>
       <div class="breadcrumb">
         <el-breadcrumb separator="/">
-          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-          <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-          <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          <transition-group name="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }" key="/">首页</el-breadcrumb-item>
+            <el-breadcrumb-item
+              v-for="(breadcrumb,index) in breadcrumbLists"
+              :key="index"
+            >{{breadcrumb}}</el-breadcrumb-item>
+          </transition-group>
         </el-breadcrumb>
       </div>
     </div>
     <div class="nav-right">
-      <header-search/>
+      <header-search />
       <div class="system-options">
         <el-dropdown>
-          <img src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80" class="user-avator">
+          <img src="@/assets/images/avator.gif" class="user-avator" />
           <i class="el-icon-caret-bottom"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>首页</el-dropdown-item>
-            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item>
+              <router-link to="/">首页</router-link>
+            </el-dropdown-item>
+            <el-dropdown-item>修改密码</el-dropdown-item>
             <el-dropdown-item divided>退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -36,14 +41,27 @@ export default {
   components: {
     HeaderSearch
   },
-  props: {
-  },
+  props: {},
   data() {
     return {};
   },
   computed: {
     isFold() {
       return this.$store.state.menu.foldState;
+    },
+    breadcrumbLists() {
+      const menuLists = this.$store.state.menu.menuLists;
+      const path = this.$route.path;
+      const res = [];
+      menuLists.map(subMenu => {
+        const subTitle = subMenu.title;
+        subMenu.children.map(menu => {
+          if (menu.index === path) {
+            res.push(subTitle, menu.title);
+          }
+        });
+      });
+      return res;
     }
   },
   methods: {
@@ -60,45 +78,47 @@ export default {
   align-items: center;
   height: 50px;
   padding: 0 15px;
-  .nav-left{
+  .nav-left {
     display: flex;
     align-items: center;
     flex: 1;
-    .option-icon{
+    .option-icon {
       flex: 0 0 40px;
-      .el-icon-s-fold,.el-icon-s-unfold{
+      .el-icon-s-fold,
+      .el-icon-s-unfold {
         font-size: 20px;
         color: #555;
         vertical-align: bottom;
         cursor: pointer;
       }
     }
-    .breadcrumb{
-      /deep/.el-breadcrumb{
-        .el-breadcrumb__inner{
+    .breadcrumb {
+      /deep/.el-breadcrumb {
+        font-size: 13px;
+        .el-breadcrumb__inner {
           color: #97a8be;
-          &.is-link{
+          &.is-link {
             color: #333;
             font-weight: 600;
           }
         }
-        .el-breadcrumb__separator{
+        .el-breadcrumb__separator {
           font-size: 12px;
         }
       }
     }
   }
-  .nav-right{
+  .nav-right {
     display: flex;
     align-items: center;
-    .system-options{
+    .system-options {
       flex: 0 0 120px;
       margin-left: 10px;
-      .user-avator{
+      .user-avator {
         width: 42px;
         border-radius: 10px;
       }
-      .el-icon-caret-bottom{
+      .el-icon-caret-bottom {
         vertical-align: bottom;
         font-size: 14px;
         color: #666;

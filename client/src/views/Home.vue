@@ -4,10 +4,10 @@
       <side-bar></side-bar>
     </div>
     <div class="main-container">
-      <nav-bar/>
-      <tags/>
+      <nav-bar />
+      <tags />
       <main class="app-main">
-        <transition class="fade-transform" mode="out-in">
+        <transition name="fade-transform" mode="out-in">
           <keep-alive :include="cachedViews">
             <router-view :key="nowPath" />
           </keep-alive>
@@ -36,7 +36,7 @@ export default {
 
     // 当前已经打开过的页面
     cachedViews() {
-      return [];
+      return this.$store.state.tags.cachedViews;
     },
 
     // 当前的路径
@@ -47,35 +47,35 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .home{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    .side-bar{
-      flex: 0 0 auto;
-      width: $side-bar-width;
-      height: 100vh;
-      background: $side-bar-color;
-      &.isFold{
-        width: 65px;
-        transition: all 0.3s;
-        /deep/.el-menu{
-          .el-submenu{
-            width :65px !important;
-          }
+.home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  .side-bar {
+    flex: 0 0 auto;
+    width: $side-bar-width;
+    height: 100vh;
+    background: $side-bar-color;
+    &.isFold {
+      width: 65px;
+      transition: all 0.3s;
+      /deep/.el-menu {
+        .el-submenu {
+          width: 65px !important;
         }
       }
-      transition: all 0.3s;
     }
-    .main-container{
-      flex: 1;
-      overflow: auto;
-      overflow-x: hidden;
-      .app-main{
-        padding: 15px;
-        box-sizing: border-box;
-      }
+    transition: all 0.3s;
+  }
+  .main-container {
+    flex: 1;
+    overflow: auto;
+    overflow-x: hidden;
+    .app-main {
+      padding: 15px;
+      box-sizing: border-box;
     }
   }
+}
 </style>

@@ -59,3 +59,23 @@ html {
     height: 3px;
   }
   
+
+
+// 覆写收缩情况下的菜单样式
+.el-menu--vertical {
+  .nest-menu .el-submenu>.el-submenu__title,
+  .el-menu-item {
+    &:hover {
+      background-color: #001528 !important;
+    }
+    &.is-active{
+      color: #409EFF !important;
+    }
+  }
+  .el-menu--popup {
+    .el-menu-item-group__title {
+      padding: 0 !important;
+      line-height: 0 !important;
+    }
+  }
+}

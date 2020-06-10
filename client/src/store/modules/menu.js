@@ -3,23 +3,17 @@ const store = {
     foldState: false, // 菜单栏是否展开状态
     menuLists: [
       {
-        title: '首页',
-        index: '0',
-        icon: 'fa-home',
-        children: []
-      },
-      {
         title: '人员管理',
         index: '1',
         icon: 'fa-group',
         children: [
           {
             title: '分组管理',
-            path: '/group'
+            index: '/group'
           },
           {
             title: '成员管理',
-            path: '/member'
+            index: '/member'
           }
         ]
       },
@@ -30,11 +24,11 @@ const store = {
         children: [
           {
             title: '项目管理',
-            path: '/project'
+            index: '/project'
           },
           {
             title: '任务管理',
-            path: '/task'
+            index: '/task'
           }
         ]
       },
@@ -45,7 +39,7 @@ const store = {
         children: [
           {
             title: '异常日志',
-            path: '/log'
+            index: '/log'
           }
         ]
       }
