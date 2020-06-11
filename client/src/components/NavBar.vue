@@ -20,7 +20,7 @@
     <div class="nav-right">
       <header-search />
       <div class="system-options">
-        <el-dropdown>
+        <el-dropdown @command="handleCommand">
           <img src="@/assets/images/avator.gif" class="user-avator" />
           <i class="el-icon-caret-bottom"></i>
           <el-dropdown-menu slot="dropdown">
@@ -28,7 +28,7 @@
               <router-link to="/">首页</router-link>
             </el-dropdown-item>
             <el-dropdown-item>修改密码</el-dropdown-item>
-            <el-dropdown-item divided>退出登录</el-dropdown-item>
+            <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -68,6 +68,21 @@ export default {
     // 切换菜单栏隐藏与否
     toggleFold(flag) {
       this.$store.commit('setFoldState', flag);
+    },
+
+    // 右上角下拉框被点击时触发事件
+    handleCommand(command) {
+      // 退出登录
+      if (command === 'logout') {
+        this.$confirm('确定退出登录吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+        // 在这里做退出登录操作
+          this.$router.push('/login');
+        });
+      }
     }
   }
 };

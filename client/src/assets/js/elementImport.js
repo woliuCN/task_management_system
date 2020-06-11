@@ -26,7 +26,10 @@ import {
   FormItem,
   Checkbox,
   DatePicker,
-  Message
+  Message,
+  MessageBox,
+  Radio,
+  RadioGroup
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -57,7 +60,9 @@ const components = {
   Form,
   FormItem,
   Checkbox,
-  DatePicker
+  DatePicker,
+  Radio,
+  RadioGroup
 };
 
 for (const key in components) {
@@ -66,4 +71,5 @@ for (const key in components) {
 // Vue.use(Loading.directive);
 // Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
-// Vue.prototype.$messageBox = MessageBox;
+Vue.prototype.$messageBox = MessageBox;
+Vue.prototype.$confirm = MessageBox.confirm;

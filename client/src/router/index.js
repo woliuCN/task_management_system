@@ -44,7 +44,7 @@ const routes = [
       },
       {
         path: 'task',
-        component: () => import('@/views/TaskList'),
+        component: () => import('@/views/TaskList/Index'),
         name: 'TaskManage',
         meta: { title: '任务管理', affix: true }
       },

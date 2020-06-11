@@ -75,11 +75,11 @@ export default {
   data() {
     return {
       internalTableData: JSON.parse(JSON.stringify(this.tableData))
-    }
+    };
   },
   created() {
     // Object.assign(this.internalTableData, this.tableData);
-    console.log(this.internalTableData)
+    console.log(this.internalTableData);
   },
   methods: {
 
@@ -120,7 +120,7 @@ export default {
       return {
         message,
         validated
-      }
+      };
     },
 
     // 清除表单内容
@@ -128,7 +128,7 @@ export default {
       this.internalTableData = JSON.parse(JSON.stringify(this.tableData));
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
