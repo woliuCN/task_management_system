@@ -27,9 +27,9 @@ export default {
     'background: #f33; font-size: 18px; font-family: monospace; color: #eee; text-shadow:0 0 1px #fff',
     'background: #000; font-size: 18px; font-family: monospace',
     'background: #000; font-size: 18px; font-family: monospace; color: #ddd; text-shadow:0 0 2px #fff'
-    )
+    );
   }
-}
+};
 </script>
 
 <style lang="scss">

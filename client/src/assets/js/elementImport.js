@@ -27,7 +27,9 @@ import {
   Checkbox,
   DatePicker,
   Message,
-  MessageBox
+  MessageBox,
+  Radio,
+  RadioGroup
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -58,7 +60,9 @@ const components = {
   Form,
   FormItem,
   Checkbox,
-  DatePicker
+  DatePicker,
+  Radio,
+  RadioGroup
 };
 
 for (const key in components) {

@@ -9,6 +9,7 @@
       @accomplish-task="accomplishTask"
       @edit-task="editTask"
       @delete-task="deleteTask"
+      @add-task="addTask"
     >
       <template v-slot:tmp_search>
         <el-date-picker
@@ -28,15 +29,26 @@
         </el-date-picker>
       </template>
     </data-table>
+
+    <data-dialog
+      :isShow="isDialogShow"
+      :projectList="projectList"
+      :userList="userList"
+      @submit-task="submitTask"
+      @close-dialog="isDialogShow = false"
+    >
+    </data-dialog>
   </div>
 </template>
 
 <script>
-import DataTable from '../components/DataTable';
+import DataTable from '../../components/DataTable';
+import DataDialog from './components/Dialog';
 import axios from 'axios';
 export default {
   components: {
-    DataTable
+    DataTable,
+    DataDialog
   },
   data() {
     return {
@@ -53,6 +65,7 @@ export default {
       buttonList: [],
       isSelection: false,
       timeInterval: '',
+      isDialogShow: false,
       timePickerOptions: {
         firstDayOfWeek: 1,
         shortcuts: [{
@@ -89,34 +102,40 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }]
-      }
+      },
+      projectList: [
+        { id: 1, name: '项目1' },
+        { id: 2, name: '项目2' },
+        { id: 3, name: '项目3' },
+        { id: 4, name: '项目4' }
+      ],
+      userList: [
+        { id: 1, name: '员工1' },
+        { id: 2, name: '员工2' },
+        { id: 3, name: '员工3' },
+        { id: 4, name: '员工4' }
+      ]
     };
   },
   methods: {
     // 获取表单抬头和数据
     getTableData(start = 0, pageSize = 10) {
-      axios.get('http://127.0.0.1:3389/taskData').then(res => {
-        const status = {
-          0: '挂起',
-          1: '未完成',
-          2: '已完成'
-        };
-        this.tableData = res.data.taskList.slice(0, 10);
-        this.tableData.map(tableItem => {
-          tableItem.state = status[tableItem.state];
-        });
-      });
+      // axios.get('http://127.0.0.1:3389/taskData').then(res => {
+      //   const status = {
+      //     0: '挂起',
+      //     1: '未完成',
+      //     2: '已完成'
+      //   };
+      //   this.tableData = res.data.taskList.slice(0, 10);
+      //   this.tableData.map(tableItem => {
+      //     tableItem.state = status[tableItem.state];
+      //   });
+      // });
     },
 
     // 初始化按钮列表
     initButtonList() {
       this.buttonList = [
-        //
-        {
-          text: '仅显示本周',
-          event: 'show-this-week'
-        },
-
         // 数据导入按钮
         {
           text: '导入',
@@ -127,6 +146,12 @@ export default {
         {
           text: '导出',
           event: 'export-data'
+        },
+
+        // 新增任务
+        {
+          text: '新增',
+          event: 'add-task'
         },
 
         // 完成任务按钮
@@ -160,6 +185,26 @@ export default {
         }
 
       ];
+    },
+
+    // 新增任务
+    addTask() {
+      this.isDialogShow = true;
+    },
+
+    // 提交新增任务表单
+    submitTask(data) {
+      data.project = this.projectList.filter(projectItem => {
+        return projectItem.id === data.project;
+      })[0];
+
+      data.belonger = this.userList.filter(user => {
+        return user.id === data.belonger;
+      })[0];
+      console.log(data);
+      axios.post('http://49713218ec71.ngrok.io/api/task/addTask', { task: data }, (res) => {
+        console.log(res);
+      })
     },
 
     // 完成任务
