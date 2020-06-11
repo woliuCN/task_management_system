@@ -71,10 +71,12 @@ const router = new VueRouter({
 
 // 每次重定向的时候需要重新修改tags标签的值
 router.beforeEach((to, from, next) => {
-  if (to.path !== '/' || to.path !== '/dashboard') {
+  if (to.path === '/' || to.path === '/dashboard' || to.path === '/login') {
+    next();
+  } else {
     store.commit('addCachedViews', { path: to.path, title: to.meta.title });
+    next();
   }
-  next();
 });
 
 export default router;
