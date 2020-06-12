@@ -38,7 +38,7 @@ const routes = [
       },
       {
         path: 'project',
-        component: () => import('@/views/ProjectManage'),
+        component: () => import('@/views/ProjectManage/Index'),
         name: 'ProjectManage',
         meta: { title: '项目管理', affix: true }
       },
