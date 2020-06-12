@@ -171,7 +171,7 @@ export default {
             2: '进行中',
             3: '挂起',
             4: '完成'
-          }
+          };
           const tableData = res.data.taskList;
           tableData.map(tableItem => {
             tableItem.startTime = time(tableItem.startTime, 'YYYY-MM-DD');
@@ -355,7 +355,7 @@ export default {
     axios.get('http://192.168.31.84:30/api/user/getUserList/options')
       .then(res => {
         this.userList = res.data.userList;
-      })
+      });
   }
 };
 </script>

@@ -70,6 +70,7 @@ export default {
   }
   .main-container {
     flex: 1;
+    height: 100vh;
     overflow: auto;
     overflow-x: hidden;
     .app-main {

@@ -105,7 +105,7 @@ export default {
           pageSize: 10,
           pageIndex: 0,
           total: 0
-        }
+        };
       }
     }
   },
@@ -166,7 +166,11 @@ export default {
     width: 20vw;
     margin-left: 1vw;
   }
-  /deep/.data-item:nth-child(2n) {
-    background-color: rgba($color: #eeeeeea9, $alpha: 1.0)
+  /deep/.data-item{
+    font-size: 13px!important;
+    &:nth-child(2n) {
+      background-color: rgba($color: #eeeeeea9, $alpha: 1.0)
+    }
   }
+
 </style>
