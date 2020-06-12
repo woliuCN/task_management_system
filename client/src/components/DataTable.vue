@@ -13,15 +13,17 @@
       {{ item.text }}
       </el-button>
       <el-input
+        v-if="isShowSearch"
         v-model="searchContent"
         size="mini"
         placeholder="输入关键字搜索"
         class="searchButton"
+        @change="handleSearchChange"
       />
     </div>
     <el-table
       ref="table"
-      :data="tableData|dataFilter(that)"
+      :data="tableData"
       :max-height="maxHeight"
       style="width: 100%;"
       :row-class-name="'data-item'"
@@ -46,23 +48,26 @@
     </el-table>
     <div class="block">
       <el-pagination
-        @current-change="handleCurrentChange"
-        :current-page="1"
-        :page-size="10"
         layout="total, prev, pager, next, jumper"
-        :total="400">
+        :current-page="pagination.pageIndex"
+        :page-size="pagination.pageSize"
+        :total="pagination.total"
+        @current-change="handlePageChange"
+      >
       </el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import { debounce } from '../filters/index.js';
 export default {
   data() {
     return {
       selectedData: [],
       that: this,
-      searchContent: ''
+      searchContent: '',
+      pageIndex: 0
     };
   },
   props: {
@@ -78,11 +83,29 @@ export default {
     // 是否在左边显示选择框
     isSelection: Boolean,
 
+    // 是否显示搜索框
+    isShowSearch: {
+      type: Boolean,
+      default: false
+    },
+
     // 自定义操作按钮组
     buttonList: {
       type: Array,
       default() {
         return [];
+      }
+    },
+
+    // 分页数据
+    pagination: {
+      type: Object,
+      default() {
+        return {
+          pageSize: 10,
+          pageIndex: 0,
+          total: 0
+        }
       }
     }
   },
@@ -101,17 +124,33 @@ export default {
       this.selectedData = val;
     },
 
-    handleCurrentChange(val) {
+    handlePageChange(val) {
+      // this.$emit('page-index-change', val);
+      this.debounceHandleSearchChange(val);
+      console.log(`当前页数${val}`);
+    },
 
+    handleSearchChange(val) {
+      if (val !== undefined && val.length > 0) {
+        this.$emit('search-content-changed', val);
+      }
     }
   },
-  filters: {
-    dataFilter(data, that) {
-      return data.filter(item => {
-        item = JSON.stringify(item);
-        return !that.searchContent || item.toLowerCase().includes(that.searchContent.toLowerCase());
-      });
-    }
+  created() {
+    this.debounceHandleSearchChange = debounce(
+      (val) => {
+        this.$emit('page-index-change', val);
+        this.pageIndex = this.pagination.pageIndex;
+      },
+      1500,
+      true,
+      () => {
+        console.log('点击太快了');
+        setTimeout(() => {
+          this.pagination.pageIndex = this.pageIndex;
+        }, 0);
+      }
+    );
   }
 };
 </script>

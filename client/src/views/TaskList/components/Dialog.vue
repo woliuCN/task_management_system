@@ -2,6 +2,7 @@
   <div>
     <el-dialog
       title="新增任务"
+      top="5vh"
       :visible.sync="isShow"
       :close-on-click-modal=false
       :show-close=false
@@ -62,9 +63,9 @@
           >
             <el-option
               v-for="user in userList"
-              :key="user.id"
-              :label="user.name"
-              :value="user.id">
+              :key="user.userId"
+              :label="user.userName"
+              :value="user.userId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -218,7 +219,7 @@ export default {
     submitTask() {
       this.$refs.taskInfo.validate(valid => {
         if (valid) {
-          this.$emit('submit-task', this.taskInfo);
+          this.$emit('submit-task', JSON.stringify(this.taskInfo));
           this.$emit('close-dialog');
           this.$refs.taskInfo.resetFields();
         }
@@ -235,8 +236,8 @@ export default {
     initTaskInfo() {
       this.taskInfo = {
         content: undefined,
-        project: '',
-        belonger: '',
+        project: {},
+        belonger: {},
         state: 1,
         workingHours: 8,
         taskType: 0,
