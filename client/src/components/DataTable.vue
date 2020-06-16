@@ -9,7 +9,7 @@
         :type="item.type"
         :size="item.size||'mini'"
         :icon="item.icon"
-        @click="handleFunc(selectedData, item.event)"
+        @click="handleFunc(selectedData, item.event, item.limit)"
       >
       {{ item.text }}
       </el-button>
@@ -121,8 +121,17 @@ export default {
      * @param {Array} row: 当前被点击的列表行数据
      * @param {String} event: 分发给父组件的事件名
      */
-    handleFunc(data, event) {
-      this.$emit(event, data);
+    handleFunc(data, event, limit) {
+      limit = limit || 0;
+      if (!data || data.length < limit) {
+        this.$message({
+          message: `至少选择${limit}项任务再执行操作`,
+          type: 'error',
+          duration: 1000
+        })
+      } else {
+        this.$emit(event, data);
+      }
     },
 
     // 已选中的表单内容，并将内容地址赋值给selectedData，用于传数据给父组件
