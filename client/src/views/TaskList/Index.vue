@@ -91,7 +91,7 @@ export default {
       keyWords: '',
 
       startTime: 0,
-      endTime: new Date().getTime(),
+      endTime: undefined,
       pageIndex: 0,
       pageSize: 8,
       total: 0,
@@ -99,71 +99,76 @@ export default {
 
       timePickerOptions: {
         firstDayOfWeek: 1,
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            const start = new Date();
-            const end = new Date();
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const start = new Date();
+              const end = new Date();
 
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 通过今天的时间减去本周已过天数，得出本周周一的日期
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
+
+              // 今天的时间加上6天可得到本周最后一天的日期
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '上周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 通过今天的时间减去本周已过天数，得出本周周一的日期
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
+
+              // 今天的时间加上6天可得到本周最后一天的日期
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 获取本月1号的时间戳
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
+
+              // 获取当前月份
+              const month = end.getMonth();
+
+              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
+              end.setMonth(month + 1);
+
+              // 将日期设置为0, 再通过getDate()就可以获取本月天数
+              end.setDate(0);
+
+              // 获取本月最后一天的时间戳
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
           }
-        }, {
-          text: '本周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 通过今天的时间减去本周已过天数，得出本周周一的日期
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-            // 今天的时间加上6天可得到本周最后一天的日期
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '上周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 通过今天的时间减去本周已过天数，得出本周周一的日期
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
-
-            // 今天的时间加上6天可得到本周最后一天的日期
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '本月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 获取本月1号的时间戳
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-            // 获取当前月份
-            const month = end.getMonth();
-
-            // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-            end.setMonth(month + 1);
-
-            // 将日期设置为0, 再通过getDate()就可以获取本月天数
-            end.setDate(0);
-
-            // 获取本月最后一天的时间戳
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
 
       // 已有项目列表，用于在新建任务时选择
@@ -194,7 +199,7 @@ export default {
       pageIndex = 0,
       pageSize = 8,
       startTime = 0,
-      endTime = new Date().getTime(),
+      endTime = undefined,
       keyWords = ''
     ) {
       // 配置loading
@@ -209,6 +214,16 @@ export default {
       const url = '/task/getTaskList';
       this.getData(url, { pageIndex, pageSize, startTime, endTime, keyWords })
         .then(res => {
+          if (res.retCode === -1) {
+            this.$message({
+              message: '数据获取出错',
+              type: 'error',
+              duration: 1000
+            })
+            this.loading.close();
+            return -1;
+          }
+
           const status = {
             0: '未启动',
             1: '进行中',
@@ -217,7 +232,7 @@ export default {
           };
           const tableData = res.data;
           tableData.map(tableItem => {
-            tableItem._startTime = time(tableItem.startTime, 'YYYY-MM-DD');
+            tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
             tableItem._state = status[tableItem.state];
             tableItem.project = JSON.parse(tableItem.project);
             tableItem.belonger = JSON.parse(tableItem.belonger);
@@ -230,10 +245,7 @@ export default {
           this.loading.close();
         })
         .catch(() => {
-          // this.paginationData.pageIndex = 1;
-          // this.$nextTick(() => {
-          //   this.paginationData.pageIndex = oldPageIndex;
-          // }, 0);
+          this.loading.close();
         });
     },
 
@@ -262,7 +274,8 @@ export default {
         {
           // type: 'success',
           text: '完成',
-          event: 'accomplish-task'
+          event: 'accomplish-task',
+          limit: 1
           // icon: 'el-icon-check'
         },
 
@@ -270,7 +283,8 @@ export default {
         {
           // type: 'primary',
           text: '编辑',
-          event: 'edit-task'
+          event: 'edit-task',
+          limit: 1
           // icon: 'el-icon-edit'
         },
 
@@ -278,7 +292,8 @@ export default {
         {
           // type: 'danger',
           text: '删除',
-          event: 'delete-task'
+          event: 'delete-task',
+          limit: 1
           // icon: 'el-icon-delete'
         },
 
@@ -299,20 +314,50 @@ export default {
     // 提交新增任务表单
     submitTask(taskInfo) {
       taskInfo = JSON.parse(taskInfo);
+      delete taskInfo._state;
+      delete taskInfo._startTime;
+
+      // 通过taskInfo是否存在taskID来判断是进行新增操作还是更新操作
+      let url;
+      let successMessage;
+      let errorMessage;
+      const taskId = taskInfo.taskId;
+      if (taskId === undefined) {
+        url = '/task/addTask';
+        successMessage = '增加任务成功';
+        errorMessage = '增加任务失败';
+      } else {
+        url = '/task/updateTask';
+        successMessage = '修改任务成功';
+        errorMessage = '修改任务失败';
+      }
 
       // 提交数据到服务器
-      this.$http.postRequest('/task/addTask', { task: taskInfo })
+      this.$http.postRequest(url, { task: taskInfo })
         .then(res => {
-          this.$message({
-            message: '添加任务成功',
-            type: 'success',
-            duration: 1500
-          });
+          // 增加/修改任务失败
+          if (res.retCode === -1) {
+            this.$message({
+              message: `${errorMessage}，错误代码:${res.message}`,
+              type: 'error',
+              duration: 1500
+            });
+          } else {
+            this.$message({
+              message: successMessage,
+              type: 'success',
+              duration: 1500
+            });
+          }
 
           // 增加数据成功后刷新数据列表
           this.getTableData();
         }).catch(err => {
-          console.log(err);
+          this.$message({
+            message: `操作失败，错误代码:${err}`,
+            type: 'error',
+            duration: 1500
+          });
         });
     },
 
@@ -338,14 +383,43 @@ export default {
 
     // 删除任务
     deleteTask(rows) {
-      console.log(rows);
+      this.$confirm(`确定删除这${rows.length}项任务吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const taskList = copy(rows);
+        taskList.map(taskItem => {
+          delete taskItem._state;
+          delete taskItem._startTime;
+        });
+        this.$http.postRequest('/task/deleteTask', { list: taskList })
+          .then(res => {
+            if (res.retCode === -1) {
+              this.$message({
+                message: `删除失败,错误代码:${res.message}`,
+                type: 'error',
+                duration: 1000
+              });
+            } else {
+              this.$message({
+                message: '删除成功',
+                type: 'success',
+                duration: 1000
+              });
+
+              // 删除数据成功后刷新数据列表
+              this.getTableData();
+            }
+          });
+      });
     },
 
     // 时间选择器内容发生变化
     timePickerChanged() {
       // 先判断timeInterval的格式是否正确
       this.timeInterval = Array.isArray(this.timeInterval) && this.timeInterval.length === 2
-        ? this.timeInterval : [0, new Date().getTime()];
+        ? this.timeInterval : [0, undefined];
       [this.startTime, this.endTime] = this.timeInterval;
       this.pageIndex = 0;
 
@@ -411,7 +485,7 @@ export default {
     // 对获取数据过程进行防抖处理
     this.getData = debounce(
       (url, data) => {
-        return this.$http.postRequest('/task/getTaskList', data);
+        return this.$http.postRequest(url, data);
       },
       500,
       true,

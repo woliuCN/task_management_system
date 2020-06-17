@@ -147,47 +147,51 @@ export default {
       // timepicker配置
       pickerOptions: {
         firstDayOfWeek: 1,
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 通过今天的时间减去本周已过天数，得出本周周一的日期
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
+
+              // 今天的时间加上6天可得到本周最后一天的日期
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 获取本月1号的时间戳
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
+
+              // 获取当前月份
+              const month = end.getMonth();
+
+              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
+              end.setMonth(month + 1);
+
+              // 将日期设置为0, 再通过getDate()就可以获取本月天数
+              end.setDate(0);
+
+              // 获取本月最后一天的时间戳
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
+              picker.$emit('pick', [start, end]);
+            }
           }
-        }, {
-          text: '本周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 通过今天的时间减去本周已过天数，得出本周周一的日期
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-            // 今天的时间加上6天可得到本周最后一天的日期
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '本月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 获取本月1号的时间戳
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-            // 获取当前月份
-            const month = end.getMonth();
-
-            // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-            end.setMonth(month + 1);
-
-            // 将日期设置为0, 再通过getDate()就可以获取本月天数
-            end.setDate(0);
-
-            // 获取本月最后一天的时间戳
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       }
     };
   },
