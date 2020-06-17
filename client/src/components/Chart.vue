@@ -6,7 +6,7 @@
       :style="{minHeight: minHeight}"
       v-show="hasData"
     ></div>
-    <div class="not-data" v-show="!hasData">当前暂无数据</div>
+    <div class="not-data" v-show="!hasData">{{title}}---当前暂无数据</div>
   </div>
 </template>
 
@@ -73,12 +73,14 @@ export default {
         }]
       },
       hasData: false,
-      firstLoad: true
+      firstLoad: true,
+      title: ''
     };
   },
   watch: {
     options: {
       handler(options) {
+        this.title = options.title.text;
         if (options.series.some((serie) => { return serie.data.length > 0; })) {
           if (this.firstLoad) {
             this.initOptions();
@@ -97,6 +99,7 @@ export default {
   },
   mounted() {
     this.initEcharts();
+    console.log(this.defaultOptions);
   },
   destroyed() {
     this.removeEventListenerResizeECharts();
