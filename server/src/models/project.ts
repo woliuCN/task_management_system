@@ -3,17 +3,17 @@
  */
 
 //表名
-const tbName = "Projects";
+const tbName = "projects";
 
 
 interface Project {
-    id: string, //项目id
-    name: string,   //项目姓名
+    projectId: number, //项目id
+    projectName: string,   //项目名称
     state: number,  //项目状态 ps (1:允许, 2-挂起, 3-完成, 4-取消)
-    apartment: string,  //负责的项目+id
-    createTime: string, //创建时间
-    updateTime: string, //修改时间
-    remarks: string //备注
+    createTime: number, //创建时间
+    updateTime: number, //修改时间
+    remarks: string, //备注
+    isDelete: number //存在情况
 }
 
 export { tbName, Project }

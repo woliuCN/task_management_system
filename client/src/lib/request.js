@@ -27,7 +27,7 @@ const http = axios.create({
  * 响应拦截
  */
 http.interceptors.response.use(response => {
-  if (response.data && response.data.code === 1001) { // 1001 token失效
+  if (response.data && response.data.retCode === 1001) { // 1001 登录状态失效
     Vue.prototype.$message({
       type: 'error',
       message: '登录信息失效,请重新登录!',

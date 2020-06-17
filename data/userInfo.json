@@ -1,0 +1,505 @@
+[{
+    "userName": "沙思辉",
+    "userId": "U000548",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041207000,
+    "updateTime": 1550041207000,
+    "remarks": "",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "沙思辉"
+}, {
+    "userName": "贾利鹏",
+    "userId": "U000765",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041218000,
+    "updateTime": 1550041218000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "贾利鹏"
+}, {
+    "userName": "丘瑞炜",
+    "userId": "U000732",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "丘瑞炜"
+}, {
+    "userName": "吴茂凯",
+    "userId": "U001548",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "吴茂凯"
+}, {
+    "userName": "廖冰",
+    "userId": "U001549",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "廖冰"
+}, {
+    "userName": "贾荣",
+    "userId": "U002099",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "贾荣"
+}, {
+    "userName": "邹彬",
+    "userId": "u003072",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "邹彬"
+}, {
+    "userName": "张锦城",
+    "userId": "U003016",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "张锦城"
+}, {
+    "userName": "曾至丰",
+    "userId": "U003017",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "曾至丰"
+}, {
+    "userName": "陆汉真",
+    "userId": "U003018",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "陆汉真"
+}, {
+    "userName": "王彤",
+    "userId": "U002999",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "王彤"
+}, {
+    "userName": "廖鹏",
+    "userId": "U003055",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "廖鹏"
+}, {
+    "userName": "刘笑天",
+    "userId": "U003019",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "刘笑天"
+}, {
+    "userName": "许康春",
+    "userId": "U000521",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550483140000,
+    "updateTime": 1550483140000,
+    "remarks": "",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "许康春"
+}, {
+    "userName": "黎朝添",
+    "userId": "U001529",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1550483140000,
+    "updateTime": 1550483140000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "黎朝添"
+}, {
+    "userName": "郭润林",
+    "userId": "U001548",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1557795894000,
+    "updateTime": 1557795894000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "郭润林"
+}, {
+    "userName": "茹钧林",
+    "userId": "X000072",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1558403291000,
+    "updateTime": 1558403291000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "茹钧林"
+}, {
+    "userName": "林俊健",
+    "userId": "U001548",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1558403323000,
+    "updateTime": 1558403323000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "林俊健"
+}, {
+    "userName": "邓佳荣",
+    "userId": "X000076",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1560164420000,
+    "updateTime": 1560164420000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "邓佳荣"
+}, {
+    "userName": "龙腾",
+    "userId": "X000077",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1560165213000,
+    "updateTime": 1560165213000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "龙腾"
+}, {
+    "userName": "熊琪",
+    "userId": "U004481",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1563183710000,
+    "updateTime": 1563183710000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "熊琪"
+}, {
+    "userName": "李秀雄",
+    "userId": "U004480",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1563184981000,
+    "updateTime": 1563184981000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "李秀雄"
+}, {
+    "userName": "骆石旺",
+    "userId": "X0000X3",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1563190107000,
+    "updateTime": 1563190107000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "骆石旺"
+}, {
+    "userName": "陈崇炜",
+    "userId": "X000099",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1587430333000,
+    "updateTime": 1587430333000,
+    "remarks": "",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "陈崇炜"
+}, {
+    "userName": "王裕敏",
+    "userId": "U005517",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1587893352000,
+    "updateTime": 1587893352000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "王裕敏"
+}, {
+    "userName": "罗琳铭",
+    "userId": "U005530",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1589851415000,
+    "updateTime": 1589851415000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "罗琳铭"
+}, {
+    "userName": "罗淋铭",
+    "userId": "U005530",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1590454243000,
+    "updateTime": 1590454243000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "罗淋铭"
+}, {
+    "userName": "顾荣富",
+    "userId": "x000109",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1590454243000,
+    "updateTime": 1590454243000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "顾荣富"
+}, {
+    "userName": "邓丹",
+    "userId": "U004637",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013729000,
+    "updateTime": 1591013729000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "邓丹"
+}, {
+    "userName": "黄弘威",
+    "userId": "U004489",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013729000,
+    "updateTime": 1591013729000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "黄弘威"
+}, {
+    "userName": "杨玉思",
+    "userId": "U004486",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013730000,
+    "updateTime": 1591013730000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "杨玉思"
+}, {
+    "userName": "陈浩铭",
+    "userId": "x000113",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013730000,
+    "updateTime": 1591013730000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "陈浩铭"
+}, {
+    "userName": "蔡楠",
+    "userId": "x000112",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013730000,
+    "updateTime": 1591013730000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "蔡楠"
+}, {
+    "userName": "吴泽权",
+    "userId": "x000114",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591013730000,
+    "updateTime": 1591013730000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "吴泽权"
+}, {
+    "userName": "文贤",
+    "userId": "U003067",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591059806000,
+    "updateTime": 1591059806000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "文贤"
+}, {
+    "userName": "郑晓灿",
+    "userId": "U003067",
+    "permission": 0,
+    "state": 1,
+    "createTime": 1591665299000,
+    "updateTime": 1591665299000,
+    "remarks": "auto generate",
+    "userGroup": {
+        "groupId": 1,
+        "groupName": "预研"
+    },
+    "isDelete": 0,
+    "passwords": "郑晓灿"
+}]

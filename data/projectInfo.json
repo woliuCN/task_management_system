@@ -1,0 +1,729 @@
+[{
+    "projectName": "九联计算机视觉融合平台",
+    "projectId": 1,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550041218000,
+    "updateTime": 1550041218000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "NB-IoT烟雾监测报警器",
+    "projectId": 2,
+    "state": 2,
+    "isDelete": "0",
+    "createTime": 1550041218000,
+    "updateTime": 1550041218000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "北广楼宇",
+    "projectId": 3,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "海南公交",
+    "projectId": 4,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "公交基础版本",
+    "projectId": 5,
+    "state": 1,
+    "isDelete": "0",
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "北京公交",
+    "projectId": 6,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "九联视频汇聚管理平台",
+    "projectId": 7,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550041219000,
+    "updateTime": 1550041219000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "非项目任务",
+    "projectId": 8,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550481496000,
+    "updateTime": 1550481496000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "九联物联网基础平台",
+    "projectId": 9,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550483140000,
+    "updateTime": 1550483140000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告平台基础版本",
+    "projectId": 10,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550484908000,
+    "updateTime": 1550484908000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "昆明公交",
+    "projectId": 11,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1550484908000,
+    "updateTime": 1550484908000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "仲恺公安车脸监控系统",
+    "projectId": 12,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1551144740000,
+    "updateTime": 1551144740000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "智慧乡村视觉平台管理系统",
+    "projectId": 13,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1551144740000,
+    "updateTime": 1551144740000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "深圳楼宇",
+    "projectId": 14,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1551161855000,
+    "updateTime": 1551161855000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告基础平台",
+    "projectId": 15,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1552353246000,
+    "updateTime": 1552353246000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "仲恺公安出租屋门禁管理平台",
+    "projectId": 16,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1553511500000,
+    "updateTime": 1553511500000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "智慧园区人像识别管理平台",
+    "projectId": 17,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1555328831000,
+    "updateTime": 1555328831000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "九联定位器管理平台",
+    "projectId": 18,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1556443951000,
+    "updateTime": 1556443951000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "九联物联网平台",
+    "projectId": 19,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1556501315000,
+    "updateTime": 1556501315000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "陕西公交",
+    "projectId": 20,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1557061574000,
+    "updateTime": 1557061574000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "深圳大风传媒广告云平台系统",
+    "projectId": 21,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1557795751000,
+    "updateTime": 1557795751000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前_系统",
+    "projectId": 22,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1557799666000,
+    "updateTime": 1557799666000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "惠州广电人脸考勤系统",
+    "projectId": 23,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1559553223000,
+    "updateTime": 1559553223000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前服务",
+    "projectId": 24,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1559611328000,
+    "updateTime": 1559611328000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "博罗公安车脸监控系统",
+    "projectId": 25,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1560165213000,
+    "updateTime": 1560165213000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "福州公交",
+    "projectId": 26,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1560770728000,
+    "updateTime": 1560770728000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前系统",
+    "projectId": 27,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1560770728000,
+    "updateTime": 1560770728000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "过程管理",
+    "projectId": 28,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1561974782000,
+    "updateTime": 1561974782000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台系统",
+    "projectId": 29,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1561977600000,
+    "updateTime": 1561977600000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "授权平台",
+    "projectId": 30,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1561977600000,
+    "updateTime": 1561977600000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "软件非任务",
+    "projectId": 31,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1562580756000,
+    "updateTime": 1562580756000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "物联网基础平台",
+    "projectId": 32,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1562597942000,
+    "updateTime": 1562597942000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "公交基础平台",
+    "projectId": 33,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1563182966000,
+    "updateTime": 1563182966000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "福州移动传媒公交系统",
+    "projectId": 34,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1563188610000,
+    "updateTime": 1563188610000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "九联烟感管理平台",
+    "projectId": 35,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1563769996000,
+    "updateTime": 1563769996000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "智慧乡村视觉平台管理系统_20190219",
+    "projectId": 36,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1563785764000,
+    "updateTime": 1563785764000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "精神文明多媒体系统",
+    "projectId": 37,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1563800472000,
+    "updateTime": 1563800472000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "智慧园区人像管理识别平台",
+    "projectId": 38,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564391753000,
+    "updateTime": 1564391753000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "园区访客系统",
+    "projectId": 39,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564391753000,
+    "updateTime": 1564391753000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "厦门公交",
+    "projectId": 40,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564396257000,
+    "updateTime": 1564396257000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台",
+    "projectId": 41,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564396257000,
+    "updateTime": 1564396257000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台项目",
+    "projectId": 42,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564396727000,
+    "updateTime": 1564396727000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台项",
+    "projectId": 43,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564396727000,
+    "updateTime": 1564396727000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "访客预约系统",
+    "projectId": 44,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1564967538000,
+    "updateTime": 1564967538000,
+    "remarks": ""
+}, {
+    "projectName": "上海公交",
+    "projectId": 45,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1565003541000,
+    "updateTime": 1565003541000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "福州移动传媒公交广告系统",
+    "projectId": 46,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1565599421000,
+    "updateTime": 1565599421000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台基础版本第四期",
+    "projectId": 47,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1565599421000,
+    "updateTime": 1565599421000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前_服务",
+    "projectId": 48,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1565601895000,
+    "updateTime": 1565601895000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "流动人口综合管理人证识别管理平台",
+    "projectId": 49,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1568017737000,
+    "updateTime": 1568017737000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "流动人口综合管理人证识别管理平",
+    "projectId": 50,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1569231249000,
+    "updateTime": 1569231249000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "系统售前",
+    "projectId": 51,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1569253794000,
+    "updateTime": 1569253794000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "人证识别管理平台",
+    "projectId": 52,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1570525623000,
+    "updateTime": 1570525623000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "博罗公安车脸监控系统_20190603",
+    "projectId": 53,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1570527197000,
+    "updateTime": 1570527197000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "无源波分复用设备系统管理软件",
+    "projectId": 54,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1571638649000,
+    "updateTime": 1571638649000,
+    "remarks": ""
+}, {
+    "projectName": "出租屋门禁管理GIS平台",
+    "projectId": 55,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1571646485000,
+    "updateTime": 1571646485000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "物联网应用平台基础服务",
+    "projectId": 56,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1571654705000,
+    "updateTime": 1571654705000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "视频汇聚平台",
+    "projectId": 57,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1572257158000,
+    "updateTime": 1572257158000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售后系统",
+    "projectId": 58,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1572320148000,
+    "updateTime": 1572320148000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "常州公交",
+    "projectId": 59,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1572922121000,
+    "updateTime": 1572922121000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "常州广电无线传媒公交广告平台",
+    "projectId": 60,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1573464054000,
+    "updateTime": 1573464054000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "视频汇聚管理平台",
+    "projectId": 61,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1574071373000,
+    "updateTime": 1574071373000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "出租屋人脸管理平台",
+    "projectId": 62,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1574673125000,
+    "updateTime": 1574673125000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "仲恺公安出租屋门禁管理GIS平台",
+    "projectId": 63,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1575882900000,
+    "updateTime": 1575882900000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "实名制流动人口管理系统",
+    "projectId": 64,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1577094000000,
+    "updateTime": 1577094000000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前",
+    "projectId": 65,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1577773985000,
+    "updateTime": 1577773985000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "广告云平台基础版本第五期",
+    "projectId": 66,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1578302332000,
+    "updateTime": 1578302332000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "系统售后",
+    "projectId": 67,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1578380553000,
+    "updateTime": 1578380553000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "监控基础平台",
+    "projectId": 68,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1581938783000,
+    "updateTime": 1581938783000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "光明区楼宇项目",
+    "projectId": 69,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1582014504000,
+    "updateTime": 1582014504000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "智慧惠南大数据综合管理平台一期",
+    "projectId": 70,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1583141102000,
+    "updateTime": 1583141102000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "仲恺视频汇聚管理平台",
+    "projectId": 71,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1583146997000,
+    "updateTime": 1583146997000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "惠州广电美丽乡村管理平台一期",
+    "projectId": 72,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1583739258000,
+    "updateTime": 1583739258000,
+    "remarks": ""
+}, {
+    "projectName": "苏州公交项目",
+    "projectId": 73,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1583826861000,
+    "updateTime": 1583826861000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "系统-售后",
+    "projectId": 74,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1584350195000,
+    "updateTime": 1584350195000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "苏州公交",
+    "projectId": 75,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1585038369000,
+    "updateTime": 1585038369000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "系统_售前",
+    "projectId": 76,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1585572699000,
+    "updateTime": 1585572699000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "光明融媒信息发布平台",
+    "projectId": 77,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1586837161000,
+    "updateTime": 1586837161000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "常州广电无线传媒公交广告系统",
+    "projectId": 78,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587384277000,
+    "updateTime": 1587384277000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前智慧惠南大数据综合管理平台一期",
+    "projectId": 79,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587384278000,
+    "updateTime": 1587384278000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "视频汇聚",
+    "projectId": 80,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587440364000,
+    "updateTime": 1587440364000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "博罗公安车脸监控系统_20190604",
+    "projectId": 81,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587893352000,
+    "updateTime": 1587893352000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "博罗公安车脸监控系统_20190605",
+    "projectId": 82,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587893352000,
+    "updateTime": 1587893352000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "车载优化机",
+    "projectId": 83,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1587988101000,
+    "updateTime": 1587988101000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "光明楼宇",
+    "projectId": 84,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1589269303000,
+    "updateTime": 1589269303000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "优化机项目",
+    "projectId": 85,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1589269304000,
+    "updateTime": 1589269304000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前_物联网",
+    "projectId": 86,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1589794204000,
+    "updateTime": 1589794204000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前_政企",
+    "projectId": 87,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1590406522000,
+    "updateTime": 1590406522000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售前_广州办事",
+    "projectId": 88,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1591080564000,
+    "updateTime": 1591080564000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "售后_广州办事",
+    "projectId": 89,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1591080564000,
+    "updateTime": 1591080564000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "自研摄像头_室外枪机UM300_SSC325",
+    "projectId": 90,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1591665299000,
+    "updateTime": 1591665299000,
+    "remarks": "auto generate"
+}, {
+    "projectName": "采集站银川项目",
+    "projectId": 91,
+    "state": 0,
+    "isDelete": "0",
+    "createTime": 1591665299000,
+    "updateTime": 1591665299000,
+    "remarks": "auto generate"
+}]
