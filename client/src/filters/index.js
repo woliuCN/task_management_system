@@ -73,8 +73,65 @@ export const debounce = function(func, wait, immediate, errCallback) {
       }, wait);
     }
 
-    if (timeout) {
+    if (timeout && typeof errCallback === 'function') {
       errCallback.apply(context);
     }
   };
 };
+
+// 判断变量的类型
+function getType(obj) {
+  var str = Object.prototype.toString.call(obj);
+  var map = {
+    '[object Boolean]': 'boolean',
+    '[object Number]': 'number',
+    '[object String]': 'string',
+    '[object Function]': 'function',
+    '[object Array]': 'array',
+    '[object Date]': 'date',
+    '[object RegExp]': 'regExp',
+    '[object Undefined]': 'undefined',
+    '[object Null]': 'null',
+    '[object Object]': 'object'
+  };
+  if (obj instanceof Element) { // 判断是否是dom元素，如div等
+    return 'element';
+  }
+  return map[str];
+}
+
+// 对象深拷贝
+
+// 深拷贝函数
+export const copy = function(obj) {
+  var res;
+  let i;
+  var str = getType(obj);
+  if (str === 'array') {
+    res = [];
+    for (i = 0; i < obj.length; i++) {
+      res.push(copy(obj[i]));
+    }
+  } else if (str === 'object') {
+    res = {};
+    for (i in obj) {
+      res[i] = copy(obj[i]);
+    }
+  } else {
+    return obj;
+  }
+  return res;
+};
+// export const copy = function(obj) {
+//   if (!obj || !(obj instanceof Object) || (typeof obj === 'function')) {
+//     return obj || undefined;
+//   }
+//   var constructor = obj.constructor;
+//   var result = new constructor();
+//   for (var key in obj) {
+//     if (Object.prototype.hasOwnProperty.call(obj, key)) {
+//       result[key] = copy(obj[key]);
+//     }
+//   }
+//   return result;
+// };

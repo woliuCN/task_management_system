@@ -17,7 +17,7 @@
           <el-option
             v-for="(option, optionIdx) in item.options"
             :key="optionIdx"
-            :label="option"
+            :label="item.optionsName[option] || option"
             :value="option">
           </el-option>
         </el-select>
@@ -31,6 +31,8 @@
           start-placeholder="开始月份"
           end-placeholder="结束月份">
         </el-date-picker>
+        <el-input v-else-if="item.type === 'password'" placeholder="请输入密码" v-model="item.value" show-password></el-input>
+        <el-input v-else-if="item.type === 'text'" v-model="item.value" :disabled="true"></el-input>
         <el-input v-else v-model="item.value" placeholder="请输入内容"></el-input>
       </el-form-item>
     </el-form>
@@ -74,12 +76,21 @@ export default {
   },
   data() {
     return {
-      internalTableData: JSON.parse(JSON.stringify(this.tableData))
+      internalTableData: null
     };
+  },
+  watch: {
+    tableData: {
+      handler(tableData) {
+        this.initTableData();
+      },
+      deep: true,
+      immediate: true
+    }
   },
   created() {
     // Object.assign(this.internalTableData, this.tableData);
-    console.log(this.internalTableData);
+    // console.log(this.internalTableData);
   },
   methods: {
 
@@ -87,18 +98,27 @@ export default {
     close() {
       this.$emit('close');
       this.$emit('update:visible', false);
-      this.clearTableData();
+      // this.initTableData();
     },
 
     // success按钮触发事件
     success() {
       const validate = this.validate();
+      const formInfo = {};
+      this.internalTableData.forEach((item) => {
+        formInfo[item.attrName] = item.value;
+      });
       if (validate.validated) {
-        this.$emit('success', this.internalTableData);
+        this.$emit('success', formInfo);
         this.$emit('update:visible', false);
-        this.clearTableData();
+        // this.initTableData();
       } else {
         console.error(validate.message);
+        this.$message({
+          message: validate.message,
+          type: 'error',
+          duration: 1500
+        });
       }
     },
 
@@ -123,8 +143,8 @@ export default {
       };
     },
 
-    // 清除表单内容
-    clearTableData() {
+    // 初始化表单内容
+    initTableData() {
       this.internalTableData = JSON.parse(JSON.stringify(this.tableData));
     }
   }

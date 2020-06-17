@@ -1,24 +1,29 @@
 <template>
   <div>
     <data-table
+      ref="data-table"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
       :tableData="tableData"
       :isSelection="true"
       :isShowSearch="true"
-      :pagination="paginationData"
+      :pageIndex="pageIndex"
+      :pageSize="pageSize"
+      :total="total"
       @accomplish-task="accomplishTask"
       @edit-task="editTask"
       @delete-task="deleteTask"
       @add-task="addTask"
       @search-content-changed="searchContentChanged"
       @page-index-change="pageIndexChange"
+      @import-data="openExportDialog('import')"
+      @export-data="openExportDialog('export')"
+      @weekly-report="openExportDialog('weekreport')"
     >
       <template v-slot:tmp_search>
         <el-date-picker
           v-model="timeInterval"
           type="daterange"
-          align="right"
           unlink-panels
           range-separator="至"
           start-placeholder="开始日期"
@@ -27,167 +32,237 @@
           value-format="timestamp"
           class="date-picker"
           :picker-options="timePickerOptions"
+          :editable="false"
+          :clearable="true"
           @change="timePickerChanged"
         >
         </el-date-picker>
       </template>
     </data-table>
 
-    <data-dialog
-      :isShow="isDialogShow"
-      :projectList="projectList"
+    <edit-dialog
+      :isShow="isEditDialogShow"
       :userList="userList"
+      :projectList="projectList"
+      :taskInfo="taskInfo"
       @submit-task="submitTask"
-      @close-dialog="isDialogShow = false"
+      @close-dialog="clearTaskInfo"
     >
-    </data-dialog>
+    </edit-dialog>
+
+    <export-dialog
+      :isShow="isExportDialogShow"
+      :openWith="openWith"
+      @close-dialog="isExportDialogShow = false"
+    >
+    </export-dialog>
   </div>
 </template>
 
 <script>
 import DataTable from '../../components/DataTable';
-import DataDialog from './components/Dialog';
-import axios from 'axios';
-import { time, debounce } from '../../filters/index.js';
+import EditDialog from './components/EditDialog';
+import ExportDialog from './components/ExportDialog'
+import { time, debounce, copy } from '../../filters/index.js';
 export default {
   components: {
     DataTable,
-    DataDialog
+    EditDialog,
+    ExportDialog
   },
   data() {
     return {
+      // table抬头
       tableTitle: [
-        { label: '开始时间', prop: 'startTime', fixed: true, width: 150, sortable: true },
-        { label: '任务编号', prop: 'taskId', sortable: true, width: 150 },
+        { label: '开始时间', prop: '_startTime', fixed: true, width: 150 },
+        { label: '任务编号', prop: 'taskId', width: 150 },
         { label: '任务名', prop: 'content', width: 250 },
-        { label: '所属项目', prop: 'project.name', sortable: true, width: 200 },
-        { label: '负责人', prop: 'belonger.name', sortable: true },
-        { label: '状态', prop: 'state' },
+        { label: '所属项目', prop: 'project.projectName', width: 200 },
+        { label: '负责人', prop: 'belonger.userName' },
+        { label: '状态', prop: '_state' },
         { label: '工时', prop: 'workingHours' }
       ],
+
+      // table主体数据
       tableData: [],
+
+      // table操作button
       buttonList: [],
+
+      // 是否显示table左侧的多选按钮
       isSelection: false,
+
+      // table数据显示的时间范围
       timeInterval: [],
-      isDialogShow: false,
+
+      // 是否弹出弹窗，用于增加/修改任务
+      isEditDialogShow: false,
+
+      // 是否弹出导入/导出窗口
+      isExportDialogShow: false,
+
+      // 导入/导出窗口显示的内容，可选项为'import' - 导入， 'export' - 导出
+      openWith: '',
+
+      // table数据索引
       keyWords: '',
+
       startTime: 0,
-      endTime: new Date().getTime(),
+      endTime: undefined,
       pageIndex: 0,
       pageSize: 8,
-      paginationData: {
-        total: 0,
-        pageIndex: 0,
-        pageSize: 10
-      },
+      total: 0,
+      loading: '',
+
       timePickerOptions: {
         firstDayOfWeek: 1,
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            const start = new Date();
-            const end = new Date();
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const start = new Date();
+              const end = new Date();
 
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 通过今天的时间减去本周已过天数，得出本周周一的日期
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
+
+              // 今天的时间加上6天可得到本周最后一天的日期
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '上周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 通过今天的时间减去本周已过天数，得出本周周一的日期
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
+
+              // 今天的时间加上6天可得到本周最后一天的日期
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '本月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              // 获取本月1号的时间戳
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
+
+              // 获取当前月份
+              const month = end.getMonth();
+
+              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
+              end.setMonth(month + 1);
+
+              // 将日期设置为0, 再通过getDate()就可以获取本月天数
+              end.setDate(0);
+
+              // 获取本月最后一天的时间戳
+              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
+
+              start.setHours(0, 0, 0, 0);
+              end.setHours(23, 59, 59, 999);
+              picker.$emit('pick', [start, end]);
+            }
           }
-        }, {
-          text: '本周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 通过今天的时间减去本周已过天数，得出本周周一的日期
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-            // 今天的时间加上6天可得到本周最后一天的日期
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '本月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            // 获取本月1号的时间戳
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-            // 获取当前月份
-            const month = end.getMonth();
-
-            // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-            end.setMonth(month + 1);
-
-            // 将日期设置为0, 再通过getDate()就可以获取本月天数
-            end.setDate(0);
-
-            // 获取本月最后一天的时间戳
-            end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
-      projectList: [
-        { id: 1, name: '项目1' },
-        { id: 2, name: '项目2' },
-        { id: 3, name: '项目3' },
-        { id: 4, name: '项目4' }
-      ],
-      userList: [
-        { id: 1, name: '员工1' },
-        { id: 2, name: '员工2' },
-        { id: 3, name: '员工3' },
-        { id: 4, name: '员工4' }
-      ]
+
+      // 已有项目列表，用于在新建任务时选择
+      projectList: [],
+
+      // 已有用户列表，用于在新建任务时选择
+      userList: [],
+
+      // 新增/修改任务的表单数据
+      taskInfo: {
+        content: '',
+        project: { projectId: '', projectName: '' },
+        belonger: { userId: '', userName: '' },
+        state: 0,
+        taskType: 0,
+        workingHours: 8,
+        startTime: new Date().getTime(),
+        endTime: new Date().getTime()
+      }
     };
   },
   methods: {
     // 格式化时间戳
     time,
 
-    // 获取表单抬头和数据
+    // 获取table数据
     getTableData(
       pageIndex = 0,
       pageSize = 8,
       startTime = 0,
-      endTime = new Date().getTime(),
+      endTime = undefined,
       keyWords = ''
     ) {
-      const url = 'http://192.168.31.84:30/api/task/getTaskList';
+      // 配置loading
+      const loadingOptions = {
+        target: '.app-main'
+      };
 
-      // 用于阻止快速发送请求时，页数发生错误跳转
-      // const oldPageIndex = this.paginationData.pageIndex;
+      // 弹出loading窗口
+      this.loading = this.$loading(loadingOptions);
+
+      // 数据获取
+      const url = '/task/getPaginTask';
       this.getData(url, { pageIndex, pageSize, startTime, endTime, keyWords })
         .then(res => {
-          console.log(res);
+          if (res.retCode === -1) {
+            this.$message({
+              message: '数据获取出错',
+              type: 'error',
+              duration: 1000
+            })
+            this.loading.close();
+            return -1;
+          }
+
           const status = {
-            1: '未启动',
-            2: '进行中',
-            3: '挂起',
-            4: '完成'
+            0: '未启动',
+            1: '进行中',
+            2: '完成',
+            3: '挂起'
           };
-          const tableData = res.data.taskList;
+          const tableData = res.data;
           tableData.map(tableItem => {
-            tableItem.startTime = time(tableItem.startTime, 'YYYY-MM-DD');
+            tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
+            tableItem._state = status[tableItem.state];
             tableItem.project = JSON.parse(tableItem.project);
             tableItem.belonger = JSON.parse(tableItem.belonger);
-            tableItem.state = status[tableItem.state];
           });
           this.tableData = tableData;
-          this.paginationData.total = res.data.totalCount;
-          this.paginationData.pageIndex = pageIndex;
+          this.total = res.totalCount;
+          this.pageIndex = pageIndex;
+
+          // 关闭loading
+          this.loading.close();
         })
         .catch(() => {
-          // this.paginationData.pageIndex = 1;
-          // this.$nextTick(() => {
-          //   this.paginationData.pageIndex = oldPageIndex;
-          // }, 0);
+          this.loading.close();
         });
     },
 
@@ -216,7 +291,8 @@ export default {
         {
           // type: 'success',
           text: '完成',
-          event: 'accomplish-task'
+          event: 'accomplish-task',
+          limit: 1
           // icon: 'el-icon-check'
         },
 
@@ -224,7 +300,8 @@ export default {
         {
           // type: 'primary',
           text: '编辑',
-          event: 'edit-task'
+          event: 'edit-task',
+          limit: 1
           // icon: 'el-icon-edit'
         },
 
@@ -232,7 +309,8 @@ export default {
         {
           // type: 'danger',
           text: '删除',
-          event: 'delete-task'
+          event: 'delete-task',
+          limit: 1
           // icon: 'el-icon-delete'
         },
 
@@ -247,68 +325,141 @@ export default {
 
     // 新增任务
     addTask() {
-      this.isDialogShow = true;
+      this.isEditDialogShow = true;
     },
 
     // 提交新增任务表单
     submitTask(taskInfo) {
       taskInfo = JSON.parse(taskInfo);
-      taskInfo.project = this.projectList.find(projectItem => {
-        return projectItem.id === taskInfo.project;
-      });
+      delete taskInfo._state;
+      delete taskInfo._startTime;
 
-      taskInfo.belonger = this.userList.find(user => {
-        return user.id === taskInfo.belonger;
-      });
-      // axios.post('http://01b3e79a05df.ngrok.io/api/task/addTask', { task: taskInfo }, (res) => {
-      //   console.log(res);
-      //   this.$message({
-      //     message: '添加任务成功',
-      //     type: 'success',
-      //     duration: 1500
-      //   });
-      // }, (err) => {
-      //   console.log(err);
-      //   this.$message({
-      //     message: `添加任务失败，错误原因:${err.message}`,
-      //     type: 'error',
-      //     duration: 1500
-      //   });
-      // });
-      axios.post('http://01b3e79a05df.ngrok.io/api/task/addTask', { task: taskInfo })
+      // 通过taskInfo是否存在taskID来判断是进行新增操作还是更新操作
+      let url;
+      let successMessage;
+      let errorMessage;
+      const taskId = taskInfo.taskId;
+      if (taskId === undefined) {
+        url = '/task/addTask';
+        successMessage = '增加任务成功';
+        errorMessage = '增加任务失败';
+      } else {
+        url = '/task/updateTask';
+        successMessage = '修改任务成功';
+        errorMessage = '修改任务失败';
+      }
+
+      // 提交数据到服务器
+      this.$http.postRequest(url, { task: taskInfo })
         .then(res => {
+          // 增加/修改任务失败
+          if (res.retCode === -1) {
+            this.$message({
+              message: `${errorMessage}，错误代码:${res.message}`,
+              type: 'error',
+              duration: 1500
+            });
+          } else {
+            this.$message({
+              message: successMessage,
+              type: 'success',
+              duration: 1500
+            });
+          }
+
+          // 增加数据成功后刷新数据列表
+          this.getTableData();
+        }).catch(err => {
           this.$message({
-            message: '添加任务成功',
-            type: 'success',
+            message: `操作失败，错误代码:${err}`,
+            type: 'error',
             duration: 1500
           });
-        }).catch(err => {
-          console.log(err);
         });
     },
 
     // 完成任务
     accomplishTask(rows) {
       // some code
+      const taskList = copy(rows);
+      this.$http.postRequest('/task/updateState', { list: taskList, data: [{ state: 2 }] })
+        .then(res => {
+          if (res.retCode === 200) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success',
+              duration: 1000
+            })
+
+            // 更新完成之后刷新页面数据
+            this.getTableData(this.pageIndex, this.pageSize, this.startTime, this.endTime, this.keyWords);
+          } else {
+            this.$message({
+              message: `修改失败!错误原因:${res.message}`,
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
     },
 
     // 编辑任务
     editTask(rows) {
-      console.log(rows);
+      if (rows.length !== 1) {
+        this.$message({
+          message: '一次只能编辑一条任务！',
+          type: 'warning',
+          duration: 1000
+        });
+        return -1;
+      } else {
+        this.taskInfo = copy(rows[0]);
+        this.isEditDialogShow = true;
+      }
     },
 
     // 删除任务
     deleteTask(rows) {
-      console.log(rows);
+      this.$confirm(`确定删除这${rows.length}项任务吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const taskList = copy(rows);
+        taskList.map(taskItem => {
+          delete taskItem._state;
+          delete taskItem._startTime;
+        });
+        this.$http.postRequest('/task/deleteTask', { list: taskList })
+          .then(res => {
+            if (res.retCode === -1) {
+              this.$message({
+                message: `删除失败,错误代码:${res.message}`,
+                type: 'error',
+                duration: 1000
+              });
+            } else {
+              this.$message({
+                message: '删除成功',
+                type: 'success',
+                duration: 1000
+              });
+
+              // 删除数据成功后刷新数据列表
+              this.getTableData();
+            }
+          });
+      });
     },
 
     // 时间选择器内容发生变化
     timePickerChanged() {
       // 先判断timeInterval的格式是否正确
       this.timeInterval = Array.isArray(this.timeInterval) && this.timeInterval.length === 2
-        ? this.timeInterval : [0, new Date().getTime()];
+        ? this.timeInterval : [0, undefined];
       [this.startTime, this.endTime] = this.timeInterval;
       this.pageIndex = 0;
+
       // 获取数据
       this.getTableData(
         this.pageIndex,
@@ -316,11 +467,14 @@ export default {
         this.startTime,
         this.endTime,
         this.keyWords);
-      // this.paginationData.pageIndex = this.pageIndex;
+
+      // 页码重置为1
+      this.pageIndex = 1;
     },
 
     pageIndexChange(val) {
       this.pageIndex = val;
+
       // 获取数据
       this.getTableData(
         this.pageIndex,
@@ -328,7 +482,6 @@ export default {
         this.startTime,
         this.endTime,
         this.keyWords);
-      // this.paginationData.pageIndex = this.pageIndex;
     },
 
     // 搜索索引
@@ -341,7 +494,29 @@ export default {
         this.startTime,
         this.endTime,
         this.keyWords);
-      // this.paginationData.pageIndex = this.pageIndex;
+
+      // 页码重置为1
+      this.pageIndex = 1;
+    },
+
+    // 关闭对话框时初始化任务数据
+    clearTaskInfo() {
+      this.isEditDialogShow = false;
+      this.taskInfo = {
+        content: '',
+        project: { projectId: '', projectName: '' },
+        belonger: { userId: '', userName: '' },
+        state: 0,
+        taskType: 0,
+        workingHours: 8,
+        startTime: new Date().getTime(),
+        endTime: new Date().getTime()
+      };
+    },
+
+    openExportDialog(method) {
+      this.openWith = method;
+      this.isExportDialogShow = true;
     }
   },
   mounted() {
@@ -349,13 +524,38 @@ export default {
     this.initButtonList();
   },
   created() {
-    this.getData = debounce((url, data) => {
-      return axios.post(url, data);
-    }, 1500, true);
-    axios.get('http://192.168.31.84:30/api/user/getUserList/options')
+    // 对获取数据过程进行防抖处理
+    this.getData = debounce(
+      (url, data) => {
+        return this.$http.getRequest(url, data);
+      },
+      500,
+      true,
+      () => {
+        // 当用户操作太快时进行弹窗提醒
+        this.$message({
+          message: '请不要频繁操作！',
+          type: 'warning',
+          duration: 1500
+        });
+        this.loading.close();
+      }
+    );
+
+    // 获取用户列表数据 用于新增任务
+    this.$http.getRequest('/user/getToallUser/options')
       .then(res => {
-        this.userList = res.data.userList;
+        this.userList = res.data;
       });
+
+    // 获取项目列表数据
+    this.$http.getRequest('/project/getToallProject/options')
+      .then(res => {
+        this.projectList = res.data;
+      });
+  },
+  beforeDestroy() {
+    this.loading.close();
   }
 };
 </script>
