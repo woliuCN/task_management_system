@@ -2,13 +2,14 @@
   <div>
     <div class="options">
       <slot name="tmp_search"></slot>
+      <!-- 将父组件传过来的按钮数组实例化 -->
       <el-button
         v-for="(item,index) in buttonList"
         :key="index"
         :type="item.type"
         :size="item.size||'mini'"
         :icon="item.icon"
-        @click="handleFunc(selectedData, item.event)"
+        @click="handleFunc(selectedData, item.event, item.limit)"
       >
       {{ item.text }}
       </el-button>
@@ -18,17 +19,22 @@
         size="mini"
         placeholder="输入关键字搜索"
         class="searchButton"
-        @change="handleSearchChange"
+        :clearable="true"
+        @change="handleFunc(searchContent, 'search-content-changed', 0)"
       />
     </div>
     <el-table
-      ref="table"
+      ref="table-body"
+      style="width: 100%;"
+      fit
+      border
+      stripe
       :data="tableData"
       :max-height="maxHeight"
-      style="width: 100%;"
       :row-class-name="'data-item'"
-      fit
       @selection-change="handleSelectionChange"
+      @row-click="handleClick"
+      @row-dblclick="handleDblcilck"
     >
       <el-table-column
         v-if="isSelection"
@@ -49,9 +55,9 @@
     <div class="block">
       <el-pagination
         layout="total, prev, pager, next, jumper"
-        :current-page="pagination.pageIndex"
-        :page-size="pagination.pageSize"
-        :total="pagination.total"
+        :current-page="pageIndex"
+        :page-size="pageSize"
+        :total="total"
         @current-change="handlePageChange"
       >
       </el-pagination>
@@ -60,14 +66,15 @@
 </template>
 
 <script>
-import { debounce } from '../filters/index.js';
 export default {
   data() {
     return {
+      // 以选中的表单数据
       selectedData: [],
       that: this,
-      searchContent: '',
-      pageIndex: 0
+
+      // 绑定搜索内容
+      searchContent: ''
     };
   },
   props: {
@@ -97,16 +104,19 @@ export default {
       }
     },
 
-    // 分页数据
-    pagination: {
-      type: Object,
-      default() {
-        return {
-          pageSize: 10,
-          pageIndex: 0,
-          total: 0
-        };
-      }
+    pageIndex: {
+      type: Number,
+      default: 0
+    },
+
+    pageSize: {
+      type: Number,
+      default: 8
+    },
+
+    total: {
+      type: Number,
+      default: 0
     }
   },
   methods: {
@@ -115,62 +125,61 @@ export default {
      * @param {Array} row: 当前被点击的列表行数据
      * @param {String} event: 分发给父组件的事件名
      */
-    handleFunc(data, event) {
-      this.$emit(event, data);
+    handleFunc(data, event, limit) {
+      limit = limit || 0;
+      if (data && data.length < limit) {
+        this.$message({
+          message: `至少选择${limit}项任务再执行操作`,
+          type: 'error',
+          duration: 1000
+        })
+      } else {
+        this.$emit(event, data);
+      }
     },
 
-    // 选中的表单内容，并将内容地址赋值给selectedData，用于传数据给父组件
+    // 已选中的表单内容，并将内容地址赋值给selectedData，用于传数据给父组件
     handleSelectionChange(val) {
       this.selectedData = val;
     },
 
+    // 页码跳转处理函数
     handlePageChange(val) {
-      // this.$emit('page-index-change', val);
-      this.debounceHandleSearchChange(val);
-      console.log(`当前页数${val}`);
+      this.$emit('page-index-change', val);
     },
 
-    handleSearchChange(val) {
-      if (val !== undefined && val.length > 0) {
-        this.$emit('search-content-changed', val);
+    handleDblcilck(row, column, event) {
+      this.handleFunc(row, 'dblclick', 0);
+    },
+
+    handleClick(row, column, event) {
+      if (!this.isSelection) {
+        return -1;
       }
+      this.$refs['table-body'].toggleRowSelection(row);
     }
-  },
-  created() {
-    this.debounceHandleSearchChange = debounce(
-      (val) => {
-        this.$emit('page-index-change', val);
-        this.pageIndex = this.pagination.pageIndex;
-      },
-      1500,
-      true,
-      () => {
-        console.log('点击太快了');
-        setTimeout(() => {
-          this.pagination.pageIndex = this.pageIndex;
-        }, 0);
-      }
-    );
   }
 };
 </script>
 
 <style lang="scss" scoped>
-  .options{
+  .options {
     display: flex;
     align-items: center;
     overflow: auto;
     margin-bottom: 20px;
   }
+
   .searchButton {
     width: 20vw;
     margin-left: 1vw;
   }
-  /deep/.data-item{
+
+  /deep/.data-item {
     font-size: 13px!important;
-    &:nth-child(2n) {
-      background-color: rgba($color: #eeeeeea9, $alpha: 1.0)
-    }
   }
 
+  /deep/.el-pagination {
+    margin-top: 10px;
+  }
 </style>

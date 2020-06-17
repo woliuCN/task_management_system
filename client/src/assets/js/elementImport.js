@@ -29,7 +29,8 @@ import {
   Message,
   MessageBox,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Loading
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -68,8 +69,8 @@ const components = {
 for (const key in components) {
   Vue.use(components[key]);
 }
-// Vue.use(Loading.directive);
-// Vue.prototype.$loading = Loading.service;
+Vue.use(Loading.directive);
+Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
 Vue.prototype.$messageBox = MessageBox;
 Vue.prototype.$confirm = MessageBox.confirm;
