@@ -136,6 +136,29 @@
 
 <script>
 export default {
+  props: {
+    // 控制本弹窗是否显示
+    isShow: Boolean,
+
+    // 项目列表
+    projectList: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+
+    // 用户列表
+    userList: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+
+    // 表单内容
+    taskInfo: Object
+  },
   data() {
     return {
       // 格式化表单宽度
@@ -194,29 +217,6 @@ export default {
         ]
       }
     };
-  },
-  props: {
-    // 控制本弹窗是否显示
-    isShow: Boolean,
-
-    // 项目列表
-    projectList: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-
-    // 用户列表
-    userList: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-
-    // 表单内容
-    taskInfo: Object
   },
   methods: {
     // 将时间选择器内的时间戳存至表单内

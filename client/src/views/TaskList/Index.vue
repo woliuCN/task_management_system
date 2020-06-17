@@ -16,6 +16,9 @@
       @add-task="addTask"
       @search-content-changed="searchContentChanged"
       @page-index-change="pageIndexChange"
+      @import-data="openExportDialog('import')"
+      @export-data="openExportDialog('export')"
+      @weekly-report="openExportDialog('weekreport')"
     >
       <template v-slot:tmp_search>
         <el-date-picker
@@ -37,27 +40,35 @@
       </template>
     </data-table>
 
-    <data-dialog
-      :isShow="isDialogShow"
+    <edit-dialog
+      :isShow="isEditDialogShow"
       :userList="userList"
       :projectList="projectList"
       :taskInfo="taskInfo"
       @submit-task="submitTask"
       @close-dialog="clearTaskInfo"
     >
-    </data-dialog>
+    </edit-dialog>
+
+    <export-dialog
+      :isShow="isExportDialogShow"
+      :openWith="openWith"
+      @close-dialog="isExportDialogShow = false"
+    >
+    </export-dialog>
   </div>
 </template>
 
 <script>
 import DataTable from '../../components/DataTable';
-import DataDialog from './components/Dialog';
+import EditDialog from './components/EditDialog';
+import ExportDialog from './components/ExportDialog'
 import { time, debounce, copy } from '../../filters/index.js';
-import { Loading } from 'element-ui';
 export default {
   components: {
     DataTable,
-    DataDialog
+    EditDialog,
+    ExportDialog
   },
   data() {
     return {
@@ -85,7 +96,13 @@ export default {
       timeInterval: [],
 
       // 是否弹出弹窗，用于增加/修改任务
-      isDialogShow: false,
+      isEditDialogShow: false,
+
+      // 是否弹出导入/导出窗口
+      isExportDialogShow: false,
+
+      // 导入/导出窗口显示的内容，可选项为'import' - 导入， 'export' - 导出
+      openWith: '',
 
       // table数据索引
       keyWords: '',
@@ -208,10 +225,10 @@ export default {
       };
 
       // 弹出loading窗口
-      this.loading = Loading.service(loadingOptions);
+      this.loading = this.$loading(loadingOptions);
 
       // 数据获取
-      const url = '/task/getTaskList';
+      const url = '/task/getPaginTask';
       this.getData(url, { pageIndex, pageSize, startTime, endTime, keyWords })
         .then(res => {
           if (res.retCode === -1) {
@@ -308,7 +325,7 @@ export default {
 
     // 新增任务
     addTask() {
-      this.isDialogShow = true;
+      this.isEditDialogShow = true;
     },
 
     // 提交新增任务表单
@@ -364,6 +381,26 @@ export default {
     // 完成任务
     accomplishTask(rows) {
       // some code
+      const taskList = copy(rows);
+      this.$http.postRequest('/task/updateState', { list: taskList, data: [{ state: 2 }] })
+        .then(res => {
+          if (res.retCode === 200) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success',
+              duration: 1000
+            })
+
+            // 更新完成之后刷新页面数据
+            this.getTableData(this.pageIndex, this.pageSize, this.startTime, this.endTime, this.keyWords);
+          } else {
+            this.$message({
+              message: `修改失败!错误原因:${res.message}`,
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
     },
 
     // 编辑任务
@@ -377,7 +414,7 @@ export default {
         return -1;
       } else {
         this.taskInfo = copy(rows[0]);
-        this.isDialogShow = true;
+        this.isEditDialogShow = true;
       }
     },
 
@@ -464,7 +501,7 @@ export default {
 
     // 关闭对话框时初始化任务数据
     clearTaskInfo() {
-      this.isDialogShow = false;
+      this.isEditDialogShow = false;
       this.taskInfo = {
         content: '',
         project: { projectId: '', projectName: '' },
@@ -475,6 +512,11 @@ export default {
         startTime: new Date().getTime(),
         endTime: new Date().getTime()
       };
+    },
+
+    openExportDialog(method) {
+      this.openWith = method;
+      this.isExportDialogShow = true;
     }
   },
   mounted() {
@@ -485,7 +527,7 @@ export default {
     // 对获取数据过程进行防抖处理
     this.getData = debounce(
       (url, data) => {
-        return this.$http.postRequest(url, data);
+        return this.$http.getRequest(url, data);
       },
       500,
       true,
@@ -501,16 +543,19 @@ export default {
     );
 
     // 获取用户列表数据 用于新增任务
-    this.$http.getRequest('/user/getUserList/options')
+    this.$http.getRequest('/user/getToallUser/options')
       .then(res => {
         this.userList = res.data;
       });
 
     // 获取项目列表数据
-    this.$http.getRequest('/project/getProjectList/options')
+    this.$http.getRequest('/project/getToallProject/options')
       .then(res => {
         this.projectList = res.data;
       });
+  },
+  beforeDestroy() {
+    this.loading.close();
   }
 };
 </script>

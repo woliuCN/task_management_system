@@ -20,17 +20,21 @@
         placeholder="输入关键字搜索"
         class="searchButton"
         :clearable="true"
-        @change="handleFunc(searchContent, 'search-content-changed')"
+        @change="handleFunc(searchContent, 'search-content-changed', 0)"
       />
     </div>
     <el-table
       ref="table-body"
       style="width: 100%;"
       fit
+      border
+      stripe
       :data="tableData"
       :max-height="maxHeight"
       :row-class-name="'data-item'"
       @selection-change="handleSelectionChange"
+      @row-click="handleClick"
+      @row-dblclick="handleDblcilck"
     >
       <el-table-column
         v-if="isSelection"
@@ -123,7 +127,7 @@ export default {
      */
     handleFunc(data, event, limit) {
       limit = limit || 0;
-      if (!data || data.length < limit) {
+      if (data && data.length < limit) {
         this.$message({
           message: `至少选择${limit}项任务再执行操作`,
           type: 'error',
@@ -142,6 +146,17 @@ export default {
     // 页码跳转处理函数
     handlePageChange(val) {
       this.$emit('page-index-change', val);
+    },
+
+    handleDblcilck(row, column, event) {
+      this.handleFunc(row, 'dblclick', 0);
+    },
+
+    handleClick(row, column, event) {
+      if (!this.isSelection) {
+        return -1;
+      }
+      this.$refs['table-body'].toggleRowSelection(row);
     }
   }
 };
@@ -162,9 +177,6 @@ export default {
 
   /deep/.data-item {
     font-size: 13px!important;
-    &:nth-child(2n) {
-      background-color: rgba($color: #eeeeeea9, $alpha: 1.0)
-    }
   }
 
   /deep/.el-pagination {
