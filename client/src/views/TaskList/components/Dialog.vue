@@ -252,7 +252,7 @@ export default {
         if (user.userId === userId) {
           this.taskInfo.belonger.userName = user.userName;
         }
-      })
+      });
     },
 
     // 当选择任务所属项目时，需要找到对应id的项目名并赋值到project
@@ -261,7 +261,7 @@ export default {
         if (project.projectId === projectId) {
           this.taskInfo.project.projectName = project.projectName;
         }
-      })
+      });
     }
   }
 };
