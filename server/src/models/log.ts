@@ -7,9 +7,11 @@ const tbName = "Logs";
 
 
 interface Log {
-    id: string, //日志id
+    logId: string, //日志id
     content: string,   //日志内容
-    createTime: string, //创建时间
+    createTime: number, //创建时间
+    operator: string, //操作者
+    sufferer: string //被操作者
 }
 
 export { tbName, Log }

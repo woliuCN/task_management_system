@@ -4,7 +4,7 @@
         "module": "commonjs",
         "outDir": "./www",
         "strict": true, /*启动所有的严格检查*/
-        "noImplicitAny": true,  /*没有明确指定类型的时候不默认推断为any*/
+        "noImplicitAny": false,  /*没有明确指定类型的时候不默认推断为any*/
         "esModuleInterop": true /*支持commonjs与ES模块的互操作性*/
 
     },
