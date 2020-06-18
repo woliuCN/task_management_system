@@ -212,13 +212,15 @@ export default {
     time,
 
     // 获取table数据
-    getTableData(
-      pageIndex = 0,
-      pageSize = 8,
-      startTime = 0,
-      endTime = undefined,
-      keyWords = ''
-    ) {
+    getTableData(index = {}) {
+      let { pageIndex, pageSize, startTime, endTime, keyWords } = index;
+      pageIndex = pageIndex || 0;
+      pageSize = pageSize || this.pageIndex;
+      startTime = startTime || 0;
+      endTime = endTime || undefined;
+      keyWords = keyWords || '';
+      const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+
       // 配置loading
       const loadingOptions = {
         target: '.app-main'
@@ -229,18 +231,20 @@ export default {
 
       // 数据获取
       const url = '/task/getPaginTask';
-      this.getData(url, { pageIndex, pageSize, startTime, endTime, keyWords })
+      let message;
+      let type;
+      let isShowMessage;
+      this.getData(url, props)
         .then(res => {
+          // 响应代码异常
           if (res.retCode === -1) {
-            this.$message({
-              message: '数据获取出错',
-              type: 'error',
-              duration: 1000
-            })
-            this.loading.close();
+            message = '数据获取出错';
+            type = 'error';
+            isShowMessage = true;
             return -1;
           }
 
+          // 对获取到的数据进行格式化
           const status = {
             0: '未启动',
             1: '进行中',
@@ -257,13 +261,22 @@ export default {
           this.tableData = tableData;
           this.total = res.totalCount;
           this.pageIndex = pageIndex;
-
-          // 关闭loading
-          this.loading.close();
         })
-        .catch(() => {
+        .catch((err) => {
+          isShowMessage = true;
+          message = `请求出错，错误原因${err}`;
+          type = 'error';
+        })
+        .finally(() => {
           this.loading.close();
-        });
+          if (isShowMessage) {
+            this.$message({
+              message,
+              type,
+              duration: 1000
+            })
+          }
+        })
     },
 
     // 初始化按钮列表
@@ -330,14 +343,17 @@ export default {
 
     // 提交新增任务表单
     submitTask(taskInfo) {
+      // 获取由子组件发送过来的表单信息并格式化
       taskInfo = JSON.parse(taskInfo);
       delete taskInfo._state;
       delete taskInfo._startTime;
 
       // 通过taskInfo是否存在taskID来判断是进行新增操作还是更新操作
       let url;
+      let message = '';
       let successMessage;
       let errorMessage;
+      let type;
       const taskId = taskInfo.taskId;
       if (taskId === undefined) {
         url = '/task/addTask';
@@ -354,52 +370,66 @@ export default {
         .then(res => {
           // 增加/修改任务失败
           if (res.retCode === -1) {
-            this.$message({
-              message: `${errorMessage}，错误代码:${res.message}`,
-              type: 'error',
-              duration: 1500
-            });
+            message = `${errorMessage}，错误代码:${res.message}`;
+            type = 'error';
           } else {
-            this.$message({
-              message: successMessage,
-              type: 'success',
-              duration: 1500
-            });
+            message = successMessage;
+            type = 'success';
           }
 
           // 增加数据成功后刷新数据列表
           this.getTableData();
-        }).catch(err => {
+        })
+        .catch(err => {
+          message = `操作失败，错误代码:${err}`;
+          type = 'error';
+        })
+        .finally(() => {
           this.$message({
-            message: `操作失败，错误代码:${err}`,
-            type: 'error',
-            duration: 1500
-          });
-        });
+            message,
+            type,
+            duration: 1000
+          })
+        })
     },
 
     // 完成任务
     accomplishTask(rows) {
-      // some code
+      // 获取需要修改状态的任务列表
       const taskList = copy(rows);
+      let message;
+      let type;
+
+      // 发送请求
       this.$http.postRequest('/task/updateState', { list: taskList, data: [{ state: 2 }] })
         .then(res => {
           if (res.retCode === 200) {
-            this.$message({
-              message: '修改成功！',
-              type: 'success',
-              duration: 1000
-            })
+            message = '修改成功！';
+            type = 'success';
 
             // 更新完成之后刷新页面数据
-            this.getTableData(this.pageIndex, this.pageSize, this.startTime, this.endTime, this.keyWords);
+            const pageIndex = this.pageIndex;
+            const pageSize = this.pageSize;
+            const startTime = this.startTime;
+            const endTime = this.endTime;
+            const keyWords = this.keyWords;
+            const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+            this.getTableData(props);
           } else {
-            this.$message({
-              message: `修改失败!错误原因:${res.message}`,
-              type: 'error',
-              duration: 1000
-            })
+            message = `修改失败!错误原因:${res.message}`;
+            type = 'error';
           }
+        })
+        .catch(err => {
+          message = `修改失败!错误原因:${err}`;
+          type = 'error';
+        })
+        .finally(() => {
+          this.$message({
+            message,
+            type,
+            duration: 1000
+          })
         })
     },
 
@@ -420,83 +450,97 @@ export default {
 
     // 删除任务
     deleteTask(rows) {
-      this.$confirm(`确定删除这${rows.length}项任务吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        const taskList = copy(rows);
-        taskList.map(taskItem => {
-          delete taskItem._state;
-          delete taskItem._startTime;
-        });
-        this.$http.postRequest('/task/deleteTask', { list: taskList })
-          .then(res => {
-            if (res.retCode === -1) {
-              this.$message({
-                message: `删除失败,错误代码:${res.message}`,
-                type: 'error',
-                duration: 1000
-              });
-            } else {
-              this.$message({
-                message: '删除成功',
-                type: 'success',
-                duration: 1000
-              });
-
-              // 删除数据成功后刷新数据列表
-              this.getTableData();
-            }
+      this.$confirm(
+        `确定删除这${rows.length}项任务吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          const taskList = copy(rows);
+          // 删除列表中不必要字段
+          taskList.map(taskItem => {
+            delete taskItem._state;
+            delete taskItem._startTime;
           });
-      });
+          let message;
+          let type;
+          // 发送删除请求
+          this.$http.postRequest('/task/deleteTask', { list: taskList })
+            .then(res => {
+              if (res.retCode === -1) {
+                message = `删除失败,错误代码:${res.message}`;
+                type = 'error';
+              } else {
+                message = '删除成功';
+                type = 'success';
+
+                // 删除数据成功后刷新数据列表
+                this.getTableData();
+              }
+            })
+            .catch(err => {
+              message = `操作失败，错误代码：${err}`;
+              type = 'error';
+            })
+            .finally(() => {
+              this.$message({
+                message,
+                type,
+                duration: 1000
+              })
+            })
+        });
     },
 
     // 时间选择器内容发生变化
     timePickerChanged() {
       // 先判断timeInterval的格式是否正确
       this.timeInterval = Array.isArray(this.timeInterval) && this.timeInterval.length === 2
-        ? this.timeInterval : [0, undefined];
+        ? this.timeInterval
+        : [0, undefined];
       [this.startTime, this.endTime] = this.timeInterval;
       this.pageIndex = 0;
 
       // 获取数据
-      this.getTableData(
-        this.pageIndex,
-        this.pageSize,
-        this.startTime,
-        this.endTime,
-        this.keyWords);
-
-      // 页码重置为1
-      this.pageIndex = 1;
+      const pageIndex = this.pageIndex;
+      const pageSize = this.pageSize;
+      const startTime = this.startTime;
+      const endTime = this.endTime;
+      const keyWords = this.keyWords;
+      const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+      this.getTableData(props);
     },
 
     pageIndexChange(val) {
       this.pageIndex = val;
 
       // 获取数据
-      this.getTableData(
-        this.pageIndex,
-        this.pageSize,
-        this.startTime,
-        this.endTime,
-        this.keyWords);
+      const pageIndex = this.pageIndex;
+      const pageSize = this.pageSize;
+      const startTime = this.startTime;
+      const endTime = this.endTime;
+      const keyWords = this.keyWords;
+      const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+      this.getTableData(props);
     },
 
     // 搜索索引
     searchContentChanged(searchContent) {
       this.keyWords = searchContent;
       this.pageIndex = 0;
-      this.getTableData(
-        this.pageIndex,
-        this.pageSize,
-        this.startTime,
-        this.endTime,
-        this.keyWords);
 
-      // 页码重置为1
-      this.pageIndex = 1;
+      // 获取数据
+      const pageIndex = this.pageIndex;
+      const pageSize = this.pageSize;
+      const startTime = this.startTime;
+      const endTime = this.endTime;
+      const keyWords = this.keyWords;
+      const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+      this.getTableData(props);
     },
 
     // 关闭对话框时初始化任务数据
@@ -526,11 +570,15 @@ export default {
   created() {
     // 对获取数据过程进行防抖处理
     this.getData = debounce(
+      // 进行防抖处理的函数
       (url, data) => {
         return this.$http.getRequest(url, data);
       },
+      // 间隔时间
       500,
+      // 立刻执行
       true,
+      // 操作太快时执行的回调函数
       () => {
         // 当用户操作太快时进行弹窗提醒
         this.$message({
@@ -543,13 +591,13 @@ export default {
     );
 
     // 获取用户列表数据 用于新增任务
-    this.$http.getRequest('/user/getToallUser/options')
+    this.$http.getRequest('/user/getTotalUser/options')
       .then(res => {
         this.userList = res.data;
       });
 
     // 获取项目列表数据
-    this.$http.getRequest('/project/getToallProject/options')
+    this.$http.getRequest('/project/getTotalProject/options')
       .then(res => {
         this.projectList = res.data;
       });
