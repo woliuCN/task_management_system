@@ -23,7 +23,7 @@
 
     <project-detail
       :isShow="isShowDetail"
-      :tableData="projectDetail"
+      :project="targetProject"
       @close-dialog="closeDialog('detailDialog')"
     >
     </project-detail>
@@ -82,11 +82,16 @@ export default {
         projectName: '',
         state: 0,
         remarks: ''
-      }
+      },
+
+      // 用于展示项目的子任务
+      targetProject: {}
     };
   },
   methods: {
+    // 格式化时间戳
     time,
+
     // 初始化按钮列表
     initButtonList() {
       this.buttonList = [
@@ -140,12 +145,8 @@ export default {
       ];
     },
 
-    // 获取列表信息
-    getProjectData(
-      pageIndex = 0,
-      pageSize = 10,
-      keyWords = ''
-    ) {
+    // 获取项目信息
+    getProjectData(index = {}) {
       // 配置loading
       const loadingOptions = {
         target: '.app-main'
@@ -153,10 +154,15 @@ export default {
 
       // 弹出loading窗口
       this.loading = this.$loading(loadingOptions);
+
+      // 索引条件获取
+      const { pageIndex, pageSize, keyWords } = index;
+
       // 数据获取
       const url = '/project/getPaginProject';
       this.getData(url, { pageIndex, pageSize, keyWords })
         .then(res => {
+          // 获取响应代码为-1，则代表获取数据失败
           if (res.retCode === -1) {
             this.$message({
               message: '数据获取出错',
@@ -166,6 +172,8 @@ export default {
             this.loading.close();
             return -1;
           }
+
+          // 当数据获取成功，需要先格式化数据
           const status = {
             0: '运行',
             1: '挂起',
@@ -179,10 +187,9 @@ export default {
           this.tableData = tableData;
           this.total = res.totalCount;
           this.pageIndex = pageIndex;
-          // 关闭loading
-          this.loading.close();
         })
-        .catch(() => {
+        .finally(() => {
+          // 关闭loading界面
           this.loading.close();
         });
     },
@@ -190,59 +197,40 @@ export default {
     // 更新页码并获取数据
     pageIndexChange(val) {
       this.pageIndex = val;
+      const pageIndex = this.pageIndex;
+      const pageSize = this.pageSize;
+      const keyWords = this.keyWords;
+      const props = { pageIndex, pageSize, keyWords };
 
       // 获取数据
-      this.getProjectData(
-        this.pageIndex,
-        this.pageSize,
-        this.keyWords);
+      this.getProjectData(props);
     },
 
     // 搜索索引
     searchContentChanged(searchContent) {
       this.keyWords = searchContent;
       this.pageIndex = 0;
-      this.getProjectData(
-        this.pageIndex,
-        this.pageSize,
-        this.keyWords);
+
+      const pageIndex = this.pageIndex;
+      const pageSize = this.pageSize;
+      const keyWords = this.keyWords;
+      const props = { pageIndex, pageSize, keyWords };
+
+      // 获取数据
+      this.getProjectData(props);
     },
 
     // 当某一行被双击之后，展示该项目的子任务
     showDetailOfProject(project) {
       this.isShowDetail = true;
-      const loadingOptions = {
-        target: '.el-dialog_body'
-      };
-      // 弹出loading窗口
-      this.loading = this.$loading(loadingOptions);
-      const { projectName, projectId } = project;
-      this.$http.getRequest('/project/getTaskByProject', { projectId, projectName })
-        .then(res => {
-          this.projectDetail = res.data;
-          const status = {
-            0: '未启动',
-            1: '进行中',
-            2: '完成',
-            3: '挂起'
-          };
-          this.projectDetail.map(tableItem => {
-            tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
-            tableItem._state = status[tableItem.state];
-            tableItem.project = JSON.parse(tableItem.project);
-            tableItem.belonger = JSON.parse(tableItem.belonger);
-          });
-          this.loading.close();
-        })
-        .catch(_ => {
-          this.loading.close();
-        })
+      this.targetProject = project;
     },
 
+    // 关闭弹窗
     closeDialog(dialog) {
       if (dialog === 'detailDialog') {
         this.isShowDetail = false;
-        this.projectDetail = [];
+        this.targetProject = {};
       } else if (dialog === 'editDialog') {
         this.isShowEditDialog = false;
         this.projectInfo = {
@@ -253,6 +241,7 @@ export default {
       }
     },
 
+    // 项目编辑
     editProject(rows) {
       if (rows.length > 1) {
         this.$message({
@@ -266,12 +255,20 @@ export default {
       this.projectInfo = copy(rows[0]);
     },
 
+    // 新增项目
     submitProject(projectInfo) {
+      // 获取由子组件表单传过来的数据并格式化为JSON
       projectInfo = JSON.parse(projectInfo);
+
+      // 删除不必要的字段
       delete projectInfo._createTime;
       delete projectInfo._state;
+
+      // 由是否存在projectId来判断该项目是否属于新增项目
       let url;
+      let message;
       let successMessage, errMessage;
+      let type;
       if (projectInfo && projectInfo.projectId !== undefined) {
         url = '/project/updateProject';
         successMessage = '修改项目成功';
@@ -287,76 +284,97 @@ export default {
         .then(res => {
           // 增加/修改任务失败
           if (res.retCode === -1) {
-            this.$message({
-              message: `${errMessage}，错误代码:${res.message}`,
-              type: 'error',
-              duration: 1500
-            });
+            message = `${errMessage}，错误代码:${res.message}`;
+            type = 'error';
           } else {
-            this.$message({
-              message: successMessage,
-              type: 'success',
-              duration: 1500
-            });
+            message = successMessage;
+            type = 'success';
           }
 
           // 增加数据成功后刷新数据列表
           this.getProjectData();
-        }).catch(err => {
+        })
+        .catch(err => {
+          message = `操作失败，错误代码:${err}`;
+          type = 'error';
+        })
+        .finally(() => {
           this.$message({
-            message: `操作失败，错误代码:${err}`,
-            type: 'error',
+            message,
+            type,
             duration: 1500
-          });
-        });
+          })
+        })
     },
 
+    // 将项目的状态修改为“完成”
     accomplishProject(rows) {
       this.changeProjectState(rows, 2);
     },
 
+    // 将项目的状态修改为“挂起”
     pendProject(rows) {
       this.changeProjectState(rows, 1);
     },
 
+    // 将项目的状态修改为“运行中”
     runProject(rows) {
       this.changeProjectState(rows, 0);
     },
 
+    // 发送请求进行项目状态修改
     changeProjectState(projectList, state) {
+      let message;
+      let type;
       this.$http.postRequest('/project/updateState', { list: projectList, data: [{ state }] })
         .then(res => {
           if (res.retCode === 200) {
-            this.$message({
-              message: '修改成功！',
-              type: 'success',
-              duration: 1000
-            })
+            message = '修改成功!';
+            type = 'success';
 
             // 更新完成之后刷新页面数据
-            this.getProjectData(this.pageIndex, this.pageSize, this.keyWords);
+            const pageIndex = this.pageIndex;
+            const pageSize = this.pageSize;
+            const keyWords = this.keyWords;
+            const props = { pageIndex, pageSize, keyWords };
+            this.getProjectData(props);
           } else {
-            this.$message({
-              message: `修改失败!错误原因:${res.message}`,
-              type: 'error',
-              duration: 1000
-            })
+            message = `修改失败!错误原因:${res.message}`;
+            type = 'error';
           }
+        })
+        .catch(err => {
+          message = `操作失败，错误原因:${err}`;
+          type = 'error';
+        })
+        .finally(() => {
+          this.$message({
+            message,
+            type,
+            duration: 1500
+          })
         })
     }
   },
   mounted() {
+    // 初始化按钮组
     this.initButtonList();
+
+    // 获取第一页项目信息
     this.getProjectData();
   },
   created() {
     // 对获取数据过程进行防抖处理
     this.getData = debounce(
+      // 需要进行防抖的函数
       (url, data) => {
         return this.$http.getRequest(url, data);
       },
+      // 间隔时间
       500,
+      // 立即执行
       true,
+      // 操作太快时执行的回调函数
       () => {
         // 当用户操作太快时进行弹窗提醒
         this.$message({

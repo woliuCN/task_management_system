@@ -58,19 +58,23 @@
 <script>
 export default {
   props: {
+    // 若projectInfo为空，则代表是新增项目，否则为修改项目信息
     projectInfo: Object,
     isShow: Boolean
   },
   data() {
     return {
       formLabelWidth: '120px'
-    }
+    };
   },
   methods: {
+    // 告知父组件关闭本弹窗并清空表单数据
     closeDialog() {
       this.$refs.projectInfo.resetFields();
       this.$emit('close-dialog');
     },
+
+    // 提交表单数据让父组件进行处理
     submitTask() {
       this.$refs.projectInfo.validate(valid => {
         if (valid) {

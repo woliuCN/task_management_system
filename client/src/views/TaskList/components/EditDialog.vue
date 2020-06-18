@@ -221,9 +221,10 @@ export default {
   methods: {
     // 将时间选择器内的时间戳存至表单内
     timePickerChanged(timeInterval) {
-      Array.isArray(timeInterval) && timeInterval.length === 2
-        ? [this.taskInfo.startTime, this.taskInfo.endTime] = timeInterval
-        : [this.taskInfo.startTime, this.taskInfo.endTime] = [new Date().getTime(), new Date().getTime()];
+      timeInterval = Array.isArray(timeInterval) && timeInterval.length === 2
+        ? timeInterval
+        : [new Date().getTime(), new Date().getTime()];
+      [this.taskInfo.startTime, this.taskInfo.endTime] = timeInterval;
     },
 
     // 将表单内容发送给父组件
