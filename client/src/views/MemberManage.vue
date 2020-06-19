@@ -1,6 +1,7 @@
 <template>
   <div>
     <data-table
+      class="people-table"
       ref="data-table"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
@@ -445,5 +446,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
+/deep/.people-table{
+  background-color: red;
+}
 </style>
