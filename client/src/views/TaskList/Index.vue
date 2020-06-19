@@ -564,8 +564,14 @@ export default {
     }
   },
   mounted() {
-    this.getTableData();
     this.initButtonList();
+    const pageIndex = this.pageIndex;
+    const pageSize = this.pageSize;
+    const startTime = this.startTime;
+    const endTime = this.endTime;
+    const keyWords = this.keyWords;
+    const props = { pageIndex, pageSize, startTime, endTime, keyWords };
+    this.getTableData(props);
   },
   created() {
     // 对获取数据过程进行防抖处理
