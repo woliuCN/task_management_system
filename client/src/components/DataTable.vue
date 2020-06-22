@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     debounce,
-    
+
     /**
      * 用于获取触发事件的列表行数据，并且将数据分发给父组件，由父组件来进行相应的处理
      * @param {Array} row: 当前被点击的列表行数据
@@ -137,7 +137,7 @@ export default {
           message: `至少选择${limit}项任务再执行操作`,
           type: 'error',
           duration: 1000
-        })
+        });
       } else {
         this.$emit(event, data);
       }
@@ -185,7 +185,7 @@ export default {
         this.currentIndex = 1;
         this.$nextTick(() => {
           this.currentIndex = this.pageIndex;
-        })
+        });
       }
     );
   },

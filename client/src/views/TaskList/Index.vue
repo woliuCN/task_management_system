@@ -62,7 +62,7 @@
 <script>
 import DataTable from '../../components/DataTable';
 import EditDialog from './components/EditDialog';
-import ExportDialog from './components/ExportDialog'
+import ExportDialog from './components/ExportDialog';
 import { time, debounce, copy } from '../../filters/index.js';
 export default {
   components: {
@@ -211,6 +211,10 @@ export default {
     // 格式化时间戳
     time,
 
+    debounce,
+
+    copy,
+
     // 获取table数据
     getTableData(index = {}) {
       let { pageIndex, pageSize, startTime, endTime, keyWords } = index;
@@ -274,9 +278,9 @@ export default {
               message,
               type,
               duration: 1000
-            })
+            });
           }
-        })
+        });
     },
 
     // 初始化按钮列表
@@ -389,14 +393,14 @@ export default {
             message,
             type,
             duration: 1000
-          })
-        })
+          });
+        });
     },
 
     // 完成任务
     accomplishTask(rows) {
       // 获取需要修改状态的任务列表
-      const taskList = copy(rows);
+      const taskList = this.copy(rows);
       let message;
       let type;
 
@@ -429,8 +433,8 @@ export default {
             message,
             type,
             duration: 1000
-          })
-        })
+          });
+        });
     },
 
     // 编辑任务
@@ -443,7 +447,7 @@ export default {
         });
         return -1;
       } else {
-        this.taskInfo = copy(rows[0]);
+        this.taskInfo = this.copy(rows[0]);
         this.isEditDialogShow = true;
       }
     },
@@ -460,7 +464,7 @@ export default {
         }
       )
         .then(() => {
-          const taskList = copy(rows);
+          const taskList = this.copy(rows);
           // 删除列表中不必要字段
           taskList.map(taskItem => {
             delete taskItem._state;
@@ -491,8 +495,8 @@ export default {
                 message,
                 type,
                 duration: 1000
-              })
-            })
+              });
+            });
         });
     },
 
@@ -575,7 +579,7 @@ export default {
   },
   created() {
     // 对获取数据过程进行防抖处理
-    this.getData = debounce(
+    this.getData = this.debounce(
       // 进行防抖处理的函数
       (url, data) => {
         return this.$http.getRequest(url, data);

@@ -179,11 +179,14 @@ export default {
 
       isShowDetail: false,
       targetProject: {}
-    }
+    };
   },
   methods: {
     // 格式化时间戳
     time,
+
+    // 深拷贝
+    copy,
 
     // 获取子任务数据
     showDetail(project, index = {}) {
@@ -194,7 +197,7 @@ export default {
       keyWords = keyWords || '';
       startTime = startTime || 0;
       const { projectName, projectId } = project;
-      const query = { projectId, projectName, pageIndex, pageSize, keyWords, startTime, endTime }
+      const query = { projectId, projectName, pageIndex, pageSize, keyWords, startTime, endTime };
 
       // 如果没有检索数据，直接退出
       if (!projectId || !projectName) {
@@ -222,11 +225,7 @@ export default {
             tableItem.project = JSON.parse(tableItem.project);
             tableItem.belonger = JSON.parse(tableItem.belonger);
           });
-          // this.loading.close();
-        })
-        // .catch(_ => {
-        //   this.loading.close();
-        // })
+        });
     },
 
     // 更新页码并获取数据
@@ -264,19 +263,19 @@ export default {
 
     // 将任务状态更新为“完成”
     accomplishTask(rows) {
-      const taskList = copy(rows);
+      const taskList = this.copy(rows);
       this.changeTaskState(taskList, 2);
     },
 
     // 将任务状态更新为“挂起”
     pendTask(rows) {
-      const taskList = copy(rows);
+      const taskList = this.copy(rows);
       this.changeTaskState(taskList, 3);
     },
 
     // 将任务状态更新为“运行中”
     runTask(rows) {
-      const taskList = copy(rows);
+      const taskList = this.copy(rows);
       this.changeTaskState(taskList, 1);
     },
 
@@ -294,7 +293,7 @@ export default {
               message: '修改成功！',
               type: 'success',
               duration: 1000
-            })
+            });
 
             // 更新完成之后刷新页面数据
             this.showDetail(
@@ -306,9 +305,9 @@ export default {
               message: `修改失败!错误原因:${res.message}`,
               type: 'error',
               duration: 1000
-            })
+            });
           }
-        })
+        });
     },
 
     // 监听时间选择器内容是否发生变化
@@ -346,7 +345,7 @@ export default {
     },
 
     project(val) {
-      this.targetProject = copy(val);
+      this.targetProject = this.copy(val);
       this.showDetail(this.targetProject);
     }
   }

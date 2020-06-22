@@ -92,6 +92,12 @@ export default {
     // 格式化时间戳
     time,
 
+    // 防抖处理
+    debounce,
+
+    // 深拷贝
+    copy,
+
     // 初始化按钮列表
     initButtonList() {
       this.buttonList = [
@@ -168,7 +174,7 @@ export default {
               message: '数据获取出错',
               type: 'error',
               duration: 1000
-            })
+            });
             this.loading.close();
             return -1;
           }
@@ -252,7 +258,7 @@ export default {
         return -1;
       }
       this.isShowEditDialog = true;
-      this.projectInfo = copy(rows[0]);
+      this.projectInfo = this.copy(rows[0]);
     },
 
     // 新增项目
@@ -303,8 +309,8 @@ export default {
             message,
             type,
             duration: 1500
-          })
-        })
+          });
+        });
     },
 
     // 将项目的状态修改为“完成”
@@ -352,8 +358,8 @@ export default {
             message,
             type,
             duration: 1500
-          })
-        })
+          });
+        });
     }
   },
   mounted() {
@@ -365,7 +371,7 @@ export default {
   },
   created() {
     // 对获取数据过程进行防抖处理
-    this.getData = debounce(
+    this.getData = this.debounce(
       // 需要进行防抖的函数
       (url, data) => {
         return this.$http.getRequest(url, data);
