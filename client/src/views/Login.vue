@@ -83,14 +83,29 @@ export default {
   },
   methods: {
     login() {
-      this.$message({
-        message: '登录成功',
-        type: 'success',
-        duration: 800,
-        onClose: () => {
-          this.$router.push('/');
-        }
-      });
+      this.$http
+        .postRequest('/user/loginValidation', {
+          password: this.formData.password,
+          userId: this.formData.username
+        })
+        .then(res => {
+          if (res.retCode === -1) {
+            this.$message({
+              message: `登录失败，${res.message}.`,
+              type: 'error',
+              duration: 1000
+            });
+          } else {
+            this.$message({
+              message: '登录成功',
+              type: 'success',
+              duration: 1000,
+              onClose: _ => {
+                this.$router.push('/');
+              }
+            });
+          }
+        });
     }
   }
 };
