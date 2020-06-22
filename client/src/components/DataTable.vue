@@ -55,7 +55,7 @@
     <div class="block">
       <el-pagination
         layout="total, prev, pager, next, jumper"
-        :current-page="pageIndex"
+        :current-page="currentIndex"
         :page-size="pageSize"
         :total="total"
         @current-change="handlePageChange"
@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { debounce } from '../filters/index';
 export default {
   data() {
     return {
@@ -74,7 +75,9 @@ export default {
       that: this,
 
       // 绑定搜索内容
-      searchContent: ''
+      searchContent: '',
+
+      currentIndex: 0
     };
   },
   props: {
@@ -120,6 +123,8 @@ export default {
     }
   },
   methods: {
+    debounce,
+    
     /**
      * 用于获取触发事件的列表行数据，并且将数据分发给父组件，由父组件来进行相应的处理
      * @param {Array} row: 当前被点击的列表行数据
@@ -145,7 +150,7 @@ export default {
 
     // 页码跳转处理函数
     handlePageChange(val) {
-      this.$emit('page-index-change', val);
+      this.debouncePageChange(val);
     },
 
     handleDblcilck(row, column, event) {
@@ -157,6 +162,36 @@ export default {
         return -1;
       }
       this.$refs['table-body'].toggleRowSelection(row);
+    }
+  },
+  created() {
+    this.debouncePageChange = this.debounce(
+      // 进行防抖处理的函数
+      (pageIndex) => {
+        this.$emit('page-index-change', pageIndex);
+      },
+      // 间隔时间
+      500,
+      // 立刻执行
+      true,
+      // 操作太快时执行的回调函数
+      () => {
+        // 当用户操作太快时进行弹窗提醒
+        this.$message({
+          message: '请不要频繁操作！',
+          type: 'warning',
+          duration: 1000
+        });
+        this.currentIndex = 1;
+        this.$nextTick(() => {
+          this.currentIndex = this.pageIndex;
+        })
+      }
+    );
+  },
+  watch: {
+    pageIndex() {
+      this.currentIndex = this.pageIndex;
     }
   }
 };
