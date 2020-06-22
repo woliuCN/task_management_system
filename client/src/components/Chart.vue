@@ -99,7 +99,7 @@ export default {
   },
   mounted() {
     this.initEcharts();
-    console.log(this.defaultOptions);
+    // console.log(this.defaultOptions);
   },
   destroyed() {
     this.removeEventListenerResizeECharts();
@@ -119,6 +119,7 @@ export default {
 
     // 配置图表信息
     setOptions() {
+      this.initOptions();
       this.chart.setOption(this.defaultOptions, true);
     },
 

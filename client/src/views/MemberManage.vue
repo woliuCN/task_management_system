@@ -46,7 +46,7 @@ export default {
 
       // table抬头
       tableTitle: [
-        { label: '编号', prop: 'idx', width: '80px' },
+        { label: '编号', prop: 'idx' },
         { label: '工号', prop: 'userId' },
         { label: '分组', prop: 'userGroup.groupName' },
         { label: '名称', prop: 'userName' },
@@ -296,43 +296,87 @@ export default {
 
     // 删除人员
     deleteUser(rows) {
-      this.titleName = '删除';
-      const list = [];
-      rows.map((row) => {
-        const state = this.stateTrim(row.state);
-        list.push({
-          userId: row.userId,
-          userName: row.userName,
-          userGroup: row.userGroup,
-          remarks: row.remarks,
-          state
-        });
-      });
-      console.log(list);
-      this.addOrUpdateOrDeleteUserInfo(list);
+      this.$confirm(
+        `确定删除这${rows.length}位员工吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.titleName = '删除';
+          const list = [];
+          rows.map((row) => {
+            const state = this.stateTrim(row.state);
+            list.push({
+              userId: row.userId,
+              userName: row.userName,
+              userGroup: row.userGroup,
+              remarks: row.remarks,
+              state
+            });
+          });
+          this.addOrUpdateOrDeleteUserInfo(list);
+        })
       // console.log('删除人员', rows);
     },
 
     // 设置人员在职
     onJob(rows) {
-      console.log('人员在职', rows);
+      this.$confirm(
+        `确定将这${rows.length}位员工设置为在职吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.titleName = '在职';
+          const list = [];
+          rows.map((row) => {
+            const state = this.stateTrim(row.state);
+            list.push({
+              userId: row.userId,
+              userName: row.userName,
+              userGroup: row.userGroup,
+              remarks: row.remarks,
+              state
+            });
+          });
+          this.addOrUpdateOrDeleteUserInfo(list);
+        })
     },
 
     // 设置人员离职
     dimission(rows) {
-      // this.titleName = '删除';
-      // const list = [];
-      // rows.map((row) => {
-      //   list.push({
-      //     userId: row.userId,
-      //     userName: row.userName,
-      //     userGroup: row.userGroup,
-      //     remarks: row.remarks,
-      //     state: row.state
-      //   });
-      // });
-      // console.log(list);
-      // this.addOrUpdateOrDeleteUserInfo({ list });
+      this.$confirm(
+        `确定将这${rows.length}位员工设置为离职吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.titleName = '离职';
+          const list = [];
+          rows.map((row) => {
+            const state = this.stateTrim(row.state);
+            list.push({
+              userId: row.userId,
+              userName: row.userName,
+              userGroup: row.userGroup,
+              remarks: row.remarks,
+              state
+            });
+          });
+          this.addOrUpdateOrDeleteUserInfo(list);
+        })
     },
 
     pageIndexChange(val) {
@@ -394,7 +438,7 @@ export default {
     },
 
     // 添加或更新员工信息
-    addOrUpdateOrDeleteUserInfo(userInfo) {
+    addOrUpdateOrDeleteUserInfo(userInfo, str = '') {
       let url = '';
       let params = {};
       if (this.titleName === '添加人员') {
@@ -403,9 +447,18 @@ export default {
       } else if (this.titleName === '修改人员') {
         url = '/user/updateUser';
         params = { user: userInfo };
-      } else {
+      } else if (this.titleName === '删除') {
         url = '/user/deleteUser';
         params = { list: userInfo };
+      } else {
+        let data;
+        if (this.titleName === '在职') {
+          data = [{ state: 1 }];
+        } else if (this.titleName === '离职') {
+          data = [{ state: 0 }];
+        }
+        url = '/user/updateState';
+        params = { list: userInfo, data };
       }
       // 配置loading
       const loadingOptions = {
@@ -424,7 +477,7 @@ export default {
             });
           } else {
             this.$message({
-              message: '更新出现问题⊙.⊙！',
+              message: `更新出现问题⊙.⊙！${res.message}`,
               type: 'error',
               duration: 1000
             });
@@ -434,6 +487,13 @@ export default {
             this.pageIndex,
             this.pageSize,
             this.keyWords);
+        })
+        .catch(err => {
+          this.$message({
+            message: `操作失败，错误代码：${err}`,
+            type: 'error',
+            duration: 1000
+          });
         });
     },
 
@@ -447,6 +507,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 /deep/.people-table{
-  background-color: red;
+  .el-table{
+    .el-table__header-wrapper{
+      .el-table__header{
+        background-color: red;
+      }
+    }
+  }
 }
 </style>
