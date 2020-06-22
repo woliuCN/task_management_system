@@ -17,6 +17,7 @@
       @accomplish-project="accomplishProject"
       @pend-project="pendProject"
       @run-project="runProject"
+      @delete-project="deleteProject"
     >
 
     </data-table>
@@ -310,6 +311,54 @@ export default {
             type,
             duration: 1500
           });
+        });
+    },
+
+    // 项目删除
+    deleteProject(rows) {
+      this.$confirm(
+        `确定删除这${rows.length}个项目吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          const projectList = this.copy(rows);
+          // 删除列表中不必要字段
+          projectList.map(projectItem => {
+            delete projectItem._state;
+            delete projectItem._createTime;
+          });
+          let message;
+          let type;
+          // 发送删除请求
+          this.$http.postRequest('/project/deleteProject', { list: projectList })
+            .then(res => {
+              if (res.retCode === -1) {
+                message = `删除失败,错误代码:${res.message}`;
+                type = 'error';
+              } else {
+                message = '删除成功';
+                type = 'success';
+
+                // 删除数据成功后刷新数据列表
+                this.getProjectData();
+              }
+            })
+            .catch(err => {
+              message = `操作失败，错误代码：${err}`;
+              type = 'error';
+            })
+            .finally(() => {
+              this.$message({
+                message,
+                type,
+                duration: 1000
+              });
+            });
         });
     },
 

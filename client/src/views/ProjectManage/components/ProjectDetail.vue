@@ -3,11 +3,13 @@
     <el-dialog
       :title="project.projectName"
       width="80%"
+      top='5vh'
       :visible.sync="isShowDetail"
       :destroy-on-close=true
-      @close="$emit('close-dialog')"
+      @close="closeDialog"
     >
       <data-table
+        id="table_1"
         :tableTitle="tableTitle"
         :tableData="tableData"
         :isSelection="true"
@@ -21,6 +23,7 @@
         @run-task="runTask"
         @pend-task="pendTask"
         @accomplish-task="accomplishTask"
+        @delete-task="deleteTask"
       >
         <template v-slot:tmp_search>
           <el-date-picker
@@ -178,7 +181,12 @@ export default {
       total: 0,
 
       isShowDetail: false,
-      targetProject: {}
+      targetProject: {},
+
+      loading: '',
+      loadingOptions: {
+        target: '#table_1 .el-table__body-wrapper'
+      }
     };
   },
   methods: {
@@ -190,20 +198,24 @@ export default {
 
     // 获取子任务数据
     showDetail(project, index = {}) {
-      // 初始化索引条件
-      let { pageIndex, pageSize, keyWords, startTime, endTime } = index;
-      pageIndex = pageIndex || 0;
-      pageSize = pageSize || this.pageSize;
-      keyWords = keyWords || '';
-      startTime = startTime || 0;
       const { projectName, projectId } = project;
-      const query = { projectId, projectName, pageIndex, pageSize, keyWords, startTime, endTime };
 
       // 如果没有检索数据，直接退出
       if (!projectId || !projectName) {
         this.tableData = [];
         return -1;
       }
+      this.$nextTick(_ => {
+        this.loading = this.$loading(this.loadingOptions);
+      });
+
+      // 初始化索引条件
+      let { pageIndex, pageSize, keyWords, startTime, endTime } = index;
+      pageIndex = pageIndex || 0;
+      pageSize = pageSize || this.pageSize;
+      keyWords = keyWords || '';
+      startTime = startTime || 0;
+      const query = { projectId, projectName, pageIndex, pageSize, keyWords, startTime, endTime };
 
       // 发送请求获取项目的子任务
       this.$http.getRequest('/project/getTaskByProject', query)
@@ -225,6 +237,9 @@ export default {
             tableItem.project = JSON.parse(tableItem.project);
             tableItem.belonger = JSON.parse(tableItem.belonger);
           });
+        })
+        .finally(() => {
+          this.loading.close();
         });
     },
 
@@ -310,6 +325,54 @@ export default {
         });
     },
 
+    // 删除任务
+    deleteTask(rows) {
+      this.$confirm(
+        `确定删除这${rows.length}项任务吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          const taskList = this.copy(rows);
+          // 删除列表中不必要字段
+          taskList.map(taskItem => {
+            delete taskItem._state;
+            delete taskItem._startTime;
+          });
+          let message;
+          let type;
+          // 发送删除请求
+          this.$http.postRequest('/task/deleteTask', { list: taskList })
+            .then(res => {
+              if (res.retCode === -1) {
+                message = `删除失败,错误代码:${res.message}`;
+                type = 'error';
+              } else {
+                message = '删除成功';
+                type = 'success';
+
+                // 删除数据成功后刷新数据列表
+                this.showDetail(this.targetProject);
+              }
+            })
+            .catch(err => {
+              message = `操作失败，错误代码：${err}`;
+              type = 'error';
+            })
+            .finally(() => {
+              this.$message({
+                message,
+                type,
+                duration: 1000
+              });
+            });
+        });
+    },
+
     // 监听时间选择器内容是否发生变化
     timePickerChanged() {
       // 先判断timeInterval的格式是否正确
@@ -330,6 +393,13 @@ export default {
         this.project,
         { pageIndex, pageSize, keyWords, startTime, endTime }
       );
+    },
+
+    // 关闭弹窗
+    closeDialog() {
+      this.$emit('close-dialog');
+      this.tableData = [];
+      this.loading.close();
     }
   },
   watch: {

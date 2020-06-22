@@ -29,8 +29,8 @@
         <el-form-item label="项目状态" :label-width="formLabelWidth">
           <el-radio-group v-model="projectInfo.state">
             <el-radio :label="0">运行中</el-radio>
-            <el-radio :label="1">完成</el-radio>
-            <el-radio :label="2">挂起</el-radio>
+            <el-radio :label="1">挂起</el-radio>
+            <el-radio :label="2">完成</el-radio>
           </el-radio-group>
         </el-form-item>
 

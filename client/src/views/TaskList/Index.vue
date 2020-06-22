@@ -219,7 +219,7 @@ export default {
     getTableData(index = {}) {
       let { pageIndex, pageSize, startTime, endTime, keyWords } = index;
       pageIndex = pageIndex || 0;
-      pageSize = pageSize || this.pageIndex;
+      pageSize = pageSize || this.pageSize;
       startTime = startTime || 0;
       endTime = endTime || undefined;
       keyWords = keyWords || '';

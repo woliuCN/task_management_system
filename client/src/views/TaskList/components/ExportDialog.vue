@@ -7,7 +7,7 @@
       @close="$emit('close-dialog')"
     >
       <div v-if="openWith === 'import'" class="center">
-        <el-button class="button-item" @click="downloadFile">下载导入模板</el-button>
+        <el-button class="button-item" @click="downloadTemplate">下载导入模板</el-button>
         <el-button class="button-item" @click="uploadFile">导入文件</el-button>
       </div>
       <div v-else-if="openWith === 'export'" class="center">
@@ -26,7 +26,6 @@
           @change="timePickerChanged"
         >
         </el-date-picker>
-        <el-button class="button-item" @click="uploadFile">导出任务列表</el-button>
         <el-button class="button-item" @click="personalPerformance">导出个人绩效</el-button>
         <el-button class="button-item" @click="monthPerformance">导出月绩效</el-button>
       </div>
@@ -60,6 +59,7 @@ export default {
   },
   data() {
     return {
+      host: 'http://192.168.31.84:30/api',
       isDialogShow: false,
       timeInterval: [],
       timePickerOptions: {
@@ -156,19 +156,22 @@ export default {
     };
   },
   methods: {
+    // 下载导入模板
+    downloadTemplate() {
+      const url = `${this.host}/task/templateDownload`;
+      window.open(`${url}`);
+    },
+
     uploadFile() {
       //
     },
-    downloadFile() {
-      //
-    },
+
+    // 生成周报
     weekreport() {
-      const url = 'http://192.168.31.84:30/api/task/weeklyDownload';
+      const url = `${this.host}/task/weeklyDownload`;
       window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
-      // this.$http.getRequest(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`).then(res => {
-      //   console.log(res);
-      // })
     },
+
     timePickerChanged() {
       this.timeInterval = Array.isArray(this.timeInterval) && this.timeInterval.length === 2
         ? this.timeInterval
@@ -176,12 +179,16 @@ export default {
       [this.startTime, this.endTime] = this.timeInterval;
       this.pageIndex = 0;
     },
+
+    // 生成个人绩效
     personalPerformance() {
-      const url = 'http://192.168.31.84:30/api/task/personalPerformanceDownload';
+      const url = `${this.host}/task/personalPerformanceDownload`;
       window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
     },
+
+    // 生成月绩效
     monthPerformance() {
-      const url = 'http://192.168.31.84:30/api/task/monthPerformanceDownload';
+      const url = `${this.host}/task/monthPerformanceDownload`;
       window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
     }
   },
@@ -189,7 +196,7 @@ export default {
     const end = new Date();
     const start = new Date();
     // 通过今天的时间减去本周已过天数，得出本周周一的日期
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
 
     // 今天的时间加上6天可得到本周最后一天的日期
     end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
