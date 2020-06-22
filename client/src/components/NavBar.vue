@@ -201,13 +201,13 @@ export default {
                   message: res.message,
                   type: 'error',
                   duration: 1000
-                })
+                });
               } else {
                 this.$message({
                   message: '修改成功',
                   type: 'success',
                   duration: 1000
-                })
+                });
               }
 
               this.isChangePassword = false;

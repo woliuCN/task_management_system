@@ -192,7 +192,7 @@ export default {
       const Task = resTask.data;
       const resProject = this.sourceData.projects;
       const project = resProject.data;
-      console.log(this.sourceData.tasks, this.sourceData.projects)
+      console.log(this.sourceData.tasks, this.sourceData.projects);
       this.cardList = [
         {
           num: await getCurrentWeekTaskNum(this.sourceData.tasks),
@@ -277,7 +277,7 @@ export default {
     getWeekTasksOfCurrentMonth() {
       const res = this.sourceData.tasks;
       if (res.retCode === 200) {
-        console.log(res)
+        console.log(res);
         const { data } = res;
         const projectListOfCurrentMonth = filtrateDateFromTasksInCurrentMonth(data);
         this.weeklyTaskNumThisMon = this.getOptions({
@@ -297,10 +297,10 @@ export default {
     getWeekTasksOfThisYear() {
       const res = this.sourceData.tasks;
       if (res.retCode === 200) {
-        console.log(res)
+        console.log(res);
         const { data } = res;
         const taskListOfThisYear = weekTasksInThisYear(data);
-        console.log(taskListOfThisYear)
+        console.log(taskListOfThisYear);
         this.weeklyTaskNumThisYear = this.getOptions({
           titleText: '今年周任务数量',
           color: '#142334',

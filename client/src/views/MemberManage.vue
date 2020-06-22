@@ -319,7 +319,7 @@ export default {
             });
           });
           this.addOrUpdateOrDeleteUserInfo(list);
-        })
+        });
       // console.log('删除人员', rows);
     },
 
@@ -348,7 +348,7 @@ export default {
             });
           });
           this.addOrUpdateOrDeleteUserInfo(list);
-        })
+        });
     },
 
     // 设置人员离职
@@ -376,7 +376,7 @@ export default {
             });
           });
           this.addOrUpdateOrDeleteUserInfo(list);
-        })
+        });
     },
 
     pageIndexChange(val) {

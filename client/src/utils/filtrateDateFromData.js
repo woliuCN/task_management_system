@@ -14,7 +14,7 @@ const nextMonth = (date) => {
     thisMon += 1;
   };
   return new Date(`${thisYear}-${thisMon}-01 00:00:00`).getTime();
-}
+};
 
 /**
  * @description 过去一年的月时间戳范围
@@ -29,7 +29,7 @@ const lastYearOfMonthList = () => {
     temp = nextMonth(temp);
   }
   return filterDateList;
-}
+};
 /**
  * @description 本周的时间戳范围
  * @returns
@@ -45,7 +45,7 @@ const currentWeek = () => {
   };
   const lastWeekDay = firstWeekDay + 7 * 24 * 60 * 60 * 1000;
   return [firstWeekDay, lastWeekDay];
-}
+};
 
 /**
  * @description 本月每周的时间戳范围
@@ -69,7 +69,7 @@ const currentMonthOfWeekList = () => {
     firstDayOfWeekInCurrentMonth = lastDayOfWeekInCurrentMonth;
   }
   return filterDateList;
-}
+};
 /**
  * @description 获取本年所有周的时间戳范围
  * @returns []
@@ -92,7 +92,7 @@ const weekListInThisYear = () => {
     firstDayOfWeekInThisYear = lastDayOfWeekInThisYear;
   };
   return filterDateList;
-}
+};
 /**
  * @description 过去一年月任务
  * @param {*} data
@@ -108,7 +108,7 @@ export const filtrateDateFromTasks = (data) => {
     result.push(fil.length);
   });
   return result;
-}
+};
 
 /**
  * @description 过去一年月项目
@@ -125,7 +125,7 @@ export const filtrateDateFromProjects = (data) => {
     result.push(fil.length);
   });
   return result;
-}
+};
 
 /**
  * @description 本月周任务数量
@@ -142,7 +142,7 @@ export const filtrateDateFromTasksInCurrentMonth = (data) => {
     result.push(fil.length);
   });
   return result;
-}
+};
 /**
  * @description 本年周任务
  * @param {*} data
@@ -158,17 +158,17 @@ export const weekTasksInThisYear = (data) => {
     result.push(fil.length);
   });
   return result;
-}
+};
 /**
  * @description 本周任务数
  * @param {*} data
  * @returns Number
  */
 export const getCurrentWeekTaskNum = ({ data }) => {
-  console.log(data)
+  console.log(data);
   const filterDateArr = currentWeek();
   const filterList = data.filter((dataItem) => {
     return dataItem.createTime >= filterDateArr[0] && dataItem.createTime < filterDateArr[1];
   });
   return filterList.length;
-}
+};
