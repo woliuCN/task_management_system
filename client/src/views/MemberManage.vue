@@ -507,10 +507,39 @@ export default {
 </script>
 <style lang="scss" scoped>
 /deep/.people-table{
-  .el-table{
-    .el-table__header-wrapper{
-      .el-table__header{
-        background-color: red;
+  min-width: 980px;
+    .el-table__header {
+    display: flex;
+    width: 100%!important;
+    .has-gutter {
+      width: 100%;
+      tr {
+        display: flex;
+        th {
+          text-align: center;
+          flex: 2;
+        }
+        th:nth-child(1),th:nth-child(2) {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .el-table__body {
+    display: flex;
+    width: 100%!important;
+    tbody {
+      width: 100%;
+      .el-table__row {
+        display: flex;
+        td {
+          text-align: center;
+          flex: 2;
+        }
+        td:nth-child(1),td:nth-child(2) {
+          flex: 1;
+        }
       }
     }
   }

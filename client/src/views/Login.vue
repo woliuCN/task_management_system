@@ -1,5 +1,11 @@
 <template>
-  <div class="login">
+  <div
+    class="login"
+    v-loading.body="isLoading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <div class="login-logo">
       <a href="#" width="40px">
         <img
@@ -32,7 +38,7 @@
           label-position="top"
           size="mini"
         >
-          <el-input prefix-icon="el-icon-lock"  v-model="formData.password" :show-password="true" />
+          <el-input prefix-icon="el-icon-lock"  v-model="formData.password" :show-password="true" @keydown.enter.native="login" />
         </el-form-item>
 
         <el-form-item
@@ -60,7 +66,6 @@
 </template>
 
 <script>
-
 export default {
   components: {
   },
@@ -78,11 +83,19 @@ export default {
         username: '',
         password: '',
         isRemember: false
-      }
+      },
+      isLoading: false
     };
+  },
+  created() {
+    const userInfo = JSON.parse(localStorage.getItem('USER'));
+    this.formData.username = userInfo.user;
+    this.formData.password = atob(userInfo.password);
+    this.formData.isRemember = userInfo.isRemember;
   },
   methods: {
     login() {
+      this.isLoading = true;
       this.$http
         .postRequest('/user/loginValidation', {
           password: this.formData.password,
@@ -96,6 +109,11 @@ export default {
               duration: 1000
             });
           } else {
+            if (this.formData.isRemember) {
+              localStorage.setItem('USER', JSON.stringify({ user: this.formData.username, password: btoa(this.formData.password), isRemember: this.formData.isRemember }));
+            } else {
+              localStorage.removeItem('USER');
+            }
             this.$message({
               message: '登录成功',
               type: 'success',
@@ -105,6 +123,7 @@ export default {
               }
             });
           }
+          this.isLoading = false;
         });
     }
   }

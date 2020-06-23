@@ -87,6 +87,7 @@ export default {
 
       // 本年周任务数量
       weeklyTaskNumThisYear: {},
+      xAxisOfTaskListOfThisYear: [],
       loadingOfTask: false,
       loadingOfProject: false,
       loadingOfProjectInCurrentMonth: false,
@@ -300,7 +301,9 @@ export default {
         console.log(res);
         const { data } = res;
         const taskListOfThisYear = weekTasksInThisYear(data);
-        console.log(taskListOfThisYear);
+        this.xAxisOfTaskListOfThisYear = new Array(taskListOfThisYear.length).map((item, index) => {
+          return `第${index + 1}周`;
+        });
         this.weeklyTaskNumThisYear = this.getOptions({
           titleText: '今年周任务数量',
           color: '#142334',

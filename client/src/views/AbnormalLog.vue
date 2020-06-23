@@ -1,6 +1,6 @@
 <template>
   <div class="logs">
-    <el-table
+    <!-- <el-table
       :data="tableData"
       style="width: 100%"
       @row-click="showLogs"
@@ -25,19 +25,19 @@
           align="center"
         >
         </el-table-column>
-    </el-table>
+    </el-table> -->
 
     <!-- 提示框 -->
-    <el-popover
+    <!-- <el-popover
       ref="tip"
       placement="top"
       width="100"
       trigger="hover"
       content="点击查看日志详情">
-    </el-popover>
+    </el-popover> -->
     <!-- <el-button v-popover:tip>okk</el-button> -->
     <!-- 日志详情 -->
-    <el-dialog :visible.sync="isShowLogs">
+    <!-- <el-dialog :visible.sync="isShowLogs">
       <el-date-picker
         v-model="value1"
         type="daterange"
@@ -55,81 +55,71 @@
           {{activity.content}}
         </el-timeline-item>
       </el-timeline>
-    </el-dialog>
-
+    </el-dialog> -->
+    <data-table
+      class="people-table"
+      ref="data-table"
+      :tableTitle="tableTitle"
+      :tableData="tableData"
+      :pageIndex="pageIndex"
+      :pageSize="pageSize"
+      :total="total"
+      :isShowSearch="true"
+      @search-content-changed="searchContent"
+      @page-index-change="pageIndexChange"
+    >
+    </data-table>
   </div>
 </template>
 
 <script>
+import DataTable from '../components/DataTable';
+// import { time, debounce, copy } from '../filters/index.js';
+// import { Loading } from 'element-ui';
 export default {
   name: 'AbnormalLog',
+  components: { DataTable },
   data() {
     return {
-      tableData: [{
-        name: 'admin',
-        timestemp: '2020-05-24 12:22:22',
-        log: '查看任务'
-      }],
-      isShowLogs: false,
-      activities: [{
-        content: '活动按期开始',
-        timestamp: '2018-04-15'
-      }, {
-        content: '通过审核',
-        timestamp: '2018-04-13'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }],
-      value1: ''
+      // table抬头
+      tableTitle: [
+        { label: '日志Id', prop: 'logId' },
+        { label: '日志内容', prop: 'content' },
+        { label: '创建时间', prop: 'createTime' },
+        { label: '操作者', prop: 'userName' },
+        { label: '被操作者', prop: 'state' }
+      ],
+
+      // table主体数据
+      tableData: [],
+      pageIndex: 1,
+      pageSize: 10,
+      total: 0,
+      sourceData: []
     };
   },
   created() {},
   mounted() {},
   methods: {
-    showLogs(row) {
-      console.log(row.name);
-      this.isShowLogs = true;
+    pageIndexChange(val) {
+      this.pageIndex = val;
+      console.log(val);
+
+      // 获取数据
+      this.getTableData(
+        this.pageIndex,
+        this.pageSize,
+        this.keyWords);
     },
-    selectLogs(value) {
-      console.log(value);
-      this.activities = [{
-        content: '活动按期结束',
-        timestamp: '2018-04-15'
-      }, {
-        content: '通过审核',
-        timestamp: '2018-04-13'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }];
+    searchContent(value) {
+      console.log(value)
+      if (value === '') {
+        this.tableData = this.sourceData;
+        return;
+      }
+      this.tableData = this.sourceData.filter && this.sourceData.filter((item) => {
+        return item.content.includes(value);
+      });
     }
   }
 };
