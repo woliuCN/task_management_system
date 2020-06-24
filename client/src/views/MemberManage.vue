@@ -76,10 +76,13 @@ export default {
       dialogInfo: [],
 
       // 选中的row索引
-      selectedRowIndex: ''
+      selectedRowIndex: '',
+
+      // 选择框的分组信息
+      selectGroup: []
     };
   },
-  created() {
+  async created() {
     // 对获取数据过程进行防抖处理
     this.getData = debounce(
       (url, data = {}) => {
@@ -97,6 +100,7 @@ export default {
         this.loading.close();
       }
     );
+    await this.getGroupInfo();
     this.initDialogInfo();
     this.initButtonList();
   },
@@ -201,14 +205,14 @@ export default {
     },
 
     // 初始化dialogInfo
-    initDialogInfo(str = '', typeOfUserId = 'input') {
+    async initDialogInfo(str = '', typeOfUserId = 'input') {
       this.dialogInfo = [
         {
           attrName: 'group',
           label: '所属分组',
           type: 'select',
-          options: ['预研'],
-          optionsName: { 0: '预研' },
+          options: this.selectGroup.map(item => item),
+          optionsName: this.selectGroup,
           value: '',
           rules: { required: true, message: '请选择项目', trigger: 'blur' }
         },
@@ -262,6 +266,23 @@ export default {
       //     rules: { required: true, message: '请选择身份', trigger: 'blur' }
       //   })
       // }
+    },
+
+    async getGroupInfo() {
+      const res = await this.$http.getRequest('/group/getGroupList/options');
+      console.log(res);
+      const { retCoude, data } = res;
+      if (retCoude === 200) {
+        data.map((item) => {
+          this.selectGroup[item.groupId] = item.groupName;
+        });
+      } else {
+        this.$message({
+          message: '获取分组信息失败',
+          type: 'error',
+          duration: 1000
+        });
+      }
     },
 
     // 新增人员
@@ -453,9 +474,9 @@ export default {
       } else {
         let data;
         if (this.titleName === '在职') {
-          data = [{ state: 1 }];
+          data = [{ state: 1 }, { deleteTime: null }];
         } else if (this.titleName === '离职') {
-          data = [{ state: 0 }];
+          data = [{ state: 0 }, { deleteTime: new Date().getTime() }];
         }
         url = '/user/updateState';
         params = { list: userInfo, data };

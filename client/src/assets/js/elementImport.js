@@ -30,7 +30,8 @@ import {
   MessageBox,
   Radio,
   RadioGroup,
-  Loading
+  Loading,
+  Avatar
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -63,7 +64,8 @@ const components = {
   Checkbox,
   DatePicker,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Avatar
 };
 
 for (const key in components) {

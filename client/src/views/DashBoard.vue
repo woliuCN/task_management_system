@@ -4,33 +4,46 @@
     <el-row class="chart" :gutter="20">
       <el-col
         :xs="24"
-        :sm="12"
+        :sm="18"
         class="account-item">
-        <chart v-loading="loadingOfProject" :options="proStatusInThePastYear" domName="one"></chart>
+        <chart v-loading="loadingOfUserInLastYear" :options="PerSituationInThePastYear" domName="two"></chart>
       </el-col>
       <el-col
         :xs="24"
-        :sm="12"
-        class="account-item">
-        <chart :options="PerSituationInThePastYear" domName="two"></chart>
-      </el-col>
-      <el-col
-        :xs="24"
-        :sm="12"
-        class="account-item">
-        <chart v-loading="loadingOfTask" :options="monMissionsNumOverThePastYear" domName="three"></chart>
-      </el-col>
-      <el-col
-        :xs="24"
-        :sm="12"
-        class="account-item">
-        <chart v-loading="loadingOfProjectInCurrentMonth" :options="weeklyTaskNumThisMon" domName="four"></chart>
+        :sm="6"
+        v-loading="loadingOfUserInLastYear"
+        class="account-item people">
+        <div class="box-card">
+          <div v-for="user in sourceData.users.data" :key="user.userId" class="text item">
+            <el-avatar icon="el-icon-s-custom" :style="getColor()"></el-avatar>
+            <p>{{user.userName}}</p>
+            <p>{{user.state | stateTrim }}</p>
+          </div>
+        </div>
       </el-col>
       <el-col
         :xs="24"
         :sm="24"
         class="account-item">
         <chart v-loading="loadingOfTasksInThisYear" :options="weeklyTaskNumThisYear" domName="four"></chart>
+      </el-col>
+      <el-col
+        :xs="24"
+        :sm="9"
+        class="account-item">
+        <chart v-loading="loadingOfProject" :options="proStatusInThePastYear" domName="one"></chart>
+      </el-col>
+      <el-col
+        :xs="24"
+        :sm="9"
+        class="account-item">
+        <chart v-loading="loadingOfTask" :options="monMissionsNumOverThePastYear" domName="three"></chart>
+      </el-col>
+      <el-col
+        :xs="24"
+        :sm="6"
+        class="account-item">
+        <chart v-loading="loadingOfProjectInCurrentMonth" :options="weeklyTaskNumThisMon" domName="four"></chart>
       </el-col>
     </el-row>
   </div>
@@ -39,11 +52,21 @@
 <script>
 import Chart from '../components/Chart.vue';
 import Cards from '../components/Cards.vue';
+// getOnJobOfMonthInlastYear
 import { filtrateDateFromTasks, filtrateDateFromProjects, filtrateDateFromTasksInCurrentMonth, weekTasksInThisYear, getCurrentWeekTaskNum } from '../utils/filtrateDateFromData.js';
 export default {
   components: {
     Chart,
     Cards
+  },
+  filters: {
+    stateTrim(value) {
+      const state = {
+        0: '离职',
+        1: '在职'
+      };
+      return state[value];
+    }
   },
   data() {
     return {
@@ -91,7 +114,8 @@ export default {
       loadingOfTask: false,
       loadingOfProject: false,
       loadingOfProjectInCurrentMonth: false,
-      loadingOfTasksInThisYear: false
+      loadingOfTasksInThisYear: false,
+      loadingOfUserInLastYear: false
     };
   },
   async created() {
@@ -121,38 +145,35 @@ export default {
       data: [0],
       type: 'line'
     });
-    await this.getTasks();
-    await this.getProjects();
+    try {
+      await this.getTasks();
+      await this.getProjects();
+      await this.getUser();
+      await this.initCardInfo();
+    } catch (error) {
+      this.$message({
+        message: '老铁，你这网络不行啊！等网络好了再来吧',
+        type: 'error',
+        duration: 5000
+      });
+    };
     this.getLastYearProjectsOfMonth();
     this.getLastYearTasksOfMonth();
     this.getWeekTasksOfCurrentMonth();
     this.getWeekTasksOfThisYear();
-    this.initCardInfo();
+    this.getUsersInlastYear();
   },
   methods: {
-    getOptions({ titleText, type = 'bar', color, data }) {
-      return {
-        title: {
-          show: true,
-          text: titleText,
-          textStyle: {
-            fontStyle: 'normal',
-            fontSize: 14
-          },
-          left: 'center',
-          bottom: -4
-        },
-        tooltip: {
-          // show: true,
-          // trigger: 'axis',
-          formatter: function(param) {
-            return `<div>${param.value}</div>`;
-          }
-        },
-        xAxis: {
+    getOptions(
+      {
+        name = '',
+        titleText,
+        type = 'bar',
+        color, data,
+        xAxis = {
           type: 'category'
         },
-        yAxis: {
+        yAxis = {
           splitLine: {
             show: false
           },
@@ -168,7 +189,34 @@ export default {
             }
           }
         },
+        graphic = {}
+      }
+    ) {
+      return {
+        title: {
+          show: true,
+          text: titleText,
+          textStyle: {
+            fontStyle: 'normal',
+            fontSize: 14
+          },
+          left: 'center'
+          // bottom: -10
+        },
+        legend: {
+          show: false
+        },
+        tooltip: {
+          show: true,
+          trigger: 'axis'
+          // formatter: function(param) {
+          //   return `<div>${param.value}</div>`;
+          // }
+        },
+        xAxis,
+        yAxis,
         series: [{
+          name: name,
           data: data,
           type: type,
           itemStyle: {
@@ -176,7 +224,8 @@ export default {
               color: color,
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
-          }
+          },
+          smooth: true
         }]
       };
     },
@@ -193,7 +242,6 @@ export default {
       const Task = resTask.data;
       const resProject = this.sourceData.projects;
       const project = resProject.data;
-      console.log(this.sourceData.tasks, this.sourceData.projects);
       this.cardList = [
         {
           num: await getCurrentWeekTaskNum(this.sourceData.tasks),
@@ -223,6 +271,8 @@ export default {
       this.loadingOfTask = true;
       this.loadingOfProjectInCurrentMonth = true;
       this.loadingOfTasksInThisYear = true;
+      this.loadingOfProject = true;
+      this.loadingOfUserInLastYear = true;
       const url = '/task/getTotalTask';
       this.sourceData.tasks = await this.$http.getRequest(url);
     },
@@ -234,16 +284,35 @@ export default {
       this.sourceData.projects = await this.$http.getRequest(url);
     },
 
+    // 获取人员数据
+    async getUser() {
+      this.loadingOfUserInLastYear = true;
+      const url = '/user/getTotalUser ';
+      this.sourceData.users = await this.$http.getRequest(url);
+    },
+
     // 获取过去一年任务情况
     getLastYearTasksOfMonth() {
       const res = this.sourceData.tasks;
       if (res.retCode === 200) {
         const { data } = res;
-        const taskListOfMonth = filtrateDateFromTasks(data);
+        const { taskListOfMonth, taskListOfMonthX } = filtrateDateFromTasks(data);
         this.monMissionsNumOverThePastYear = this.getOptions({
+          name: '任务数量',
           titleText: '过去一年的月任务数量',
           color: '#11659a',
-          data: taskListOfMonth
+          data: taskListOfMonth,
+          xAxis: {
+            type: 'category',
+            data: taskListOfMonthX,
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 3,
+              align: 'right'
+            }
+          }
         });
       } else {
         this.$message({
@@ -255,15 +324,26 @@ export default {
       this.loadingOfTask = false;
     },
 
-    async getLastYearProjectsOfMonth() {
+    getLastYearProjectsOfMonth() {
       const res = this.sourceData.projects;
       if (res.retCode === 200) {
         const { data } = res;
-        const projectListOfMonth = filtrateDateFromProjects(data);
+        const { projectListOfMonth, projectListOfMonthX } = filtrateDateFromProjects(data);
         this.proStatusInThePastYear = this.getOptions({
+          name: '项目数量',
           titleText: '过去一年项目情况',
           color: '#4e7ca1',
-          data: projectListOfMonth
+          data: projectListOfMonth,
+          xAxis: {
+            type: 'category',
+            data: projectListOfMonthX,
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              align: 'right'
+            }
+          }
         });
       } else {
         this.$message({
@@ -278,13 +358,26 @@ export default {
     getWeekTasksOfCurrentMonth() {
       const res = this.sourceData.tasks;
       if (res.retCode === 200) {
-        console.log(res);
         const { data } = res;
         const projectListOfCurrentMonth = filtrateDateFromTasksInCurrentMonth(data);
+        const projectListOfCurrentMonthX = (new Array(projectListOfCurrentMonth.length)).fill('').map((item, index) => {
+          return `第${index + 1}周`;
+        });
         this.weeklyTaskNumThisMon = this.getOptions({
+          name: '任务数量',
           titleText: '本月周任务数量',
           color: '#3170a7',
-          data: projectListOfCurrentMonth
+          data: projectListOfCurrentMonth,
+          xAxis: {
+            type: 'category',
+            data: projectListOfCurrentMonthX,
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              align: 'center'
+            }
+          }
         });
       } else {
         this.$message({
@@ -298,17 +391,70 @@ export default {
     getWeekTasksOfThisYear() {
       const res = this.sourceData.tasks;
       if (res.retCode === 200) {
-        console.log(res);
         const { data } = res;
         const taskListOfThisYear = weekTasksInThisYear(data);
-        this.xAxisOfTaskListOfThisYear = new Array(taskListOfThisYear.length).map((item, index) => {
+        this.xAxisOfTaskListOfThisYear = (new Array(taskListOfThisYear.length)).fill('').map((item, index) => {
           return `第${index + 1}周`;
         });
         this.weeklyTaskNumThisYear = this.getOptions({
+          name: '项目数量',
           titleText: '今年周任务数量',
           color: '#142334',
           data: taskListOfThisYear,
-          type: 'line'
+          type: 'line',
+          xAxis: {
+            type: 'category',
+            data: this.xAxisOfTaskListOfThisYear,
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              align: 'center'
+            }
+          },
+          graphic: [{
+            type: 'group',
+            left: '10%',
+            top: 'center',
+            children: [
+              {
+                type: 'rect',
+                z: 100,
+                left: 'center',
+                top: 'middle',
+                shape: {
+                  width: 190,
+                  height: 90
+                },
+                style: {
+                  fill: '#fff',
+                  stroke: '#555',
+                  lineWidth: 2,
+                  shadowBlur: 8,
+                  shadowOffsetX: 3,
+                  shadowOffsetY: 3,
+                  shadowColor: 'rgba(0,0,0,0.3)'
+                }
+              },
+              {
+                type: 'text',
+                z: 100,
+                left: 'center',
+                top: 'middle',
+                style: {
+                  fill: '#333',
+                  text: [
+                    '横轴表示温度，单位是°C',
+                    '纵轴表示高度，单位是km',
+                    '右上角有一个图片做的水印',
+                    '这个文本块可以放在图中各',
+                    '种位置'
+                  ].join('\n'),
+                  font: '14px Microsoft YaHei'
+                }
+              }
+            ]
+          }]
         });
       } else {
         this.$message({
@@ -318,6 +464,47 @@ export default {
         });
       }
       this.loadingOfTasksInThisYear = false;
+    },
+
+    // 获取过去一年人员变动情况
+    getUsersInlastYear() {
+      // const res = this.sourceData.users;
+      // if (res.retCode === 200) {
+      //   const { data } = res;
+      //   const { onJob, obJobX } = getOnJobOfMonthInlastYear(data);
+      //   console.log(onJob, obJobX)
+      //   this.PerSituationInThePastYear = this.getOptions({
+      //     name: '在职人数',
+      //     titleText: '过去一年人员情况',
+      //     color: '#4e7ca1',
+      //     data: onJob,
+      //     xAxis: {
+      //       type: 'category',
+      //       data: obJobX,
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         align: 'center'
+      //       }
+      //     }
+      //   });
+      // } else {
+      //   this.$message({
+      //     message: '获取人员数据失败',
+      //     type: 'error',
+      //     duration: 1000
+      //   });
+      // }
+      this.loadingOfUserInLastYear = false;
+    },
+
+    // 获取随机颜色
+    getColor() {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      return `color:rgb(${r}, ${g}, ${b})`;
     }
   }
 };
@@ -325,5 +512,32 @@ export default {
 <style lang="scss" scoped>
 .chart {
   padding-right: 20px;
+  .account-item {
+    margin: 20px 0;
+    .box-card {
+      text-align: center;
+      .item {
+        padding: 0 20px;
+        padding-bottom: 5px;;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  }
+  .people {
+    margin: 20px 0;
+    // box-shadow: 0 0 10px #777;
+    height: 200px;
+    overflow: auto;
+  }
+}
+
+/deep/.el-avatar {
+  background-color: #FFF!important;
+  box-shadow: 0 0 5px #bbb;
+}
+/deep/.card-item {
+  box-shadow: 0 0 10px #666;
 }
 </style>

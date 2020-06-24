@@ -101,13 +101,15 @@ const weekListInThisYear = () => {
 export const filtrateDateFromTasks = (data) => {
   const filterDateList = lastYearOfMonthList();
   const result = [];
+  const resultX = [];
   filterDateList.map((item) => {
     const fil = data.filter((dataItem) => {
       return dataItem.createTime >= item[0] && dataItem.createTime < item[1];
     });
+    resultX.push(`${new Date(item[0]).getFullYear()}-${new Date(item[0]).getMonth() + 1}`);
     result.push(fil.length);
   });
-  return result;
+  return { taskListOfMonth: result, taskListOfMonthX: resultX };
 };
 
 /**
@@ -118,13 +120,15 @@ export const filtrateDateFromTasks = (data) => {
 export const filtrateDateFromProjects = (data) => {
   const filterDateList = lastYearOfMonthList();
   const result = [];
+  const resultX = [];
   filterDateList.map((item) => {
     const fil = data.filter((dataItem) => {
       return dataItem.createTime >= item[0] && dataItem.createTime < item[1];
     });
+    resultX.push(`${new Date(item[0]).getFullYear()}-${new Date(item[0]).getMonth() + 1}`);
     result.push(fil.length);
   });
-  return result;
+  return { projectListOfMonth: result, projectListOfMonthX: resultX };
 };
 
 /**
@@ -165,10 +169,41 @@ export const weekTasksInThisYear = (data) => {
  * @returns Number
  */
 export const getCurrentWeekTaskNum = ({ data }) => {
-  console.log(data);
   const filterDateArr = currentWeek();
   const filterList = data.filter((dataItem) => {
     return dataItem.createTime >= filterDateArr[0] && dataItem.createTime < filterDateArr[1];
   });
   return filterList.length;
+};
+
+// 获取过去一年每月的在职人数
+export const getOnJobOfMonthInlastYear = (data) => {
+  const filterDateArr = lastYearOfMonthList();
+  const result = [];
+  const resultX = [];
+
+  // 获取过去一年第一个月之前的在职人数
+  const OnJobSumOfFirst = (data.filter((dataItem) => {
+    return dataItem.createTime < filterDateArr[0][0] && dataItem.state === 1;
+  })).length;
+  filterDateArr.reduce((onJob, month) => {
+    console.log(month);
+    // 本月新入职人数
+    const newOnJobSumInThisMonth = (data.filter((dataItem) => {
+      return (data.createTime >= month[0] && data.createTime < month[1]) && dataItem.state === 1;
+    })).length;
+    console.log('在职', newOnJobSumInThisMonth);
+
+    // 本月离职人数
+    const newDimissionSumInThisMonth = (data.filter((dataItem) => {
+      return (data.deleteTime >= month[0] && data.deleteTime < month[1]) && dataItem.state === 0;
+    })).length;
+    console.log('离职', newDimissionSumInThisMonth);
+    const onJobSumInThisMonth = onJob + newOnJobSumInThisMonth - newDimissionSumInThisMonth;
+    resultX.push(`${new Date(month[0]).getFullYear()}-${new Date(month[0]).getMonth() + 1}`);
+    result.push(onJobSumInThisMonth);
+    return onJobSumInThisMonth;
+  }, OnJobSumOfFirst);
+  console.log(result, resultX);
+  return { onJob: result, obJobX: resultX };
 };
