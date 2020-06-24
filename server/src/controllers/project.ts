@@ -5,6 +5,7 @@ import server from '../common/index';
 import { Project, tbName } from '../models/project';
 import { tbName as TaskTbName } from '../models/task';
 import { pagingQuery } from '../common/utils';
+import Log from '../controllers/log';
 const config = require('../config/index');
 const ISDELETE_FLAG = config.ISDELETE_FLAG;
 export default {
@@ -15,7 +16,8 @@ export default {
      * @param {any} params 传入的body数据
      * @return: 
     **/
-    async addProject(params: any, next: any) {
+    async addProject(params: any, ctx: any) {
+        let userName: string = ctx.session.userName;
         let project: Project = {} as Project;
         project = Object.assign(
             { ...params.project },
@@ -24,6 +26,8 @@ export default {
                 updateTime: new Date().getTime()
             }
         );
+        
+        await Log.addLog(`${userName}添加了项目${params.project.projectName}`, userName);
         return await server.db.Insert<Project>(project, tbName);
     },
 
@@ -32,7 +36,7 @@ export default {
      * @param request{object}: 可能有的参数(携带在url后面的或者用?xxx='xx'&的) 
      * @return:promise
     **/
-    async getTotalProject(request: any, next: any) {
+    async getTotalProject(request: any, ctx: any) {
         let field: string[] = [];
         let res: object = {};
         if (request.url.indexOf('options') > 0) {
@@ -58,17 +62,13 @@ export default {
      * @param request{object}: 可能有的参数(携带在url后面的或者用?xxx='xx'&的) 
      * @return:promise
     **/
-    async getPaginProject(request: any, next: any) {
+    async getPaginProject(request: any, ctx: any) {
         let field: string[] = [];
         let res: object = {};
         let { pageSize, pageIndex, keyWords } = request.query;
 
         //查询条件，其他约束
-        let { condition, constraint } = pagingQuery({ pageSize, pageIndex, keyWords, keyWordsFields: ["projectName", "remarks"], sortField: "projectId" })
-        // if (request.url.indexOf('options') > 0) {
-        //     field = ['projectId', 'projectName'];
-        //     constraint = '';
-        // }
+        let { condition, constraint } = pagingQuery({ pageSize, pageIndex, keyWords, keyWordsFields: ["projectName", "remarks"], sortField: "projectId" });
         await server.db.Find(['count(*) as totalCount'], tbName, condition).then(data => {
             res = {
                 totalCount: data[0].totalCount,
@@ -94,19 +94,20 @@ export default {
     * @param request{object}: 可能有的参数(携带在url后面的或者用?xxx='xx'&的) 
     * @return:promise
     **/
-    async getTaskByProject(request: any, next: any) {
+    async getTaskByProject(request: any, ctx: any) {
         let field: string[] = [];
         let res: object = {};
         let project: any;
-        let { pageSize, pageIndex, keyWords, projectId, projectName } = request.query;
+        let { startTime, endTime, pageSize, pageIndex, keyWords, projectId, projectName } = request.query;
         project = {
             projectId: parseInt(projectId),
             projectName
         }
         project = JSON.stringify(project);
         let keyWordsFields: Array<string> = ["belonger", "project", "content"];
+        
         //查询条件，其他约束
-        let { condition, constraint } = pagingQuery({ pageSize, pageIndex, keyWords, keyWordsFields, sortField: "taskId", associated: [{ project }] });
+        let { condition, constraint } = pagingQuery({ startTime, endTime, pageSize, pageIndex, keyWords, keyWordsFields, sortField: "taskId", associated: [{ project }] });
         await server.db.Find(['count(*) as totalCount'], TaskTbName, condition).then(data => {
             res = {
                 totalCount: data[0].totalCount,
@@ -132,7 +133,8 @@ export default {
      * @param {any} params 传入的整个project对象
      * @return: promise
      */
-    async updateProject(params: any, next: any) {
+    async updateProject(params: any, ctx: any) {
+        let userName: string = ctx.session.userName;
         let project: Project = params.project;
         let condition: object = { projectId: project.projectId }; //更新条件 
         delete project.projectId;
@@ -145,6 +147,8 @@ export default {
 
             }
         );
+
+        await Log.addLog(`${userName}修改了项目${params.project.projectName}的信息`, userName);
         return await server.db.Update(project, tbName, condition);
     },
 
@@ -153,9 +157,16 @@ export default {
      * @param {object} params 传入的{list:{xxx},data:[{state:1}]}
      * @return: promise
     **/
-    async updateState(params: any, next: any) {
+    async updateState(params: any, ctx: any) {
+        const stateMap = { 0: '运行', 1: '挂起', 2: '完成' };
+        let userName: string = ctx.session.userName;
         let projectList: Array<Project> = params.list;
-        let dataArray: Array<object> = params.data;
+        let dataArray: Array<any> = params.data;
+        let projectNameStr: string = projectList.map((project: any) => {
+            return project.projectName
+        }).join(',');
+
+        await Log.addLog(`${userName}修改了项目${projectNameStr}状态为${stateMap[dataArray[0].state]}`, userName);
         return await server.db.BatchUpdate<Project>(tbName, projectList, dataArray);
     },
 
@@ -167,9 +178,15 @@ export default {
      * @param {object} params 传入的{list:{xxx}}
      * @return: promise
     **/
-    async deleteProject(params: { list: Array<Project> }, next: any) {
+    async deleteProject(params: { list: Array<Project> }, ctx: any) {
+        let userName: string = ctx.session.userName;
         let projectList: Array<Project> = params.list;
         let dataArray: Array<object> = [{ isDelete: 1 }];
+        let projectNameStr: string = projectList.map((project: any) => {
+            return project.userName
+        }).join(',');
+
+        await Log.addLog(`${userName}删除了项目${projectNameStr}`, userName);
         return await server.db.BatchUpdate(tbName, projectList, dataArray);
     },
 

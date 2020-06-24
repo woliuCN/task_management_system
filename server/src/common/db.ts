@@ -50,7 +50,6 @@ export default {
             }
             sqlStr += constrain;
         }
-        console.log(sqlStr);
         // return await this.sql(sqlStr);
         await this.sql(sqlStr).then((data: any) => {
             res = data;
@@ -90,6 +89,45 @@ export default {
             })
         return res;
     },
+
+    /**
+    * @description: 批量插入操作
+    * @param {T} arr 插入的数据结构 
+    * @param {T} tbName  表名
+    * @return: {retCode:xx,message:'xx'}
+    * @example: 
+    */
+    async BatchInsert<T>(arr: Array<T>, tbName: string) {
+        let keys: string = "";
+        let valuesArr: Array<string> = [];
+        let res: object = {};
+        for (let key in arr[0]) {
+            keys += "," + key;
+        }
+        arr.map(item => {
+            let values: string = "";
+            for (let key in item) {
+                values += typeof (item[key]) === 'string' ? ",'" + item[key] + "'" : "," + item[key];
+            }
+            valuesArr.push(`(${values.slice(1)})`);
+        })
+        let sqlStr = `insert into ${tbName} (${keys.slice(1)}) values ${valuesArr.join(',')}`;
+        await this.sql(sqlStr)
+            .then((data: object) => {
+                res = {
+                    retCode: 200,
+                    message: '插入成功'
+                }
+            }).catch((err: Error) => {
+                res = {
+                    retCode: -1,
+                    message: '插入失败'
+                }
+            })
+        console.log(res);
+        return res;
+    },
+
 
     /**
      * @description: 更新操作
@@ -158,7 +196,6 @@ export default {
         })
         dataObjStr = dataArray.join(',');
         let sqlStr = `update ${tbName} set ${dataObjStr} , updateTime = ${new Date().getTime()} where ${field} in (${conditionStr})`;
-        console.log(sqlStr);
         await this.sql(sqlStr).then((data: any) => {
             res = {
                 retCode: 200,
@@ -172,7 +209,30 @@ export default {
         });
         return res;
     },
-
+    /**
+    * @description: 删除操作
+    * @param {string} tbName 表名
+    * @param {string} where 条件
+    * @return: true/false
+    * @example delete('User',"id=21") 删除单条记录
+    *          delete('Users',"id in(1,2,3)") 删除多条记录
+    */
+    async Delete(tbName: string, conditions: string) {
+        let sqlStr = `delete from  ${tbName} where ${conditions}`;
+        let res: object = {};
+        await this.sql(sqlStr).then((data: any) => {
+            res = {
+                retCode: 200,
+                message: '删除成功'
+            }
+        }).catch((err: Error) => {
+            res = {
+                retCode: -1,
+                message: '删除失败'
+            }
+        });
+        return res;
+    },
 
     /**
      * @description: 执行sql语句

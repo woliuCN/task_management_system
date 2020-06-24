@@ -1,4 +1,3 @@
-
 // 格式化id函数的第一个参数的类型的类型别名
 type objInfo = {
     userId: string,
@@ -63,7 +62,7 @@ const pagingQuery: pagingQueryFn = (args: any) => {
     endTime = parseInt(endTime) || null;
     pageSize = parseInt(pageSize) || 10;
     pageIndex = parseInt(pageIndex) || 1;
-    keyWordsFields = keyWordsFields.map((field: string) => {
+    keyWordsFields = keyWordsFields && keyWordsFields.map((field: string) => {
         return `${field} like "%${keyWords}%"`;
     })
     if (keys.includes('startTime') && keys.includes('endTime')) {
@@ -87,7 +86,7 @@ const pagingQuery: pagingQueryFn = (args: any) => {
             }
             return newItem
         })
-        condition += ` ${keyWords ? 'and' : ''} ${associated.join("and")} `;
+        condition += ` ${keyWords || startTime >= 0 ? 'and' : ''} ${associated.join("and")} `;
     }
     constraint = ` order by ${sortField} desc limit ${(pageIndex - 1) * pageSize},${pageSize} `;
     return {
@@ -109,7 +108,7 @@ const sessionMiddleWare = async (ctx: any, next: any) => {
     // 对/favicon.ico网站图标请求忽略
     if (ctx.path === '/favicon.ico') return;
     if (!ctx.session.Logining && (ctx.path.indexOf('loginValidation') === -1)) { //如果登录状态不存在或者未false,则对应未登录
-        ctx.session.Logining = false; //默认设置为false,验证账号后再确认是否为true
+        ctx.session.Logining = null; //默认设置为false,验证账号后再确认是否为true
         ctx.body = {
             retCode: 1001,
             message: '登录状态失效,请重新登录'
@@ -120,9 +119,8 @@ const sessionMiddleWare = async (ctx: any, next: any) => {
 }
 
 
-
 export {
     formatId,
     sessionMiddleWare,
-    pagingQuery
+    pagingQuery,
 }

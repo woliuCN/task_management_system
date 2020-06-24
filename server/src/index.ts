@@ -1,41 +1,23 @@
-import koa from 'koa';
-import koaBody from 'koa-body';
-import router from './routes/routes';
-import cors from 'koa2-cors';
-import koa_session from 'koa-session';
-import { sessionMiddleWare } from './common/utils';
-const config = require('./config');
+const cluster = require('cluster');
+//主进程
+if (cluster.isMaster) {
+    // const cpuNum = require('os').cpus().length;
+    for (let i = 0; i < 4; i++) {
+        cluster.fork()
+    }
 
-const app = new koa();
-const session = koa_session(config.SESSION_CONFIG, app)
-app.keys = config.SESSION_SIGNED_KET;
+    //创建完子进程后输出信息
+    cluster.on('online', (worker: any) => {
+        console.log('create worker-' + worker.process.pid);
+    });
 
-//配置跨域资源共享
-app.use(cors({
-    origin: function (ctx) {
-        if (ctx.header.origin) {
-            return ctx.header.origin;
-        }
-        return '*';
-    },
-    maxAge: 5, //指定本次预检请求的有效期，单位为秒。
-    credentials: true, //是否允许发送Cookie
-    allowMethods: ['GET', 'POST', 'DELETE', 'PUT'], //配置请求方式
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept'], //配置支持的头部信息
-}));
-
-//body信息获取中间件
-app.use(koaBody({
-    multipart: true, /*支持form-data形式文件/键值对传值*/
+    //任何子进程被关闭都触发这个事件，监听用来实时重启
+    cluster.on('exit', (worker: any, code: any, signal: any) => {
+        console.log('worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+        // cluster.fork();
+    });
 }
-));
-
-//session 登录状态验证
-// app.use(session);
-// app.use(sessionMiddleWare);
-
-app.use(router);
-
-app.listen(config.SERVER_PORT, () => {
-    console.log("server running at", config.SERVER_PORT);
-})
+//子进程的操作....
+else {
+    require('./app');
+}

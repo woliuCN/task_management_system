@@ -3,7 +3,7 @@
  */
 
 //表名
-const tbName = "Logs";
+const tbName = "logs";
 
 
 interface Log {
