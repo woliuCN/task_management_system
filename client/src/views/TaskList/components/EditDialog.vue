@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="新增任务"
+      :title="title"
       top="5vh"
       :visible.sync="isShow"
       :close-on-click-modal=false
@@ -105,8 +105,8 @@
 
         <el-form-item label="任务性质" :label-width="formLabelWidth">
           <el-radio-group v-model="taskInfo.taskType">
-            <el-radio :label="0">新增</el-radio>
-            <el-radio :label="1">计划</el-radio>
+            <el-radio :label="0">计划</el-radio>
+            <el-radio :label="1">新增</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -127,7 +127,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" @click="submitTask">增 加</el-button>
+        <el-button type="primary" @click="submitTask">确 认</el-button>
       </div>
 
     </el-dialog>
@@ -139,7 +139,7 @@ export default {
   props: {
     // 控制本弹窗是否显示
     isShow: Boolean,
-
+    title: String,
     // 项目列表
     projectList: {
       type: Array,

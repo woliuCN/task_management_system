@@ -38,7 +38,7 @@ const store = {
         icon: 'fa-gears',
         children: [
           {
-            title: '异常日志',
+            title: '系统日志',
             index: '/log'
           }
         ]

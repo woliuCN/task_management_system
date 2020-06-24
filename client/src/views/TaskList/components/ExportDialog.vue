@@ -1,14 +1,24 @@
 <template>
   <div>
     <el-dialog
-      title="导出/导出文件"
+      title="导入/导出文件"
       width="30%"
       :visible.sync="isDialogShow"
       @close="$emit('close-dialog')"
     >
-      <div v-if="openWith === 'import'" class="center">
-        <el-button class="button-item" @click="downloadTemplate">下载导入模板</el-button>
-        <el-button class="button-item" @click="uploadFile">导入文件</el-button>
+      <div v-if="openWith === 'import'" class="upload">
+        <el-upload
+          :action="uploadUrl"
+          :multiple="false"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          :file-list="fileList"
+          with-credentials
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button  size="small" type="success" @click="downloadTemplate">下载模板</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传xlsx文件</div>
+        </el-upload>
       </div>
       <div v-else-if="openWith === 'export'" class="center">
         <el-date-picker
@@ -55,11 +65,22 @@
 export default {
   props: {
     isShow: Boolean,
-    openWith: String
+    openWith: String,
+    projectList: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    userList: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
   },
   data() {
     return {
-      host: 'http://192.168.31.84:30/api',
       isDialogShow: false,
       timeInterval: [],
       timePickerOptions: {
@@ -152,24 +173,48 @@ export default {
             }
           }
         ]
-      }
+      },
+      fileList: [],
+      uploadUrl: '' // 上传的地址
     };
   },
   methods: {
     // 下载导入模板
     downloadTemplate() {
-      const url = `${this.host}/task/templateDownload`;
-      window.open(`${url}`);
+      const url = this.$http.adornUrl('/task/templateDownload');
+      window.open(url);
+    },
+
+    // 导入成功回调
+    handleSuccess(res) {
+      if (res.retCode === -1) {
+        this.handleError();
+      } else {
+        this.$message({
+          message: '导入成功',
+          type: 'success',
+          duration: 1000
+        });
+      }
+    },
+
+    // 导入失败回调
+    handleError() {
+      this.fileList = [];
+      this.$message({
+        message: '导入失败',
+        type: 'error',
+        duration: 1000
+      });
     },
 
     uploadFile() {
       //
     },
-
     // 生成周报
     weekreport() {
-      const url = `${this.host}/task/weeklyDownload`;
-      window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
+      const url = this.$http.adornUrl('/task/weeklyDownload', { startTime: this.startTime, endTime: this.endTime });
+      window.open(url);
     },
 
     timePickerChanged() {
@@ -182,14 +227,14 @@ export default {
 
     // 生成个人绩效
     personalPerformance() {
-      const url = `${this.host}/task/personalPerformanceDownload`;
-      window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
+      const url = this.$http.adornUrl('/task/personalPerformanceDownload', { startTime: this.startTime, endTime: this.endTime });
+      window.open(url);
     },
 
     // 生成月绩效
     monthPerformance() {
-      const url = `${this.host}/task/monthPerformanceDownload`;
-      window.open(`${url}?startTime=${this.startTime}&endTime=${this.endTime}`);
+      const url = this.$http.adornUrl('/task/monthPerformanceDownload', { startTime: this.startTime, endTime: this.endTime });
+      window.open(url);
     }
   },
   created() {
@@ -206,6 +251,7 @@ export default {
     this.startTime = start.getTime();
     this.endTime = end.getTime();
     this.timeInterval = [this.startTime, this.endTime];
+    this.uploadUrl = this.$http.adornUrl('/task/uploadFile');
   },
   watch: {
     isShow(val) {
@@ -224,5 +270,9 @@ export default {
     .button-item {
       margin: 10px;
     }
+  }
+  .upload{
+    display: flex;
+    align-items: flex-start;
   }
 </style>

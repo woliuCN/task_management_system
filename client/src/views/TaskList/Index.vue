@@ -41,6 +41,7 @@
     </data-table>
 
     <edit-dialog
+      :title="title"
       :isShow="isEditDialogShow"
       :userList="userList"
       :projectList="projectList"
@@ -56,6 +57,21 @@
       @close-dialog="isExportDialogShow = false"
     >
     </export-dialog>
+    <el-dialog
+      title="任务是否完成"
+      :visible.sync="dialogVisible"
+      width="25%"
+      >
+      <el-form :model="completeForm" label-width="50px">
+        <el-form-item label="工时">
+          <el-input v-model="completeForm.workingHours"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleComfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,6 +88,7 @@ export default {
   },
   data() {
     return {
+      title: '新增任务',
       // table抬头
       tableTitle: [
         { label: '开始时间', prop: '_startTime', fixed: true, width: 150 },
@@ -100,6 +117,8 @@ export default {
 
       // 是否弹出导入/导出窗口
       isExportDialogShow: false,
+
+      dialogVisible: false,
 
       // 导入/导出窗口显示的内容，可选项为'import' - 导入， 'export' - 导出
       openWith: '',
@@ -204,6 +223,10 @@ export default {
         workingHours: 8,
         startTime: new Date().getTime(),
         endTime: new Date().getTime()
+      },
+      completeForm: {
+        workingHours: 0,
+        taskList: []
       }
     };
   },
@@ -342,6 +365,7 @@ export default {
 
     // 新增任务
     addTask() {
+      this.title = '新增任务';
       this.isEditDialogShow = true;
     },
 
@@ -401,11 +425,25 @@ export default {
     accomplishTask(rows) {
       // 获取需要修改状态的任务列表
       const taskList = this.copy(rows);
+      if (rows.length !== 1) {
+        this.$message({
+          message: '一次只能编辑一条任务！',
+          type: 'warning',
+          duration: 1000
+        });
+        return -1;
+      }
+      this.dialogVisible = true;
+      this.completeForm.workingHours = taskList[0].workingHours;
+      this.completeForm.taskList = taskList;
+    },
+
+    //  完成任务确认触发事件
+    handleComfirm() {
       let message;
       let type;
-
       // 发送请求
-      this.$http.postRequest('/task/updateState', { list: taskList, data: [{ state: 2 }] })
+      this.$http.postRequest('/task/updateState', { list: this.completeForm.taskList, data: [{ state: 2 }, { workingHours: this.completeForm.workingHours }] })
         .then(res => {
           if (res.retCode === 200) {
             message = '修改成功！';
@@ -434,6 +472,7 @@ export default {
             type,
             duration: 1000
           });
+          this.dialogVisible = false;
         });
     },
 
@@ -448,6 +487,7 @@ export default {
         return -1;
       } else {
         this.taskInfo = this.copy(rows[0]);
+        this.title = '编辑任务';
         this.isEditDialogShow = true;
       }
     },

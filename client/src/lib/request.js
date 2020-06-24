@@ -31,10 +31,17 @@ http.interceptors.response.use(response => {
     Vue.prototype.$message({
       type: 'error',
       message: '登录信息失效,请重新登录!',
-      duration: 1500,
+      duration: 1000,
       onClose: () => {
         router.push({ name: 'Login' });
       }
+    });
+    return;
+  } else if (response.data && response.data.retCode === 1002) { // 1002 没权限
+    Vue.prototype.$message({
+      type: 'warning',
+      message: response.data.message,
+      duration: 1000
     });
     return;
   }
@@ -42,6 +49,23 @@ http.interceptors.response.use(response => {
 }, error => {
   return Promise.reject(error);
 });
+
+/**
+ * get请求拼接路径
+ * @param actionName action方法名称
+ * @param params get请求的参数
+ */
+http.adornUrl = (actionName, params = {}) => {
+  let paramStr = '';
+  if (Object.keys(params).length > 0) {
+    paramStr = '?';
+    for (const key in params) {
+      paramStr += `${key}=${params[key]}&`;
+    }
+  }
+  paramStr = paramStr.slice(0, paramStr.length - 1);
+  return `${process.env.VUE_APP_BASE_URL}${actionName}${paramStr}`;
+};
 
 /**
  * get 请求封装
