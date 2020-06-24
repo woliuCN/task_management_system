@@ -31,7 +31,8 @@ import {
   Radio,
   RadioGroup,
   Loading,
-  Upload
+  Upload,
+  Avatar
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -65,7 +66,8 @@ const components = {
   DatePicker,
   Radio,
   RadioGroup,
-  Upload
+  Upload,
+  Avatar
 };
 
 for (const key in components) {

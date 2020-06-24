@@ -12,6 +12,7 @@
       >
         <i
           class="el-icon-tickets card-icon"
+          :class="card.icon"
           :icon="card.icon"
         ></i>
         <div class="card-info">

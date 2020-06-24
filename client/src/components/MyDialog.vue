@@ -12,6 +12,7 @@
         :key="index"
         :label="item.label"
         :rules="item.rules"
+        v-show="item.type !== 'hidden'"
       >
         <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择">
           <el-option
@@ -33,7 +34,7 @@
         </el-date-picker>
         <el-input v-else-if="item.type === 'password'" placeholder="请输入密码" v-model="item.value" show-password></el-input>
         <el-input v-else-if="item.type === 'text'" v-model="item.value" :disabled="true"></el-input>
-        <el-input v-else v-model="item.value" placeholder="请输入内容"></el-input>
+        <el-input v-else v-model="item.value" placeholder="请输入内容" :disabled="item.type === 'hidden'" ></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
