@@ -91,13 +91,14 @@ export default {
       title: '新增任务',
       // table抬头
       tableTitle: [
-        { label: '开始时间', prop: '_startTime', fixed: true, width: 150 },
+        { label: '开始时间', prop: '_startTime', width: 150 },
         { label: '任务编号', prop: 'taskId', width: 150 },
         { label: '任务名', prop: 'content', width: 250 },
         { label: '所属项目', prop: 'project.projectName', width: 200 },
         { label: '负责人', prop: 'belonger.userName' },
         { label: '状态', prop: '_state' },
-        { label: '工时', prop: 'workingHours' }
+        { label: '工时', prop: 'workingHours' },
+        { label: '结束时间', prop: '_endTime' }
       ],
 
       // table主体数据
@@ -281,6 +282,7 @@ export default {
           const tableData = res.data;
           tableData.map(tableItem => {
             tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
+            tableItem._endTime = this.time(tableItem.endTime, 'YYYY-MM-DD');
             tableItem._state = status[tableItem.state];
             tableItem.project = JSON.parse(tableItem.project);
             tableItem.belonger = JSON.parse(tableItem.belonger);
@@ -375,6 +377,7 @@ export default {
       taskInfo = JSON.parse(taskInfo);
       delete taskInfo._state;
       delete taskInfo._startTime;
+      delete taskInfo._endTime;
 
       // 通过taskInfo是否存在taskID来判断是进行新增操作还是更新操作
       let url;
@@ -509,6 +512,7 @@ export default {
           taskList.map(taskItem => {
             delete taskItem._state;
             delete taskItem._startTime;
+            delete taskItem._endTime;
           });
           let message;
           let type;

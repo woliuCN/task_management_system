@@ -20,20 +20,7 @@
 export default {
   data() {
     return {
-      options: [
-        {
-          path: '/',
-          title: '首页'
-        },
-        {
-          path: '/task',
-          title: '任务'
-        },
-        {
-          path: '/project',
-          title: '项目'
-        }
-      ],
+      options: [],
       search: '',
       isShow: false
     };

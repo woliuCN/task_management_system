@@ -6,7 +6,7 @@
     <div class="main-container">
       <nav-bar />
       <tags />
-      <main class="app-main">
+      <main class="app-main" :class="nowPath==='/dashboard'?'dashboard':''">
         <transition name="fade-transform" mode="out-in">
           <keep-alive :include="cachedViews">
             <router-view :key="nowPath" />
@@ -76,6 +76,9 @@ export default {
     .app-main {
       padding: 15px;
       box-sizing: border-box;
+      &.dashboard {
+        background: #eee;
+      }
     }
   }
 }

@@ -16,7 +16,8 @@ interface User {
     createTime: number, //创建时间
     updateTime: number, //修改时间
     remarks: string, //备注
-    isDelete: number, //该用户账号是否被删除 1是 0否
+    deleteTime: number, //删除时间
+    isDelete: number //该用户账号是否被删除 1是 0否
 }
 
 export { tbName, User }

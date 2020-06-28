@@ -57,7 +57,7 @@ export default {
 
       // table抬头数据
       tableTitle: [
-        { label: '项目名', prop: 'projectName', width: 300, fixed: true },
+        { label: '项目名', prop: 'projectName', width: 300 },
         { label: '项目编号', prop: 'projectId', width: 150 },
         { label: '开始时间', prop: '_createTime', width: 200 },
         { label: '状态', prop: '_state', width: 200 },

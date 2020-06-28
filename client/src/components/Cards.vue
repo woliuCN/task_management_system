@@ -7,13 +7,12 @@
       :lg="6"
     >
       <div
-        class="card-item default-bgcolor"
-        :style="{backgroundColor: bgColors[index]}"
+        class="card-item"
       >
         <i
-          class="el-icon-tickets card-icon"
+          class="fa card-icon"
           :class="card.icon"
-          :icon="card.icon"
+          :style="{color:card.color}"
         ></i>
         <div class="card-info">
           <p class="card-info-num">{{card.num}}</p>
@@ -46,29 +45,24 @@ export default {
 .card-item {
   display: flex;
   align-items: center;
-  height: 140px;
-  margin: 20px;
+  justify-content: space-around;
+  background: #fff;
+  height: 100px;
   .card-icon {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-right: 20px;
-    font-size: 60px;
+    font-size: 38px;
   }
   .card-info {
     display: flex;
     flex-direction: column;
-    width: 200px;
-    color: #FFF;
+    color: #333;
     .card-info-num {
       font-weight: bold;
-      font-size: 34px;
+      font-size: 22px;
     }
     .card-info-name {
       font-size: 14px;
     }
   }
 }
-.default-bgcolor {
-  background-color: #22a2c3;
-}
+
 </style>

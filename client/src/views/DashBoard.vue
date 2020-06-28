@@ -4,13 +4,13 @@
     <el-row class="chart" :gutter="20">
       <el-col
         :xs="24"
-        :sm="18"
+        :sm="16"
         class="account-item">
         <chart v-loading="loadingOfUserInLastYear" :options="PerSituationInThePastYear" domName="two"></chart>
       </el-col>
       <el-col
         :xs="24"
-        :sm="6"
+        :sm="8"
         v-loading="loadingOfUserInLastYear"
         class="account-item people">
         <div class="box-card">
@@ -121,30 +121,27 @@ export default {
       onJobPeople: []
     };
   },
+
+  // 初始化 echarts 配置
   async created() {
     this.proStatusInThePastYear = this.getOptions({
       titleText: '过去一年项目情况',
-      color: '#4e7ca1',
       data: [0]
     });
     this.PerSituationInThePastYear = this.getOptions({
       titleText: '过去一年人员情况',
-      color: '#346c9c',
       data: [0]
     });
     this.monMissionsNumOverThePastYear = this.getOptions({
       titleText: '过去一年的月任务数量',
-      color: '#11659a',
       data: [0]
     });
     this.weeklyTaskNumThisMon = this.getOptions({
       titleText: '本月周任务数量',
-      color: '#3170a7',
       data: [0]
     });
     this.weeklyTaskNumThisYear = this.getOptions({
       titleText: '今年周任务数量',
-      color: '#142334',
       data: [0],
       type: 'line'
     });
@@ -247,22 +244,29 @@ export default {
         {
           num: await getCurrentWeekTaskNum(this.sourceData.tasks),
           name: '本周任务',
-          icon: '**'
+          icon: 'fa-calendar-minus-o',
+          color: '#c72d1a'
+
         },
         {
           num: Task.length,
           name: '历史任务',
-          icon: '**'
+          icon: 'fa-tasks',
+          color: '#c47d0c'
+
         },
         {
           num: project.length,
           name: '项目',
-          icon: '**'
+          icon: 'fa-align-center',
+          color: '#0484c7'
+
         },
         {
           num: onJob.length,
           name: '在职人数',
-          icon: '**'
+          icon: 'fa-user-plus',
+          color: '#089e9c'
         }
       ];
     },
@@ -336,7 +340,7 @@ export default {
         this.proStatusInThePastYear = this.getOptions({
           name: '项目数量',
           titleText: '过去一年项目情况',
-          color: '#4e7ca1',
+          color: 'rgb(243, 229, 106)',
           data: projectListOfMonth,
           xAxis: {
             type: 'category',
@@ -403,7 +407,7 @@ export default {
         this.weeklyTaskNumThisYear = this.getOptions({
           name: '项目数量',
           titleText: '今年周任务数量',
-          color: '#142334',
+          color: '#c72d1a',
           data: taskListOfThisYear,
           type: 'line',
           xAxis: {
@@ -479,7 +483,7 @@ export default {
         this.PerSituationInThePastYear = this.getOptions({
           name: '在职人数',
           titleText: '过去一年人员情况',
-          color: '#4e7ca1',
+          color: '#089e9c',
           data: onJob,
           xAxis: {
             type: 'category',
@@ -514,26 +518,32 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart {
-  padding-right: 20px;
+   margin: 15px 0 0 0 !important;
   .account-item {
-    margin: 20px 0;
+    margin-bottom: 15px;
+    background: #fff;
     .box-card {
-      text-align: center;
       .item {
         padding: 0 20px;
-        padding-bottom: 5px;;
+        height: 50px;
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
+        >p {
+          flex: 0 0 100px;
+          text-align: center;
+        }
       }
     }
   }
   .people {
-    margin: 20px 0;
-    // box-shadow: 0 0 10px #777;
-    height: 200px;
+    padding: 10px 0;
+    height: 260px;
     overflow: auto;
   }
+}
+/deep/.el-row{
+  margin-top: 15px;
 }
 
 /deep/.el-avatar {
@@ -541,6 +551,6 @@ export default {
   box-shadow: 0 0 5px #bbb;
 }
 /deep/.card-item {
-  box-shadow: 0 0 10px #666;
+  border-radius: 4px;
 }
 </style>

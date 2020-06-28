@@ -139,7 +139,7 @@ export default {
             return task.belonger.userName
         }).join(','); //批量更新的人群
         let sufferIdStr: string = taskList.map((task: any) => {
-            return task.userId
+            return task.taskId
         }).join(',');
         await Log.addLog(`${userName}修改了${sufferNameStr}的任务的状态为${stateMap[dataArray[0].state]},任务ID是${sufferIdStr}`, userName, sufferNameStr);
         return await server.db.BatchUpdate<Task>(tbName, taskList, dataArray);

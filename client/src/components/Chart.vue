@@ -143,8 +143,10 @@ export default {
 
 <style>
 #echarts, .not-data {
+  border-radius: 4px;
   width: 100%;
-  height: 200px;
+  height: 240px;
+  padding: 10px 0;
 }
 .not-data {
   text-align: center;
