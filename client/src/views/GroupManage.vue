@@ -115,7 +115,6 @@ export default {
     async getGroupInfo(params) {
       this.isLoading = true;
       const res = await this.$http.getRequest('/group/getGroupList', params);
-      console.log(res);
       const { data, totalCount, retCoude } = res;
       if (retCoude === 200) {
         this.sourceData = data.map((item) => {
@@ -212,13 +211,10 @@ export default {
         type: 'warning',
         duration: 1000
       });
-      console.log('删除分组', rows);
     },
     success(value) {
-      console.log(value);
     },
     close() {
-      console.log('close');
     }
   }
 };

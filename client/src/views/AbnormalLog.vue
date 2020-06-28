@@ -108,7 +108,6 @@ export default {
   methods: {
     pageIndexChange(val) {
       this.pageIndex = val;
-      console.log(val);
 
       // 获取数据
       this.getLogsInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex, keyWords: this.keyWords });

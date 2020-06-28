@@ -270,7 +270,6 @@ export default {
 
     async getGroupInfo() {
       const res = await this.$http.getRequest('/group/getGroupList/options');
-      console.log(res);
       const { retCoude, data } = res;
       if (retCoude === 200) {
         data.map((item) => {
@@ -402,7 +401,6 @@ export default {
 
     pageIndexChange(val) {
       this.pageIndex = val;
-      console.log(val);
 
       // 获取数据
       this.getTableData(
@@ -520,7 +518,6 @@ export default {
 
     // 取消
     close() {
-      console.log('取消');
       // this.visible = false;
     }
   }

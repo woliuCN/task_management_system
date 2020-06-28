@@ -109,7 +109,6 @@ export default {
               duration: 1000
             });
           } else {
-            console.log(res);
             if (this.formData.isRemember) {
               localStorage.setItem('USER', JSON.stringify({ user: this.formData.username, password: btoa(this.formData.password), isRemember: this.formData.isRemember }));
             } else {
