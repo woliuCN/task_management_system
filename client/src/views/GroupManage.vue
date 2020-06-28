@@ -170,33 +170,48 @@ export default {
 
     // 新增分组
     addGroup() {
-      this.initDialogInfo();
-      this.titleName = '添加分组';
-      this.visible = true;
-      console.log('添加分组');
+      this.$message({
+        message: '目前无需多加分组，功能待扩展',
+        type: 'warning',
+        duration: 1000
+      });
+      // this.initDialogInfo();
+      // this.titleName = '添加分组';
+      // this.visible = true;
+      // console.log('添加分组');
     },
 
     // 修改分组
     modificationGroup(rows) {
-      if (rows.length !== 1) {
-        this.$message({
-          message: '一次只能编辑一条分组信息！',
-          type: 'warning',
-          duration: 1000
-        });
-        return -1;
-      } else {
-        this.titleName = '修改分组';
-        const rowInfo = copy(rows[0]);
-        this.visible = true;
-        this.dialogInfo.forEach((item, index) => {
-          this.dialogInfo[index].value = rowInfo[item.attrName];
-        });
-      }
+      this.$message({
+        message: '目前无需修改分组，功能待扩展',
+        type: 'warning',
+        duration: 1000
+      });
+      // if (rows.length !== 1) {
+      //   this.$message({
+      //     message: '一次只能编辑一条分组信息！',
+      //     type: 'warning',
+      //     duration: 1000
+      //   });
+      //   return -1;
+      // } else {
+      //   this.titleName = '修改分组';
+      //   const rowInfo = copy(rows[0]);
+      //   this.visible = true;
+      //   this.dialogInfo.forEach((item, index) => {
+      //     this.dialogInfo[index].value = rowInfo[item.attrName];
+      //   });
+      // }
     },
 
     // 删除分组
     deleteGroup(rows) {
+      this.$message({
+        message: '目前无需删除分组，功能待扩展',
+        type: 'warning',
+        duration: 1000
+      });
       console.log('删除分组', rows);
     },
     success(value) {

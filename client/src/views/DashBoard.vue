@@ -14,7 +14,7 @@
         v-loading="loadingOfUserInLastYear"
         class="account-item people">
         <div class="box-card">
-          <div v-for="user in sourceData.users.data" :key="user.userId" class="text item">
+          <div v-for="user in onJobPeople" :key="user.userId" class="text item">
             <el-avatar icon="el-icon-s-custom" :style="getColor()"></el-avatar>
             <p>{{user.userName}}</p>
             <p>{{user.state | stateTrim }}</p>
@@ -53,7 +53,7 @@
 import Chart from '../components/Chart.vue';
 import Cards from '../components/Cards.vue';
 // getOnJobOfMonthInlastYear
-import { filtrateDateFromTasks, filtrateDateFromProjects, filtrateDateFromTasksInCurrentMonth, weekTasksInThisYear, getCurrentWeekTaskNum } from '../utils/filtrateDateFromData.js';
+import { filtrateDateFromTasks, filtrateDateFromProjects, filtrateDateFromTasksInCurrentMonth, weekTasksInThisYear, getCurrentWeekTaskNum, getOnJobOfMonthInlastYear } from '../utils/filtrateDateFromData.js';
 export default {
   components: {
     Chart,
@@ -115,7 +115,10 @@ export default {
       loadingOfProject: false,
       loadingOfProjectInCurrentMonth: false,
       loadingOfTasksInThisYear: false,
-      loadingOfUserInLastYear: false
+      loadingOfUserInLastYear: false,
+
+      // onJobPeople
+      onJobPeople: []
     };
   },
   async created() {
@@ -233,9 +236,7 @@ export default {
     // 初始化卡片
     async initCardInfo() {
       // 在职员工
-      const url = '/user/getTotalUser';
-      const resUser = await this.$http.getRequest(url);
-      const onJob = resUser.data.filter((item) => {
+      const onJob = this.sourceData.users.data.filter((item) => {
         return item.state === 1;
       });
       const resTask = this.sourceData.tasks;
@@ -289,6 +290,9 @@ export default {
       this.loadingOfUserInLastYear = true;
       const url = '/user/getTotalUser ';
       this.sourceData.users = await this.$http.getRequest(url);
+      this.onJobPeople = this.sourceData.users.data.filter(user => {
+        return user.state === 1;
+      });
     },
 
     // 获取过去一年任务情况
@@ -468,34 +472,33 @@ export default {
 
     // 获取过去一年人员变动情况
     getUsersInlastYear() {
-      // const res = this.sourceData.users;
-      // if (res.retCode === 200) {
-      //   const { data } = res;
-      //   const { onJob, obJobX } = getOnJobOfMonthInlastYear(data);
-      //   console.log(onJob, obJobX)
-      //   this.PerSituationInThePastYear = this.getOptions({
-      //     name: '在职人数',
-      //     titleText: '过去一年人员情况',
-      //     color: '#4e7ca1',
-      //     data: onJob,
-      //     xAxis: {
-      //       type: 'category',
-      //       data: obJobX,
-      //       axisTick: {
-      //         show: false
-      //       },
-      //       axisLabel: {
-      //         align: 'center'
-      //       }
-      //     }
-      //   });
-      // } else {
-      //   this.$message({
-      //     message: '获取人员数据失败',
-      //     type: 'error',
-      //     duration: 1000
-      //   });
-      // }
+      const res = this.sourceData.users;
+      if (res.retCode === 200) {
+        const { data } = res;
+        const { onJob, obJobX } = getOnJobOfMonthInlastYear(data);
+        this.PerSituationInThePastYear = this.getOptions({
+          name: '在职人数',
+          titleText: '过去一年人员情况',
+          color: '#4e7ca1',
+          data: onJob,
+          xAxis: {
+            type: 'category',
+            data: obJobX,
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              align: 'center'
+            }
+          }
+        });
+      } else {
+        this.$message({
+          message: '获取人员数据失败',
+          type: 'error',
+          duration: 1000
+        });
+      }
       this.loadingOfUserInLastYear = false;
     },
 

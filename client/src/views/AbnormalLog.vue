@@ -97,7 +97,8 @@ export default {
       pageSize: 10,
       total: 0,
       sourceData: [],
-      isLoading: false
+      isLoading: false,
+      keyWords: ''
     };
   },
   created() {
@@ -110,22 +111,22 @@ export default {
       console.log(val);
 
       // 获取数据
-      this.getLogsInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
+      this.getLogsInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex, keyWords: this.keyWords });
     },
     searchContent(value) {
+      this.keyWords = value;
       if (value === '') {
-        this.tableData = this.sourceData;
+        this.pageSize = 10;
+        this.pageIndex = 1;
+        this.getLogsInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
         return;
       }
-      this.tableData = this.sourceData.filter && this.sourceData.filter((item) => {
-        return item.content.includes(value);
-      });
+      this.getLogsInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex, keyWords: value });
     },
-    async getLogsInfo(params) {
+    async getLogsInfo(params = {}) {
       this.isLoading = true;
       const res = await this.$http.getRequest('/log/getLogList', params);
       this.total = res.totalCount;
-      console.log(res);
       const { data, retCode } = res;
       if (retCode === 200) {
         this.tableData = data.map((item) => {

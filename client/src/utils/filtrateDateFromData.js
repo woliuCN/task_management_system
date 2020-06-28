@@ -187,23 +187,19 @@ export const getOnJobOfMonthInlastYear = (data) => {
     return dataItem.createTime < filterDateArr[0][0] && dataItem.state === 1;
   })).length;
   filterDateArr.reduce((onJob, month) => {
-    console.log(month);
     // 本月新入职人数
     const newOnJobSumInThisMonth = (data.filter((dataItem) => {
-      return (data.createTime >= month[0] && data.createTime < month[1]) && dataItem.state === 1;
+      return (dataItem.createTime >= month[0] && dataItem.createTime < month[1]);
     })).length;
-    console.log('在职', newOnJobSumInThisMonth);
 
     // 本月离职人数
     const newDimissionSumInThisMonth = (data.filter((dataItem) => {
-      return (data.deleteTime >= month[0] && data.deleteTime < month[1]) && dataItem.state === 0;
+      return (dataItem.deleteTime >= month[0] && dataItem.deleteTime < month[1]) && dataItem.state === 0;
     })).length;
-    console.log('离职', newDimissionSumInThisMonth);
     const onJobSumInThisMonth = onJob + newOnJobSumInThisMonth - newDimissionSumInThisMonth;
     resultX.push(`${new Date(month[0]).getFullYear()}-${new Date(month[0]).getMonth() + 1}`);
     result.push(onJobSumInThisMonth);
     return onJobSumInThisMonth;
   }, OnJobSumOfFirst);
-  console.log(result, resultX);
   return { onJob: result, obJobX: resultX };
 };
