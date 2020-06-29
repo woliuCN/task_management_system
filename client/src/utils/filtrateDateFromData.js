@@ -41,7 +41,12 @@ const currentWeek = () => {
   if (weekDay === 1) {
     firstWeekDay = new Date(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} 00:00:00`).getTime();
   } else {
-    firstWeekDay = new Date(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate() - weekDay + 1} 00:00:00`).getTime();
+    // 规定一周是从周1到周日
+    if (weekDay === 0) {
+      firstWeekDay = new Date(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate() - 6} 00:00:00`).getTime();
+    } else {
+      firstWeekDay = new Date(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate() - weekDay - 1} 00:00:00`).getTime();
+    }
   };
   const lastWeekDay = firstWeekDay + 7 * 24 * 60 * 60 * 1000;
   return [firstWeekDay, lastWeekDay];
@@ -170,6 +175,7 @@ export const weekTasksInThisYear = (data) => {
  */
 export const getCurrentWeekTaskNum = ({ data }) => {
   const filterDateArr = currentWeek();
+  console.log(filterDateArr)
   const filterList = data.filter((dataItem) => {
     return dataItem.createTime >= filterDateArr[0] && dataItem.createTime < filterDateArr[1];
   });

@@ -233,8 +233,13 @@ export default {
           text-align: center;
           flex: 2;
         }
-        th:nth-child(1),th:nth-child(2) {
-          flex: 1;
+        th:nth-child(1) {
+          flex: none;
+          width: 50px;
+        }
+        th:nth-child(2) {
+          flex: none;
+          width: 200px;
         }
       }
     }
@@ -251,8 +256,13 @@ export default {
           text-align: center;
           flex: 2;
         }
-        td:nth-child(1),td:nth-child(2) {
-          flex: 1;
+        td:nth-child(1) {
+          flex: none;
+          width: 50px;
+        }
+        td:nth-child(2) {
+          flex: none;
+          width: 200px;
         }
       }
     }

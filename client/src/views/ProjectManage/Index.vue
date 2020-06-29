@@ -1,6 +1,7 @@
 <template>
   <div>
     <data-table
+      class="people-table"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
       :tableData="tableData"
@@ -447,5 +448,52 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/deep/.people-table{
+  min-width: 980px;
+    .el-table__header {
+    display: flex;
+    width: 100%!important;
+    .has-gutter {
+      width: 100%;
+      tr {
+        display: flex;
+        th {
+          text-align: center;
+          flex: 2;
+        }
+        th:nth-child(1) {
+          flex: none;
+          width: 50px;
+        }
+        th:nth-child(2) {
+          flex: none;
+          width: 250px;
+        }
+      }
+    }
+  }
 
+  .el-table__body {
+    display: flex;
+    width: 100%!important;
+    tbody {
+      width: 100%;
+      .el-table__row {
+        display: flex;
+        td {
+          text-align: center;
+          flex: 2;
+        }
+        td:nth-child(1) {
+          flex: none;
+          width: 50px;
+        }
+        td:nth-child(2) {
+          flex: none;
+          width: 250px;
+        }
+      }
+    }
+  }
+}
 </style>

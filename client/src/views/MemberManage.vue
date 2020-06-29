@@ -538,7 +538,8 @@ export default {
           flex: 2;
         }
         th:nth-child(1),th:nth-child(2) {
-          flex: 1;
+          flex: none;
+          width: 50px;
         }
       }
     }
@@ -556,7 +557,8 @@ export default {
           flex: 2;
         }
         td:nth-child(1),td:nth-child(2) {
-          flex: 1;
+          flex: none;
+          width: 50px;
         }
       }
     }
