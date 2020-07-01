@@ -43,6 +43,7 @@
       </el-table-column>
       <el-table-column
         v-for="title in tableTitle"
+        align="center"
         :key="title.id"
         :prop="title.prop"
         :label="title.label"

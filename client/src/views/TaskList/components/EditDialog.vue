@@ -7,23 +7,25 @@
       :close-on-click-modal=false
       :show-close=false
       @open="initTaskInfo"
+      @closed="onDialogClosed"
     >
       <!-- 新增任务表单 -->
       <el-form
-        :model="taskInfo"
         ref="taskInfo"
+        :model="taskInfo"
         :hide-required-asterisk=true
+        :rules="taskInfoRules"
       >
         <el-form-item
           label="任务内容"
           prop="content"
           :label-width="formLabelWidth"
-          :rules="[ { required: true, message: '内容不能为空'} ]"
         >
           <el-input
             v-model="taskInfo.content"
             autocomplete="off"
             class="width-90"
+            placeholder="请填写任务内容"
           >
           </el-input>
         </el-form-item>
@@ -32,13 +34,13 @@
           label="选择项目"
           prop="project"
           :label-width="formLabelWidth"
-          :rules="[ { required: true, message: '项目信息不能为空'} ]"
         >
           <el-select
-            v-model="taskInfo.project.projectId"
+            v-model="taskInfo.projectId"
             filterable
             placeholder="请选择任务所属项目"
             class="width-90"
+            ref="project"
             @change="formatProject"
           >
             <el-option
@@ -55,13 +57,14 @@
           label="选择负责人"
           prop="belonger"
           :label-width="formLabelWidth"
-          :rules="[ { required: true, message: '负责人信息不能为空'} ]"
         >
           <el-select
-            v-model="taskInfo.belonger.userId"
+            v-model="taskInfo.belongerId"
             filterable
             placeholder="请选择任务负责人"
             class="width-90"
+            ref="belonger"
+            :disabled="isEdit"
             @change="formatBelonger"
           >
             <el-option
@@ -74,7 +77,11 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="计划时间" :label-width="formLabelWidth">
+        <el-form-item
+          label="计划时间"
+          prop="timeInterval"
+          :label-width="formLabelWidth"
+        >
           <div class="block">
             <el-date-picker
               v-model="timeInterval"
@@ -86,42 +93,37 @@
               end-placeholder="结束日期"
               class="width-90"
               value-format="timestamp"
+              ref="timeInterval"
               :default-value="new Date()"
-              :picker-options="pickerOptions"
+              :editable="false"
+              :picker-options="timePickerOptions"
               @change="timePickerChanged"
             >
             </el-date-picker>
           </div>
         </el-form-item>
 
-        <el-form-item label="任务状态" :label-width="formLabelWidth">
+        <el-form-item
+          v-if="isEdit === false"
+          label="任务状态"
+          :label-width="formLabelWidth"
+        >
           <el-radio-group v-model="taskInfo.state">
-            <el-radio :label="0">未启动</el-radio>
-            <el-radio :label="1">运行中</el-radio>
-            <el-radio :label="2">完成</el-radio>
-            <el-radio :label="3">挂起</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item label="任务性质" :label-width="formLabelWidth">
-          <el-radio-group v-model="taskInfo.taskType">
-            <el-radio :label="0">计划</el-radio>
-            <el-radio :label="1">新增</el-radio>
+            <el-radio :label="0">运行中</el-radio>
+            <el-radio :label="1">完成</el-radio>
+            <el-radio :label="2">挂起</el-radio>
           </el-radio-group>
         </el-form-item>
 
         <el-form-item
-          label="工时"
+          v-if="isEdit === false"
+          label="任务性质"
           :label-width="formLabelWidth"
-          prop="workingHours"
-          :rules="[ { required: true, message: '工时不能为空'} ]"
         >
-          <el-input
-            v-model="taskInfo.workingHours"
-            autocomplete="off"
-            class="width-25"
-          >
-          </el-input>
+          <el-radio-group v-model="taskInfo.taskType">
+            <el-radio :label="0">计划</el-radio>
+            <el-radio :label="1">新增</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
 
@@ -135,6 +137,7 @@
 </template>
 
 <script>
+import { initTimePicker } from '../../../utils/timePickerConfig.js';
 export default {
   props: {
     // 控制本弹窗是否显示
@@ -156,10 +159,47 @@ export default {
       }
     },
 
+    isEdit: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+
     // 表单内容
     taskInfo: Object
   },
   data() {
+    const that = this;
+    const validateString = function(rule, value, callback) {
+      value = value ? value.toString().trim() : '';
+      if (!value) {
+        return callback(new Error('内容不能为空'));
+      }
+      callback();
+    };
+    const validateProject = function(rule, value, callback) {
+      const projectId = that.$refs.project.value;
+      if (projectId === undefined || /\d+/.test(projectId) === false) {
+        return callback(new Error('项目信息不能为空'));
+      }
+      callback();
+    };
+    const validateBelonger = function(rule, value, callback) {
+      const belongerId = that.$refs.belonger.value;
+      if (belongerId === undefined || /\d+/.test(belongerId) === false) {
+        return callback(new Error('负责人信息不能为空'));
+      }
+      callback();
+    };
+    const validateTimeInterval = function(rule, value, callback) {
+      const timeInterval = that.timeInterval;
+      // const [startTime, endTime] = timeInterval;
+      if (!timeInterval || timeInterval.length < 2) {
+        return callback(new Error('计划时间不能为空'));
+      }
+      callback();
+    };
     return {
       // 格式化表单宽度
       formLabelWidth: '120px',
@@ -167,53 +207,19 @@ export default {
       // 任务开始/结束时间戳
       timeInterval: [],
 
-      // timepicker配置
-      pickerOptions: {
-        firstDayOfWeek: 1,
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '本周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 通过今天的时间减去本周已过天数，得出本周周一的日期
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-              // 今天的时间加上6天可得到本周最后一天的日期
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '本月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 获取本月1号的时间戳
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-              // 获取当前月份
-              const month = end.getMonth();
-
-              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-              end.setMonth(month + 1);
-
-              // 将日期设置为0, 再通过getDate()就可以获取本月天数
-              end.setDate(0);
-
-              // 获取本月最后一天的时间戳
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-              picker.$emit('pick', [start, end]);
-            }
-          }
+      // 表单校验规则
+      taskInfoRules: {
+        content: [
+          { validator: validateString, trigger: 'blur', message: '任务内容不能为空' }
+        ],
+        project: [
+          { validator: validateProject, trigger: 'change', message: '项目信息不能为空' }
+        ],
+        belonger: [
+          { validator: validateBelonger, trigger: 'change', message: '负责人信息不能为空' }
+        ],
+        timeInterval: [
+          { validator: validateTimeInterval, trigger: 'blur', message: '计划时间不能为空' }
         ]
       }
     };
@@ -255,18 +261,33 @@ export default {
     formatBelonger(userId) {
       this.userList.find((user) => {
         if (user.userId === userId) {
-          this.taskInfo.belonger.userName = user.userName;
+          this.taskInfo.belongerName = user.userName;
         }
       });
     },
 
     // 当选择任务所属项目时，需要找到对应id的项目名并赋值到project
-    formatProject(projectId) {
+    formatProject(projectId, key) {
       this.projectList.find((project) => {
         if (project.projectId === projectId) {
-          this.taskInfo.project.projectName = project.projectName;
+          this.taskInfo.projectName = project.projectName;
         }
       });
+    },
+
+    // 当弹窗完全关闭时回调
+    onDialogClosed() {
+      this.$emit('close-edit-mode');
+    }
+  },
+  computed: {
+    // 初始化时间选择器
+    timePickerOptions() {
+      const onPick = () => {};
+      return initTimePicker(
+        ['today', 'week', 'month'],
+        { firstDayOfWeek: 1, onPick }
+      );
     }
   }
 };

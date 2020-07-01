@@ -32,7 +32,7 @@
           class="date-picker"
           :picker-options="timePickerOptions"
           :editable="false"
-          :clearable="true"
+          :clearable="false"
           @change="timePickerChanged"
         >
         </el-date-picker>
@@ -51,7 +51,7 @@
           class="date-picker"
           :picker-options="timePickerOptions"
           :editable="false"
-          :clearable="true"
+          :clearable="false"
           @change="timePickerChanged"
         >
         </el-date-picker>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import { initTimePicker } from '../../../utils/timePickerConfig';
+import { REQUEST_URL } from '../../../common/config.js';
 export default {
   props: {
     isShow: Boolean,
@@ -83,105 +85,21 @@ export default {
     return {
       isDialogShow: false,
       timeInterval: [],
-      timePickerOptions: {
-        firstDayOfWeek: 1,
-        shortcuts: [
-          {
-            text: '本周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 通过今天的时间减去本周已过天数，得出本周周一的日期
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-              // 今天的时间加上6天可得到本周最后一天的日期
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '上周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 通过今天的时间减去本周已过天数，得出本周周一的日期
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
-
-              // 今天的时间加上6天可得到本周最后一天的日期
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '本月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 获取本月1号的时间戳
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-              // 获取当前月份
-              const month = end.getMonth();
-
-              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-              end.setMonth(month + 1);
-
-              // 将日期设置为0, 再通过getDate()就可以获取本月天数
-              end.setDate(0);
-
-              // 获取本月最后一天的时间戳
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '上月',
-            onClick(picker) {
-              const start = new Date();
-              const lastMonth = start.getMonth() === 0 ? 11 : start.getMonth() - 1;
-              start.setMonth(lastMonth);
-
-              // 获取本月1号的时间戳
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-              const end = new Date(start);
-
-              // 获取当前月份
-              const month = end.getMonth();
-
-              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-              end.setMonth(month + 1);
-
-              // 将日期设置为0, 再通过getDate()就可以获取本月天数
-              end.setDate(0);
-
-              // 获取本月最后一天的时间戳
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          }
-        ]
-      },
       fileList: [],
       uploadUrl: '' // 上传的地址
     };
   },
   methods: {
+    dealDisabledDate(time) {
+      // 一天的毫秒数 = 8.64e7  判断时在return处可进行加减
+      const curDate = (new Date()).getTime();
+      const day = 30 * 24 * 3600 * 1000;
+      const dateRegion = curDate - day;
+      return time.getTime() > Date.now() || time.getTime() < dateRegion;
+    },
     // 下载导入模板
     downloadTemplate() {
-      const url = this.$http.adornUrl('/task/templateDownload');
+      const url = this.$http.adornUrl(REQUEST_URL.TASK_TEMPLATEDOWNLOAD);
       window.open(url);
     },
 
@@ -213,7 +131,10 @@ export default {
     },
     // 生成周报
     weekreport() {
-      const url = this.$http.adornUrl('/task/weeklyDownload', { startTime: this.startTime, endTime: this.endTime });
+      const url = this.$http.adornUrl(
+        REQUEST_URL.TASK_WEEKLYDOWNLOAD,
+        { startTime: this.startTime, endTime: this.endTime }
+      );
       window.open(url);
     },
 
@@ -227,19 +148,34 @@ export default {
 
     // 生成个人绩效
     personalPerformance() {
-      const url = this.$http.adornUrl('/task/personalPerformanceDownload', { startTime: this.startTime, endTime: this.endTime });
+      const url = this.$http.adornUrl(
+        REQUEST_URL.TASK_PERSONALPERFORMANCEDOWNLOAD,
+        { startTime: this.startTime, endTime: this.endTime }
+      );
       window.open(url);
     },
 
     // 生成月绩效
     monthPerformance() {
-      const url = this.$http.adornUrl('/task/monthPerformanceDownload', { startTime: this.startTime, endTime: this.endTime });
+      const url = this.$http.adornUrl(
+        REQUEST_URL.TASK_TEMPLATEDOWNLOAD,
+        { startTime: this.startTime, endTime: this.endTime }
+      );
       window.open(url);
+    }
+  },
+  computed: {
+    timePickerOptions() {
+      return initTimePicker(
+        ['today', 'week', 'lastWeek', 'month', 'lastMonth', 'all'],
+        { firstDayOfWeek: 1 }
+      );
     }
   },
   created() {
     const end = new Date();
     const start = new Date();
+
     // 通过今天的时间减去本周已过天数，得出本周周一的日期
     start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
 
@@ -251,6 +187,7 @@ export default {
     this.startTime = start.getTime();
     this.endTime = end.getTime();
     this.timeInterval = [this.startTime, this.endTime];
+
     this.uploadUrl = this.$http.adornUrl('/task/uploadFile');
   },
   watch: {

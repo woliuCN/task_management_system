@@ -45,15 +45,26 @@
         </template>
       </data-table>
     </el-dialog>
+    <accomplish-dialog
+      :isShow="isAccomplishDialogShow"
+      :taskInfo="taskInfo"
+      @close-dialog="isAccomplishDialogShow = false"
+      @change-workinghours="changeWorkingHours"
+    >
+    </accomplish-dialog>
   </div>
 </template>
 
 <script>
 import DataTable from '../../../components/DataTable';
-import { time, copy } from '../../../filters/index.js';
+import AccomplishDialog from './AccomplishDialog';
+import { time, copy } from '../../../utils/api.js';
+import { initTimePicker } from '../../../utils/timePickerConfig';
+import { REQUEST_URL, STATUS, STATUS_CH } from '../../../common/config.js';
 export default {
   components: {
-    DataTable
+    DataTable,
+    AccomplishDialog
   },
   props: {
     // 目标项目信息，用于索引该项目的子任务
@@ -64,112 +75,13 @@ export default {
   },
   data() {
     return {
-      tableTitle: [
-        { label: '开始时间', prop: '_startTime', fixed: true, width: 150 },
-        { label: '任务编号', prop: 'taskId', width: 200 },
-        { label: '任务名', prop: 'content', width: 250 },
-        { label: '负责人', prop: 'belonger.userName', width: 150 },
-        { label: '状态', prop: '_state' },
-        { label: '工时', prop: 'workingHours' }
-      ],
+      // 完成任务弹窗项目数据
+      isAccomplishDialogShow: false,
+      taskInfo: {},
+
       tableData: [],
-      buttonList: [
-        {
-          text: '完成',
-          event: 'accomplish-task',
-          limit: 1
-        },
-        {
-          text: '挂起',
-          event: 'pend-task',
-          limit: 1
-        },
-        {
-          text: '运行',
-          event: 'run-task',
-          limit: 1
-        },
-        {
-          text: '删除',
-          event: 'delete-task',
-          limit: 1
-        }
-      ],
 
       // 时间选择器相关配置
-      timePickerOptions: {
-        firstDayOfWeek: 1,
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const start = new Date();
-              const end = new Date();
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '本周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 通过今天的时间减去本周已过天数，得出本周周一的日期
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
-
-              // 今天的时间加上6天可得到本周最后一天的日期
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '上周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 通过今天的时间减去本周已过天数，得出本周周一的日期
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() + 6));
-
-              // 今天的时间加上6天可得到本周最后一天的日期
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '本月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              // 获取本月1号的时间戳
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDate() - 1));
-
-              // 获取当前月份
-              const month = end.getMonth();
-
-              // 生成实际的月份: 由于curMonth会比实际月份小1, 故需加1
-              end.setMonth(month + 1);
-
-              // 将日期设置为0, 再通过getDate()就可以获取本月天数
-              end.setDate(0);
-
-              // 获取本月最后一天的时间戳
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * (end.getDate() - 1));
-
-              start.setHours(0, 0, 0, 0);
-              end.setHours(23, 59, 59, 999);
-              picker.$emit('pick', [start, end]);
-            }
-          }
-        ]
-      },
       timeInterval: [],
 
       // 索引条件
@@ -196,8 +108,11 @@ export default {
     // 深拷贝
     copy,
 
-    // 获取子任务数据
-    showDetail(project, index = {}) {
+    /**
+     * 获取子任务数据
+     * @param method{String}: 默认为KEEP，若为REFRESH，则重制请求参数
+     */
+    showDetail(project, method = 'KEEP') {
       const { projectName, projectId } = project;
 
       // 如果没有检索数据，直接退出
@@ -205,37 +120,34 @@ export default {
         this.tableData = [];
         return -1;
       }
+
+      // 将索引条件初始化
+      if (method === 'REFRESH') {
+        this.pageIndex = 0;
+        this.pageSize = 8;
+        this.keyWords = '';
+        this.startTime = 0;
+        this.endTime = undefined;
+      }
+
       this.$nextTick(_ => {
         this.loading = this.$loading(this.loadingOptions);
       });
 
-      // 初始化索引条件
-      let { pageIndex, pageSize, keyWords, startTime, endTime } = index;
-      pageIndex = pageIndex || 0;
-      pageSize = pageSize || this.pageSize;
-      keyWords = keyWords || '';
-      startTime = startTime || 0;
+      const { pageIndex, pageSize, keyWords, startTime, endTime } = this;
       const query = { projectId, projectName, pageIndex, pageSize, keyWords, startTime, endTime };
-
       // 发送请求获取项目的子任务
-      this.$http.getRequest('/project/getTaskByProject', query)
+      const url = REQUEST_URL.PROJECT_GETTASKBYPROJECT;
+      this.$http.getRequest(url, query)
         .then(res => {
           this.tableData = res.data;
           this.total = res.totalCount;
           this.pageIndex = pageIndex;
-          const status = {
-            0: '未启动',
-            1: '进行中',
-            2: '完成',
-            3: '挂起'
-          };
 
           // 格式化获取到的数据类型
           this.tableData.map(tableItem => {
             tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
-            tableItem._state = status[tableItem.state];
-            tableItem.project = JSON.parse(tableItem.project);
-            tableItem.belonger = JSON.parse(tableItem.belonger);
+            tableItem._state = STATUS_CH[tableItem.state];
           });
         })
         .finally(() => {
@@ -246,63 +158,53 @@ export default {
     // 更新页码并获取数据
     pageIndexChange(val) {
       this.pageIndex = val;
-      const pageIndex = this.pageIndex;
-      const pageSize = this.pageSize;
-      const keyWords = this.keyWords;
-      const startTime = this.startTime;
-      const endTime = this.endTime;
 
       // 获取数据
-      this.showDetail(
-        this.project,
-        { pageIndex, pageSize, keyWords, startTime, endTime }
-      );
+      this.showDetail(this.project);
     },
 
     // 搜索内容变更并获取新数据
     searchContentChanged(searchContent) {
       this.keyWords = searchContent;
       this.pageIndex = 0;
-      const pageIndex = this.pageIndex;
-      const pageSize = this.pageSize;
-      const keyWords = this.keyWords;
-      const startTime = this.startTime;
-      const endTime = this.endTime;
 
       // 获取数据
-      this.showDetail(
-        this.project,
-        { pageIndex, pageSize, keyWords, startTime, endTime }
-      );
+      this.showDetail(this.project);
     },
 
     // 将任务状态更新为“完成”
     accomplishTask(rows) {
+      // 获取需要修改状态的任务列表
       const taskList = this.copy(rows);
-      this.changeTaskState(taskList, 2);
+      if (rows.length !== 1) {
+        this.$message({
+          message: '一次只能完成一条任务！',
+          type: 'warning',
+          duration: 1000
+        });
+        return -1;
+      }
+      this.isAccomplishDialogShow = true;
+      this.taskInfo = taskList[0];
     },
 
     // 将任务状态更新为“挂起”
     pendTask(rows) {
       const taskList = this.copy(rows);
-      this.changeTaskState(taskList, 3);
+      this.changeTaskState(taskList, STATUS.PEND);
     },
 
     // 将任务状态更新为“运行中”
     runTask(rows) {
       const taskList = this.copy(rows);
-      this.changeTaskState(taskList, 1);
+      this.changeTaskState(taskList, STATUS.RUNNING);
     },
 
     // 发送请求更新任务状态
     changeTaskState(taskList, state) {
-      this.$http.postRequest('/task/updateState', { list: taskList, data: [{ state }] })
+      const url = REQUEST_URL.TASK_UPDATESTATE;
+      this.$http.postRequest(url, { list: taskList, data: [{ state }] })
         .then(res => {
-          const pageIndex = this.pageIndex;
-          const pageSize = this.pageSize;
-          const keyWords = this.keyWords;
-          const startTime = this.startTime;
-          const endTime = this.endTime;
           if (res.retCode === 200) {
             this.$message({
               message: '修改成功！',
@@ -311,10 +213,7 @@ export default {
             });
 
             // 更新完成之后刷新页面数据
-            this.showDetail(
-              this.project,
-              { pageIndex, pageSize, keyWords, startTime, endTime }
-            );
+            this.showDetail(this.project);
           } else {
             this.$message({
               message: `修改失败!错误原因:${res.message}`,
@@ -346,7 +245,8 @@ export default {
           let message;
           let type;
           // 发送删除请求
-          this.$http.postRequest('/task/deleteTask', { list: taskList })
+          const url = REQUEST_URL.TASK_DELETETASK;
+          this.$http.postRequest(url, { list: taskList })
             .then(res => {
               if (res.retCode === -1) {
                 message = `删除失败,错误代码:${res.message}`;
@@ -356,7 +256,7 @@ export default {
                 type = 'success';
 
                 // 删除数据成功后刷新数据列表
-                this.showDetail(this.targetProject);
+                this.showDetail(this.targetProject, 'REFRESH');
               }
             })
             .catch(err => {
@@ -382,17 +282,8 @@ export default {
       [this.startTime, this.endTime] = this.timeInterval;
       this.pageIndex = 0;
 
-      const pageIndex = this.pageIndex;
-      const pageSize = this.pageSize;
-      const keyWords = this.keyWords;
-      const startTime = this.startTime;
-      const endTime = this.endTime;
-
       // 获取数据
-      this.showDetail(
-        this.project,
-        { pageIndex, pageSize, keyWords, startTime, endTime }
-      );
+      this.showDetail(this.project);
     },
 
     // 关闭弹窗
@@ -400,6 +291,88 @@ export default {
       this.$emit('close-dialog');
       this.tableData = [];
       this.loading.close();
+    },
+
+    //  完成任务确认触发事件
+    changeWorkingHours(completeForm) {
+      let message;
+      let type;
+
+      // 发送请求
+      const url = REQUEST_URL.TASK_UPDATESTATE;
+      this.$http.postRequest(
+        url,
+        {
+          list: [completeForm.task],
+          data: [{ state: STATUS.ACCOMPLISH }, { workingHours: completeForm.workingHours }]
+        }
+      )
+        .then(res => {
+          if (res.retCode === 200) {
+            message = '修改成功！';
+            type = 'success';
+
+            // 更新完成之后刷新页面数据
+            this.showDetail(this.project);
+          } else {
+            message = `修改失败!错误原因:${res.message}`;
+            type = 'error';
+          }
+        })
+        .catch(err => {
+          message = `修改失败!错误原因:${err}`;
+          type = 'error';
+        })
+        .finally(() => {
+          this.$message({
+            message,
+            type,
+            duration: 1000
+          });
+          this.dialogVisible = false;
+        });
+    }
+  },
+  computed: {
+    timePickerOptions() {
+      return initTimePicker(
+        ['today', 'week', 'lastWeek', 'month', 'lastMonth', 'all'],
+        { firstDayOfWeek: 1 }
+      );
+    },
+    tableTitle() {
+      return [
+        { label: '开始时间', prop: '_startTime', fixed: true, width: 150 },
+        { label: '任务编号', prop: 'taskId', width: 200 },
+        { label: '任务名', prop: 'content', width: 250 },
+        { label: '负责人', prop: 'belongerName', width: 150 },
+        { label: '状态', prop: '_state' },
+        { label: '工时', prop: 'workingHours' }
+      ];
+    },
+    buttonList() {
+      return [
+        {
+          text: '完成',
+          event: 'accomplish-task',
+          limit: 1
+        },
+        {
+          text: '挂起',
+          event: 'pend-task',
+          limit: 1
+        },
+        {
+          text: '运行',
+          event: 'run-task',
+          limit: 1
+        },
+        {
+          text: '删除',
+          event: 'delete-task',
+          limit: 1
+        }
+      ];
     }
   },
   watch: {
