@@ -17,8 +17,8 @@
         v-if="isShowSearch"
         v-model="searchContent"
         size="mini"
-        placeholder="输入关键字搜索"
         class="searchButton"
+        :placeholder="searchPlaceholder"
         :clearable="true"
         @change="handleFunc(searchContent, 'search-content-changed', 0)"
       />
@@ -69,18 +69,6 @@
 <script>
 import { debounce } from '../filters/index';
 export default {
-  data() {
-    return {
-      // 以选中的表单数据
-      selectedData: [],
-      that: this,
-
-      // 绑定搜索内容
-      searchContent: '',
-
-      currentIndex: 0
-    };
-  },
   props: {
     // 表单的首行，格式为[{prop, label, id, width, fixed}]，其中width和fixed为必填，prop必须与tableData对应
     tableTitle: Array,
@@ -121,7 +109,24 @@ export default {
     total: {
       type: Number,
       default: 0
+    },
+
+    searchPlaceholder: {
+      type: String,
+      default: '输入关键字搜索'
     }
+  },
+  data() {
+    return {
+      // 以选中的表单数据
+      selectedData: [],
+      that: this,
+
+      // 绑定搜索内容
+      searchContent: '',
+
+      currentIndex: 0
+    };
   },
   methods: {
     debounce,

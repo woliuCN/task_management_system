@@ -2,6 +2,7 @@
   <div>
     <data-table
       class="people-table"
+      searchPlaceholder="输入项目名搜索"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
       :tableData="tableData"

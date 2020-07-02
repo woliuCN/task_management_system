@@ -3,6 +3,7 @@
     <data-table
       class="people-table"
       ref="data-table"
+      searchPlaceholder="输入负责人/项目名搜索"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
       :tableData="tableData"
