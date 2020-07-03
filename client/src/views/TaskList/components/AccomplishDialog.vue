@@ -73,6 +73,7 @@ export default {
   methods: {
     closeDialog() {
       this.$refs.completeForm.resetFields();
+      this.$refs.completeForm.clearValidate();
       this.$emit('close-dialog');
     },
     submit() {

@@ -26,6 +26,20 @@ export const TASK_TYPE_CH = {
   1: '新增'
 };
 
+export const PERMISSION = {
+  // 普通用户
+  ORDINARY_USER: 0,
+
+  // 小组管理员
+  TEAM_MANAGER: 1,
+
+  // 部门管理员
+  DEPT_MANAGER: 2,
+
+  // 系统管理员
+  SYS_ADMIN: 3
+};
+
 export const REQUEST_URL = {
   // 获取任务数据
   TASK_GETPAGINTASK: '/task/getPaginTask',
@@ -76,5 +90,11 @@ export const REQUEST_URL = {
   PROJECT_GETTOTALPROJECT_OPTIONS: '/project/getTotalProject/options',
 
   // 获取项目子任务信息
-  PROJECT_GETTASKBYPROJECT: '/project/getTaskByProject'
+  PROJECT_GETTASKBYPROJECT: '/project/getTaskByProject',
+
+  // 获取用户信息
+  USER_GETUSERINFO: '/user/getUserInfo',
+
+  // 获取部门列表
+  DEPARTMENT_GETDEPARTMENTLIST: '/department/getDepartMentList'
 };

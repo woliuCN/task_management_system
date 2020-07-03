@@ -4,11 +4,12 @@
       <slot name="tmp_search"></slot>
       <!-- 将父组件传过来的按钮数组实例化 -->
       <el-button
-        v-for="(item,index) in buttonList"
+        v-for="(item, index) in buttonList"
         :key="index"
         :type="item.type"
         :size="item.size||'mini'"
         :icon="item.icon"
+        v-has-permission="item.permission"
         @click="handleFunc(selectedData, item.event, item.limit)"
       >
       {{ item.text }}

@@ -20,24 +20,47 @@
           <div slot="tip" class="el-upload__tip">只能上传xlsx文件</div>
         </el-upload>
       </div>
-      <div v-else-if="openWith === 'export'" class="center">
-        <el-date-picker
-          v-model="timeInterval"
-          type="daterange"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="timestamp"
-          class="date-picker"
-          :picker-options="timePickerOptions"
-          :editable="false"
-          :clearable="false"
-          @change="timePickerChanged"
-        >
-        </el-date-picker>
-        <el-button class="button-item" @click="personalPerformance">导出个人绩效</el-button>
-        <el-button class="button-item" @click="monthPerformance">导出月绩效</el-button>
+      <div v-else-if="openWith === 'export'">
+        <div class="export-info-item">
+          <span>选择时间：</span>
+          <el-date-picker
+            v-model="timeInterval"
+            type="daterange"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="timestamp"
+            class="date-picker width-100"
+            style="margin: 0"
+            :picker-options="timePickerOptions"
+            :editable="false"
+            :clearable="false"
+            @change="timePickerChanged"
+          >
+          </el-date-picker>
+        </div>
+        <div class="export-info-item">
+          <span>选择部门：</span>
+          <el-select
+            v-model="seletedDept"
+            class="width-100"
+            placeholder="选择部门"
+            filterable
+          >
+            <el-option
+              v-for="dept in deptList"
+              :key="dept.deptId"
+              :label="dept.deptName"
+              :value="dept.deptId"
+            >
+            </el-option>
+          </el-select>
+        </div>
+        <div class="center">
+          <el-button class="button-item" @click="personalPerformance">导出个人绩效</el-button>
+          <el-button class="button-item" @click="monthPerformance">导出月绩效</el-button>
+        </div>
       </div>
       <div v-else class="center">
         <el-date-picker
@@ -86,7 +109,11 @@ export default {
       isDialogShow: false,
       timeInterval: [],
       fileList: [],
-      uploadUrl: '' // 上传的地址
+      uploadUrl: '',
+
+      // 部门列表
+      deptList: [],
+      seletedDept: 0
     };
   },
   methods: {
@@ -150,7 +177,7 @@ export default {
     personalPerformance() {
       const url = this.$http.adornUrl(
         REQUEST_URL.TASK_PERSONALPERFORMANCEDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime }
+        { startTime: this.startTime, endTime: this.endTime, dept: this.seletedDept }
       );
       window.open(url);
     },
@@ -159,7 +186,7 @@ export default {
     monthPerformance() {
       const url = this.$http.adornUrl(
         REQUEST_URL.TASK_TEMPLATEDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime }
+        { startTime: this.startTime, endTime: this.endTime, dept: this.seletedDept }
       );
       window.open(url);
     }
@@ -167,7 +194,7 @@ export default {
   computed: {
     timePickerOptions() {
       return initTimePicker(
-        ['today', 'week', 'lastWeek', 'month', 'lastMonth', 'all'],
+        ['today', 'week', 'lastWeek', 'month', 'lastMonth'],
         { firstDayOfWeek: 1 }
       );
     }
@@ -189,6 +216,14 @@ export default {
     this.timeInterval = [this.startTime, this.endTime];
 
     this.uploadUrl = this.$http.adornUrl('/task/uploadFile');
+
+    // 获取部门列表
+    const url = REQUEST_URL.DEPARTMENT_GETDEPARTMENTLIST;
+    this.$http.getRequest(url)
+      .then(res => {
+        this.deptList = res.data;
+        this.seletedDept = this.deptList[0].deptId;
+      })
   },
   watch: {
     isShow(val) {
@@ -211,5 +246,19 @@ export default {
   .upload{
     display: flex;
     align-items: flex-start;
+  }
+
+  .export-info-item {
+    margin-bottom: 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    span {
+      margin-bottom: 10px;
+    }
+  }
+
+  .width-100 {
+    width: 100%;
   }
 </style>

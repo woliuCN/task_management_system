@@ -47,7 +47,7 @@ import DataTable from '../../components/DataTable';
 import ProjectDetail from './components/ProjectDetail';
 import EditDialog from './components/EditDialog';
 import { time, debounce, copy } from '../../utils/api.js';
-import { STATUS, STATUS_CH, REQUEST_URL } from '../../common/config.js';
+import { STATUS, STATUS_CH, REQUEST_URL, PERMISSION } from '../../common/config.js';
 export default {
   components: {
     DataTable,
@@ -363,7 +363,8 @@ export default {
         {
           text: '新增',
           event: 'add-project',
-          limit: 0
+          limit: 0,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 项目编辑按钮
@@ -371,7 +372,8 @@ export default {
           // type: 'primary',
           text: '编辑',
           event: 'edit-project',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-edit'
         },
 
@@ -379,7 +381,8 @@ export default {
         {
           text: '删除',
           event: 'delete-project',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         },
 
@@ -387,7 +390,8 @@ export default {
         {
           text: '完成',
           event: 'accomplish-project',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         },
 
@@ -395,7 +399,8 @@ export default {
         {
           text: '挂起',
           event: 'pend-project',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         },
 
@@ -403,7 +408,8 @@ export default {
         {
           text: '运行',
           event: 'run-project',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         }
       ];

@@ -7,6 +7,10 @@ import './assets/js/elementImport';
 import './assets/css/reset.scss';
 import './assets/css/common-variables.scss';
 import 'font-awesome/css/font-awesome.min.css';
+
+import directives from './directives';
+Vue.use(directives);
+
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = http; // ajax请求
