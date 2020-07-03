@@ -18,14 +18,18 @@
       </div>
     </div>
     <div class="nav-right">
-      <header-search />
+      <!-- <header-search /> -->
+      <div class="user-info">
+        <i class="el-icon-user"></i>
+        <span>{{ $store.state.userInfo.userName }}</span>
+      </div>
       <div class="system-options">
         <el-dropdown @command="handleCommand">
           <img src="@/assets/images/avator.gif" class="user-avator" />
           <i class="el-icon-caret-bottom"></i>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <router-link to="/">首页</router-link>
+              <router-link to="/" class="homePage">首页</router-link>
             </el-dropdown-item>
             <el-dropdown-item command="changePassword">修改密码</el-dropdown-item>
             <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
@@ -39,6 +43,7 @@
       width="30%"
       :visible.sync="isChangePassword"
       @close="closePasswordDialog"
+      @closed="clearPassword"
     >
       <el-form
         ref="passwordForm"
@@ -80,21 +85,21 @@
   </div>
 </template>
 <script>
-import HeaderSearch from './HeaderSearch';
+// import HeaderSearch from './HeaderSearch';
 export default {
   components: {
-    HeaderSearch
+    // HeaderSearch
   },
   props: {},
   data() {
-    var validateOrginPass = (rule, value, callback) => {
+    const validateOrginPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入原密码'));
       } else {
         callback();
       }
     };
-    var validateNewPass = (rule, value, callback) => {
+    const validateNewPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入新密码'));
       } else {
@@ -104,7 +109,7 @@ export default {
         callback();
       }
     };
-    var validateNewPass2 = (rule, value, callback) => {
+    const validateNewPass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'));
       } else if (value !== this.passwordForm.newPassword) {
@@ -112,6 +117,13 @@ export default {
       } else {
         callback();
       }
+    };
+    const validatePassword = (rule, value, callback) => {
+      const patt = /^[0-9a-zA-Z][0-9a-zA-Z._]*$/;
+      if (!patt.test(value)) {
+        return callback(new Error('密码必须以数字/字母开头并且不能包含空格等特殊字符'));
+      }
+      callback();
     };
     return {
       isChangePassword: false,
@@ -122,16 +134,19 @@ export default {
       },
       passwordFormRules: {
         orginPassword: [
-          { validator: validateOrginPass, trigger: 'blur' },
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
+          { validator: validatePassword, trigger: 'blur' },
+          { validator: validateOrginPass, trigger: 'blur' }
         ],
         newPassword: [
-          { validator: validateNewPass, trigger: 'blur' },
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
+          { validator: validatePassword, trigger: 'blur' },
+          { validator: validateNewPass, trigger: 'blur' }
         ],
         checkNewPassword: [
-          { validator: validateNewPass2, trigger: 'blur' },
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
+          { validator: validatePassword, trigger: 'blur' },
+          { validator: validateNewPass2, trigger: 'blur' }
         ]
       }
     };
@@ -214,11 +229,23 @@ export default {
             });
         }
       });
+    },
+
+    clearPassword() {
+      this.$refs.passwordForm.resetFields();
+      this.$refs.passwordForm.clearValidate();
     }
+  },
+  created() {
+    this.$store.commit('getUserInfo');
   }
 };
 </script>
 <style lang="scss" scoped>
+/deep/.homePage{
+  color: #606266!important;
+}
+
 .nav-container {
   display: flex;
   align-items: center;
@@ -268,6 +295,15 @@ export default {
         vertical-align: bottom;
         font-size: 14px;
         color: #666;
+      }
+    }
+    .user-info {
+      font-size: 18px;
+      flex: 0 0 auto;
+      text-align: right;
+      margin-right: 5px;
+      span {
+        margin-left: 5px;
       }
     }
   }

@@ -48,7 +48,7 @@ const currentWeek = () => {
     }
   };
   const lastWeekDay = firstWeekDay + 7 * 24 * 60 * 60 * 1000;
-  console.log(firstWeekDay, lastWeekDay)
+  console.log(firstWeekDay, lastWeekDay);
   return [firstWeekDay, lastWeekDay];
 };
 
@@ -175,7 +175,7 @@ export const weekTasksInThisYear = (data) => {
  */
 export const getCurrentWeekTaskNum = ({ data }) => {
   const filterDateArr = currentWeek();
-  console.log(filterDateArr)
+  console.log(filterDateArr);
   const filterList = data.filter((dataItem) => {
     return dataItem.createTime >= filterDateArr[0] && dataItem.createTime < filterDateArr[1];
   });

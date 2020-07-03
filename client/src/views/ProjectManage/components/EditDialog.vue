@@ -87,7 +87,7 @@ export default {
     userList: {
       type: Array,
       defalut() {
-        return {}
+        return {};
       }
     }
   },

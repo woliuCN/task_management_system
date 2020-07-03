@@ -106,13 +106,13 @@ export const initTimePicker = function(shortcutsList = ['today', 'week', 'month'
         picker.$emit('pick', [start, end]);
       }
     }
-  }
+  };
   const shortcutsOptions = [];
   shortcutsList.forEach(shortcut => {
     if (shortcut in shortcuts) {
-      shortcutsOptions.push(shortcuts[shortcut])
+      shortcutsOptions.push(shortcuts[shortcut]);
     }
-  })
+  });
 
   options = typeof options === 'object' ? options : {};
 
@@ -121,10 +121,10 @@ export const initTimePicker = function(shortcutsList = ['today', 'week', 'month'
     const end = date.maxDate || new Date();
     start.setHours(0, 0, 0, 0);
     end.setHours(23, 59, 59, 999);
-  }
+  };
   return {
     shortcuts: shortcutsOptions,
     ...options,
     onPick
-  }
-}
+  };
+};

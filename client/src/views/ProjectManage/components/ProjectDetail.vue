@@ -60,7 +60,7 @@ import DataTable from '../../../components/DataTable';
 import AccomplishDialog from './AccomplishDialog';
 import { time, copy } from '../../../utils/api.js';
 import { initTimePicker } from '../../../utils/timePickerConfig';
-import { REQUEST_URL, STATUS, STATUS_CH } from '../../../common/config.js';
+import { REQUEST_URL, STATUS, STATUS_CH, PERMISSION } from '../../../common/config.js';
 export default {
   components: {
     DataTable,
@@ -355,22 +355,26 @@ export default {
         {
           text: '完成',
           event: 'accomplish-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
         {
           text: '挂起',
           event: 'pend-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
         {
           text: '运行',
           event: 'run-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
         {
           text: '删除',
           event: 'delete-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         }
       ];
     }

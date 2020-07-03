@@ -45,7 +45,7 @@ http.interceptors.response.use(response => {
     });
     return;
   }
-  return response;
+  return response.data;
 }, error => {
   return Promise.reject(error);
 });
@@ -75,13 +75,14 @@ http.adornUrl = (actionName, params = {}) => {
  * @example (user/getUserList,{id:'1001'})
  */
 http.getRequest = (url, params = {}) => {
-  return new Promise((resolve, reject) => {
-    http.get(url, { params }).then(res => {
-      resolve(res.data);
-    }).catch(err => {
-      reject(err);
-    });
-  });
+  return http.get(url, { params });
+  // return new Promise((resolve, reject) => {
+  //   http.get(url, { params }).then(res => {
+  //     resolve(res.data);
+  //   }).catch(err => {
+  //     reject(err);
+  //   });
+  // });
 };
 
 /**
@@ -92,13 +93,14 @@ http.getRequest = (url, params = {}) => {
  * @example (user/getUserList,{id:'1001'})
  */
 http.postRequest = (url, params) => {
-  return new Promise((resolve, reject) => {
-    http.post(url, params).then(res => {
-      resolve(res.data);
-    }).catch(err => {
-      reject(err);
-    });
-  });
+  return http.post(url, params);
+  // return new Promise((resolve, reject) => {
+  //   http.post(url, params).then(res => {
+  //     resolve(res.data);
+  //   }).catch(err => {
+  //     reject(err);
+  //   });
+  // });
 };
 
 export default http;

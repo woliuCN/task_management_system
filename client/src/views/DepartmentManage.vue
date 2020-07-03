@@ -11,12 +11,12 @@
       :total="total"
       v-loading="isLoading"
       :isSelection="true"
-      :isShowSearch="true"
+      :isShowSearch="false"
       @search-content-changed="searchContent"
-      @add-group="addGroup"
+      @add-group="addDept"
       @allocate-administrator="allocateAdministrator"
-      @modification-group="modificationGroup"
-      @delete-group="deleteGroup"
+      @modification-group="modificationDept"
+      @delete-group="deleteDept"
     >
     </data-table>
 
@@ -56,7 +56,7 @@ import DataTable from '../components/DataTable';
 import MyDialog from '../components/MyDialog';
 import { time, copy } from '../utils/api.js';
 import { Loading } from 'element-ui';
-import { USER_PERMISSION, REQUEST_URL } from '../common/config';
+import { PERMISSION, USER_PERMISSION, REQUEST_URL } from '../common/config';
 export default {
   components: {
     DataTable,
@@ -107,11 +107,11 @@ export default {
     };
   },
   created() {
+    this.initButtonList();
+    this.initDialogInfo();
     this.getDepartmentInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
   },
   mounted() {
-    this.initButtonList();
-    this.initDialogInfo();
   },
   methods: {
 
@@ -141,8 +141,8 @@ export default {
         this.pageSize = 8;
         this.pageIndex = 1;
       }
-      const pageSize = this.pageSize
-      const pageIndex = this.pageIndex
+      const pageSize = this.pageSize;
+      const pageIndex = this.pageIndex;
       this.getDepartmentInfo({ pageSize, pageIndex, keyWords: value });
     },
 
@@ -172,34 +172,38 @@ export default {
     // 初始化按钮列表
     initButtonList() {
       this.buttonList = [
-        // // 新增分组按钮
+        // 新增分组按钮
         // {
         //   text: '添加',
-        //   event: 'add-group'
+        //   event: 'add-group',
+        //   permission: [PERMISSION.SYS_ADMIN]
         // },
 
-        // // 修改分组按钮
-        // {
-        //   text: '修改',
-        //   event: 'modification-group'
-        // },
+        // 修改分组按钮
+        {
+          text: '修改',
+          event: 'modification-group',
+          permission: [PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        },
 
         // 分配管理员按钮
         {
           text: '分配管理员',
-          event: 'allocate-administrator'
+          event: 'allocate-administrator',
+          permission: [PERMISSION.SYS_ADMIN]
         }
 
-        // // 删除分组按钮
+        // 删除分组按钮
         // {
         //   text: '删除',
-        //   event: 'delete-group'
+        //   event: 'delete-group',
+        //   permission: [PERMISSION.SYS_ADMIN]
         // }
       ];
     },
 
-    // 新增分组
-    addGroup() {
+    // 新增部门
+    addDept() {
       // this.$message({
       //   message: '目前无需多加分组，功能待扩展',
       //   type: 'warning',
@@ -223,7 +227,7 @@ export default {
       };
       this.titleName = '分配管理员';
       this.$rows = rows;
-      const { deptId } = rows[0]
+      const { deptId } = rows[0];
       this.$http.getRequest(REQUEST_URL.DEPARTMENT_ALLUSER, { deptId })
         .then((res) => {
           const { retCode, data } = res;
@@ -233,20 +237,20 @@ export default {
               return {
                 label: user.userName,
                 key: user.userId
-              }
+              };
             });
             this.selectUsers = data.filter((user) => {
               return user.permission === USER_PERMISSION['管理员'];
             }).map((user) => {
-              return user.userId
+              return user.userId;
             });
           }
         });
       this.allocating = true;
     },
 
-    // 修改分组
-    modificationGroup(rows) {
+    // 修改部门
+    modificationDept(rows) {
       if (rows.length !== 1) {
         this.$message({
           message: '一次只能编辑一条部门信息！',
@@ -264,13 +268,30 @@ export default {
       }
     },
 
-    // 删除分组
-    deleteGroup(rows) {
-      this.$message({
-        message: '目前无需删除分组，功能待扩展',
-        type: 'warning',
-        duration: 1000
-      });
+    // 删除部门
+    deleteDept(rows) {
+      if (rows.length !== 1) {
+        this.$message({
+          message: '一次只能删除一个部门信息',
+          type: 'warning',
+          duration: 1000
+        });
+        return -1;
+      }
+      this.$confirm(
+        '确定删除这个部门吗？',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.titleName = '删除部门';
+          const department = rows[0];
+          this.addOrUpdateOrAllocateAdmin(department);
+        });
     },
     success(valueInfo) {
       console.log(valueInfo);
@@ -291,6 +312,9 @@ export default {
       } else if (this.titleName === '分配管理员') {
         url = REQUEST_URL.USER_UPDATESTATE;
         params = paramsObj;
+      } else if (this.titleName === '删除部门') {
+        url = REQUEST_URL.DEPARTMENT_DELETEDEPARTMENT;
+        params = { department: paramsObj };
       }
       // 配置loading
       const loadingOptions = {
@@ -328,7 +352,7 @@ export default {
             this.pageIndex,
             this.pageSize,
             this.keyWords);
-        })
+        });
     },
     close() {
     },
@@ -348,14 +372,14 @@ export default {
         list = this.selectUsers.map((user) => {
           return {
             userId: user
-          }
+          };
         });
       } else {
         permission = USER_PERMISSION['组员'];
         list = this.allUsers.map((user) => {
           return {
             userId: user.key
-          }
+          };
         });
       };
       this.addOrUpdateOrAllocateAdmin({ list, data: [{ permission }] });

@@ -246,6 +246,7 @@ export default {
     // 关闭本弹窗
     closeDialog() {
       this.$refs.taskInfo.resetFields();
+      this.$refs.taskInfo.clearValidate();
       this.$emit('close-dialog');
     },
 

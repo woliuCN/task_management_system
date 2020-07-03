@@ -1,3 +1,5 @@
+import { REQUEST_URL } from '../common/config.js';
+import http from '../lib/request.js';
 /**
  * 将时间戳格式化为具体日期格式
  *
@@ -122,16 +124,8 @@ export const copy = function(obj) {
   }
   return res;
 };
-// export const copy = function(obj) {
-//   if (!obj || !(obj instanceof Object) || (typeof obj === 'function')) {
-//     return obj || undefined;
-//   }
-//   var constructor = obj.constructor;
-//   var result = new constructor();
-//   for (var key in obj) {
-//     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-//       result[key] = copy(obj[key]);
-//     }
-//   }
-//   return result;
-// };
+
+export const getUserInfo = function() {
+  const url = REQUEST_URL.USER_GETUSERINFO;
+  return http.getRequest(url);
+};

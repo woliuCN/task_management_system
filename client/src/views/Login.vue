@@ -2,18 +2,17 @@
   <div
     class="login"
     v-loading.body="isLoading"
-    element-loading-text="拼命加载中"
+    element-loading-text="登录中"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
     <div class="login-logo">
-      <a href="#" width="40px">
-        <img
-          class="logo-img"
-          src="https://b-gold-cdn.xitu.io/v3/static/img/normal.0447fe9.png"
-          alt="logo"
-        />
-      </a>
+      <img
+        class="logo-img"
+        :src="logoImg.src"
+        :width="logoImg.width"
+        alt="logo"
+      />
     </div>
     <div class="login-box">
       <el-form
@@ -28,7 +27,12 @@
           label-position="top"
           size="mini"
         >
-          <el-input prefix-icon="el-icon-user" v-model="formData.username"/>
+          <el-input
+            prefix-icon="el-icon-user"
+            v-model="formData.username"
+            @focus="logoImg = images.GREETING"
+            @blur="logoImg = images.NORMAL"
+          />
         </el-form-item>
 
         <el-form-item
@@ -38,7 +42,14 @@
           label-position="top"
           size="mini"
         >
-          <el-input prefix-icon="el-icon-lock"  v-model="formData.password" :show-password="true" @keydown.enter.native="login" />
+          <el-input
+            prefix-icon="el-icon-lock"
+            v-model="formData.password"
+            :show-password="true"
+            @keydown.enter.native="login"
+            @focus="logoImg = images.BLINDFOLD"
+            @blur="logoImg = images.NORMAL"
+          />
         </el-form-item>
 
         <el-form-item
@@ -47,7 +58,7 @@
           align="right"
           class="remember"
         >
-          <el-checkbox v-model="formData.isRemember">remember</el-checkbox>
+          <el-checkbox v-model="formData.isRemember">记住密码</el-checkbox>
         </el-form-item>
 
         <el-form-item>
@@ -66,6 +77,10 @@
 </template>
 
 <script>
+import normalPic from '@/assets/images/normal.png';
+import greetingPic from '@/assets/images/greeting.png';
+import blindfoldPic from '@/assets/images/blindfold.png';
+
 export default {
   components: {
   },
@@ -84,14 +99,25 @@ export default {
         password: '',
         isRemember: false
       },
-      isLoading: false
+      isLoading: false,
+      images: {
+        NORMAL: { src: normalPic, width: 115 },
+        BLINDFOLD: { src: blindfoldPic, width: 105 },
+        GREETING: { src: greetingPic, width: 105 }
+      },
+      logoImg: {}
     };
   },
   created() {
-    const userInfo = JSON.parse(localStorage.getItem('USER'));
-    this.formData.username = userInfo.user;
-    this.formData.password = atob(userInfo.password);
-    this.formData.isRemember = userInfo.isRemember;
+    this.logoImg = this.images.NORMAL;
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('USER'));
+      this.formData.username = userInfo.user;
+      this.formData.password = atob(userInfo.password);
+      this.formData.isRemember = userInfo.isRemember;
+    } catch (err) {
+      console.log('localStorage获取数据失败', err);
+    }
   },
   methods: {
     login() {
@@ -117,12 +143,14 @@ export default {
             this.$message({
               message: '登录成功',
               type: 'success',
-              duration: 1000,
-              onClose: _ => {
+              duration: 500,
+              onClose: () => {
                 this.$router.push('/');
               }
             });
           }
+        })
+        .finally(() => {
           this.isLoading = false;
         });
     }
@@ -147,6 +175,7 @@ export default {
       background-color: rgba(255, 255, 255, 0.7);
       box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
       padding: 1vw 3vw .5vw;
+      user-select: none;
 
       /deep/.el-form-item__content {
         margin-left: 0!important;
@@ -171,9 +200,15 @@ export default {
       }
     }
 
+    .login-logo {
+      height: 100!important;
+      // width: 100%;
+    }
     .logo-img {
-      width: 120px!important;
-      transform: translate(0, 15%);
+      // width: 120px!important;
+      display: block;
+      height: 100px!important;
+      transform: translate(0, 24px);
     }
   }
 </style>

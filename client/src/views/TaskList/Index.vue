@@ -3,6 +3,7 @@
     <data-table
       class="people-table"
       ref="data-table"
+      searchPlaceholder="输入负责人/项目名搜索"
       :buttonList="buttonList"
       :tableTitle="tableTitle"
       :tableData="tableData"
@@ -80,7 +81,7 @@ import ExportDialog from './components/ExportDialog';
 import AccomplishDialog from './components/AccomplishDialog';
 import { time, debounce, copy } from '../../utils/api.js';
 import { initTimePicker } from '../../utils/timePickerConfig.js';
-import { STATUS, STATUS_CH, TASK_TYPE, TASK_TYPE_CH, REQUEST_URL } from '../../common/config';
+import { STATUS, STATUS_CH, TASK_TYPE, TASK_TYPE_CH, REQUEST_URL, PERMISSION } from '../../common/config';
 export default {
   components: {
     DataTable,
@@ -501,19 +502,22 @@ export default {
         // 数据导入按钮
         {
           text: '导入',
-          event: 'import-data'
+          event: 'import-data',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 数据导出按钮
         {
           text: '导出',
-          event: 'export-data'
+          event: 'export-data',
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 新增任务
         {
           text: '新增',
-          event: 'add-task'
+          event: 'add-task',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 完成任务按钮
@@ -521,7 +525,8 @@ export default {
           // type: 'success',
           text: '完成',
           event: 'accomplish-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-check'
         },
 
@@ -530,7 +535,8 @@ export default {
           // type: 'success',
           text: '运行',
           event: 'run-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-check'
         },
 
@@ -539,7 +545,8 @@ export default {
           // type: 'success',
           text: '挂起',
           event: 'pend-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-check'
         },
 
@@ -548,7 +555,8 @@ export default {
           // type: 'primary',
           text: '编辑',
           event: 'edit-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-edit'
         },
 
@@ -557,14 +565,16 @@ export default {
           // type: 'danger',
           text: '删除',
           event: 'delete-task',
-          limit: 1
+          limit: 1,
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         },
 
         // 生成周报按钮
         {
           text: '生成周报',
-          event: 'weekly-report'
+          event: 'weekly-report',
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         }
 
       ];

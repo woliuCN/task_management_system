@@ -71,7 +71,7 @@ import DataTable from '../components/DataTable';
 import MyDialog from '../components/MyDialog';
 import { time, debounce, copy } from '../utils/api.js';
 import { Loading } from 'element-ui';
-import { USER_STATUS, USER_PERMISSION, REQUEST_URL } from '../common/config';
+import { PERMISSION, USER_STATUS, USER_PERMISSION, REQUEST_URL } from '../common/config';
 export default {
   components: {
     DataTable,
@@ -88,6 +88,7 @@ export default {
         { label: '编号', prop: 'idx' },
         { label: '工号', prop: 'userId' },
         { label: '名称', prop: 'userName' },
+        { label: '部门', prop: 'deptName' },
         { label: '小组', prop: 'groupName' },
         { label: '职位', prop: 'permission' },
         { label: '状态', prop: 'state' },
@@ -169,12 +170,8 @@ export default {
     // 按关键字搜索
     searchContent(value) {
       this.keyWords = value;
-      if (value === '') {
-        this.pageSize = 8;
-        this.pageIndex = 1;
-      }
-      const pageSize = this.pageSize
-      const pageIndex = this.pageIndex
+      const pageSize = this.pageSize = 8;
+      const pageIndex = this.pageIndex = 1;
       this.getTableData(pageIndex, pageSize, value);
     },
 
@@ -209,10 +206,15 @@ export default {
             tableData[index].userId = tableItem.userId;
             tableData[index].userName = tableItem.userName;
             tableData[index].groupId = tableItem.groupId;
-            tableData[index].groupName = tableItem.groupName;
+            tableData[index].groupName = tableItem.groupName || '-';
             tableData[index].permission = USER_PERMISSION[tableItem.permission];
             tableData[index].remarks = tableItem.remarks;
-            tableData[index].deptId = tableItem.deptId;
+            if (tableItem.deptId) {
+              tableData[index].deptId = tableItem.deptId;
+              tableData[index].deptName = this.deptIdTodeptName(tableItem.deptId);
+            } else {
+              tableData[index].deptName = '-';
+            }
           });
           this.tableData = tableData;
           this.total = res.totalCount;
@@ -222,7 +224,7 @@ export default {
           this.loading.close && this.loading.close();
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           // this.paginationData.pageIndex = 1;
           // this.$nextTick(() => {
           //   this.paginationData.pageIndex = oldPageIndex;
@@ -236,43 +238,50 @@ export default {
         // 添加人员按钮
         {
           text: '添加',
-          event: 'add-user'
+          event: 'add-user',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 修改信息按钮
         {
           text: '修改',
-          event: 'modification-user'
+          event: 'modification-user',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 在职按钮
         {
           text: '在职',
-          event: 'on-job'
+          event: 'on-job',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 离职按钮
         {
           text: '离职',
-          event: 'dimission'
+          event: 'dimission',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 删除人员按钮
         {
           text: '删除',
-          event: 'delete-user'
+          event: 'delete-user',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 分配小组成员
         {
           text: '小组分配成员',
-          event: 'allocate-group-member'
+          event: 'allocate-group-member',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 初始化成员密码
         {
           text: '初始化成员密码',
-          event: 'init-password'
+          event: 'init-password',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         }
       ];
     },
@@ -294,16 +303,16 @@ export default {
           value: '',
           rules: { required: true, message: '请输入工号', trigger: 'blur' }
         },
-        {
-          attrName: 'deptName',
-          label: '部门',
-          type: 'select',
-          options: this.departmentList.map((department) => department.deptName),
-          optionsName: {},
-          value: '',
-          rules: { required: false, message: '请选择部门', trigger: 'blur' },
-          event: 'selectedEvent'
-        },
+        // {
+        //   attrName: 'deptName',
+        //   label: '部门',
+        //   type: 'select',
+        //   options: this.departmentList.map((department) => department.deptName),
+        //   optionsName: {},
+        //   value: '',
+        //   rules: { required: false, message: '请选择部门', trigger: 'blur' },
+        //   event: 'selectedEvent'
+        // },
         {
           attrName: 'groupName',
           label: '小组',
@@ -342,7 +351,7 @@ export default {
 
     // 获取部门列表
     async getDept() {
-      const res = await this.$http.getRequest(REQUEST_URL.DEPARTMENT_GETDEPT);
+      const res = await this.$http.getRequest(REQUEST_URL.DEPARTMENT_GETDEPARTMENTLIST);
       const { data, retCode } = res;
       if (retCode === 200) {
         this.departmentList = data;
@@ -392,10 +401,10 @@ export default {
       if (retCoude === 200) {
         this.groupList = data;
         // 更新dialogInfo
-        this.$refs.mydialog.internalTableData[3].options = data.map(group => {
+        this.$refs.mydialog.internalTableData[2].options = data.map(group => {
           return group.groupName;
         });
-        this.$refs.mydialog.internalTableData[3].value = '';
+        this.$refs.mydialog.internalTableData[2].value = '';
         this.selectedGroup = '';
       } else {
         this.$message({
@@ -410,6 +419,7 @@ export default {
     addUser(rows) {
       this.initDialogInfo();
       this.titleName = '添加人员';
+      this.getGroup(1);
       this.visible = true;
       console.log('新增人员');
     },
@@ -435,7 +445,7 @@ export default {
           rowInfo.deptName = this.deptIdTodeptName(rowInfo.deptId);
           this.$nextTick(async () => {
             await this.getGroup(rowInfo.deptId);
-            this.$refs.mydialog.internalTableData[3].value = rowInfo.groupName;
+            this.$refs.mydialog.internalTableData[2].value = rowInfo.groupName;
           });
         }
         this.dialogInfo.forEach((item, index) => {
@@ -568,7 +578,7 @@ export default {
         });
         return -1;
       }
-      this.titleName = '小组分配成员'
+      this.titleName = '小组分配成员';
       this.visibleOfAllocate = true;
       await this.getDept();
       this.$rows = rows;
@@ -580,9 +590,10 @@ export default {
         // const groupName = (this.groupList.filter((group) => {
         //   return group.groupId === this.selectedGroup;
         // }))[0].groupName;
+        const deptId = this.selectedDept;
         const groupId = this.selectedGroup;
         // console.log(this.$rows, groupName);
-        this.addOrUpdateOrDeleteUserInfo(this.$rows, [{ groupId }]);
+        this.addOrUpdateOrDeleteUserInfo(this.$rows, [{ deptId }, { groupId }]);
       } else {
         this.$message({
           message: '请选择要分配的小组',
@@ -639,10 +650,13 @@ export default {
         userId: valueInfo.userId,
         userName: valueInfo.userName,
         remarks: valueInfo.remarks,
+
+        // 目前单部门，先写死，后面扩展删除
+        deptId: 1,
         state
       };
       if (valueInfo.groupName) {
-        const userGroupId = this.groupNameTogroupId(valueInfo.groupName)
+        const userGroupId = this.groupNameTogroupId(valueInfo.groupName);
         userInfo.groupId = userGroupId;
         // userInfo.userGroupName = valueInfo.userGroupName;
         userInfo.permission = valueInfo.permission;
@@ -665,7 +679,7 @@ export default {
         params = { list: userInfo };
       } else if (this.titleName === '初始化成员密码') {
         url = REQUEST_URL.USER_RESETPASSWORD;
-        params = { list: userInfo }
+        params = { list: userInfo };
       } else {
         let data;
         if (this.titleName === '在职') {
@@ -673,7 +687,7 @@ export default {
         } else if (this.titleName === '离职') {
           data = [{ state: 0 }, { deleteTime: new Date().getTime() }];
         } else {
-          data = group
+          data = group;
         }
         url = REQUEST_URL.USER_UPDATESTATE;
         params = { list: userInfo, data };
@@ -714,7 +728,7 @@ export default {
             this.pageIndex,
             this.pageSize,
             this.keyWords);
-        })
+        });
     },
 
     // 取消

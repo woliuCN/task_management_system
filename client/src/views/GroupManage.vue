@@ -54,11 +54,44 @@ import DataTable from '../components/DataTable';
 import MyDialog from '../components/MyDialog';
 import { time, copy } from '../utils/api.js';
 import { Loading } from 'element-ui';
-import { USER_PERMISSION, REQUEST_URL } from '../common/config';
+import { PERMISSION, USER_PERMISSION, REQUEST_URL } from '../common/config';
 export default {
   components: {
     DataTable,
     MyDialog
+  },
+  computed: {
+    buttonList() {
+      return [
+        // 新增分组按钮
+        {
+          text: '添加',
+          event: 'add-group',
+          permission: [PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        },
+
+        // 修改分组按钮
+        {
+          text: '修改',
+          event: 'modification-group',
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        },
+
+        // 分配小组组长按钮
+        {
+          text: '分配组长',
+          event: 'allocate-group',
+          permission: [PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        },
+
+        // 删除分组按钮
+        {
+          text: '删除',
+          event: 'delete-group',
+          permission: [PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        }
+      ];
+    }
   },
   data() {
     return {
@@ -76,9 +109,6 @@ export default {
       sourceData: [],
       // table主体数据
       tableData: [],
-
-      // table操作button
-      buttonList: [],
       pageIndex: 0,
       pageSize: 8,
       total: 0,
@@ -114,8 +144,8 @@ export default {
     this.getGroupInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
   },
   mounted() {
-    this.initButtonList();
     this.initDialogInfo();
+    window.$dept = this.deptList;
   },
   methods: {
 
@@ -138,10 +168,10 @@ export default {
         {
           attrName: 'deptName',
           label: '所属部门',
-          type: 'select',
-          options: this.deptList.filter(item => item !== undefined),
-          optionsName: this.deptList,
-          value: '',
+          type: 'text',
+          // options: this.deptList.filter(item => item !== undefined),
+          // optionsName: this.deptList,
+          value: this.deptList[1],
           rules: { required: true, message: '请选择所属部门', trigger: 'blur' }
         },
         {
@@ -205,35 +235,6 @@ export default {
       }
     },
 
-    // 初始化按钮列表
-    initButtonList() {
-      this.buttonList = [
-        // 新增分组按钮
-        {
-          text: '添加',
-          event: 'add-group'
-        },
-
-        // 修改分组按钮
-        {
-          text: '修改',
-          event: 'modification-group'
-        },
-
-        // 分配小组组长按钮
-        {
-          text: '分配组长',
-          event: 'allocate-group'
-        },
-
-        // 删除分组按钮
-        {
-          text: '删除',
-          event: 'delete-group'
-        }
-      ];
-    },
-
     // 新增分组
     addGroup() {
       // this.$message({
@@ -260,7 +261,7 @@ export default {
       this.titleName = '分配组长';
       this.$rows = rows;
       const { groupId } = rows[0];
-      console.log(REQUEST_URL)
+      console.log(REQUEST_URL);
       this.$http.getRequest(REQUEST_URL.GROUP_ALLUSER, { groupId })
         .then((res) => {
           const { retCode, data } = res;
@@ -270,12 +271,12 @@ export default {
               return {
                 label: user.userName,
                 key: user.userId
-              }
+              };
             });
             this.selectUsers = data.filter((user) => {
               return user.permission === USER_PERMISSION['组长'];
             }).map((user) => {
-              return user.userId
+              return user.userId;
             });
           }
         });
@@ -287,7 +288,7 @@ export default {
     modificationGroup(rows) {
       if (rows.length !== 1) {
         this.$message({
-          message: '一次只能编辑一条小组信息！',
+          message: '一次只能编辑一个小组信息！',
           type: 'warning',
           duration: 1000
         });
@@ -305,14 +306,31 @@ export default {
 
     // 删除分组
     deleteGroup(rows) {
-      this.$message({
-        message: '目前无需删除分组，功能待扩展',
-        type: 'warning',
-        duration: 1000
-      });
+      if (rows.length !== 1) {
+        this.$message({
+          message: '一次只能删除一个小组信息',
+          type: 'warning',
+          duration: 1000
+        });
+        return -1;
+      }
+      this.$confirm(
+        '确定删除这个小组吗？',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.titleName = '删除';
+          const groupInfo = rows[0];
+          this.addOrUpdateOrDeleteGroupInfo(groupInfo);
+        });
     },
     success(value) {
-      console.log(value)
+      console.log(value);
       this.addOrUpdateOrDeleteGroupInfo(value);
     },
     close() {
@@ -329,15 +347,15 @@ export default {
           groupName: groupInfo.groupName,
           // deptName: groupInfo.deptName,
           deptId
-        }
+        };
         params = { group };
       } else if (this.titleName === '修改分组') {
         url = REQUEST_URL.GROUP_UPDATEGROUP;
         delete groupInfo.deptName;
         params = { group: groupInfo };
       } else if (this.titleName === '删除') {
-        url = '/user/deleteUser';
-        params = { list: groupInfo };
+        url = REQUEST_URL.GROUP_DELETEGROUP;
+        params = { group: groupInfo };
       } else if (this.titleName === '分配组长') {
         url = REQUEST_URL.USER_UPDATESTATE;
         params = groupInfo;
@@ -378,7 +396,7 @@ export default {
             this.pageIndex,
             this.pageSize,
             this.keyWords);
-        })
+        });
     },
 
     // 分配的取消按钮事件
@@ -396,14 +414,14 @@ export default {
         list = this.selectUsers.map((user) => {
           return {
             userId: user
-          }
+          };
         });
       } else {
         permission = USER_PERMISSION['组员'];
         list = this.allUsers.map((user) => {
           return {
             userId: user.key
-          }
+          };
         });
       };
       this.addOrUpdateOrDeleteGroupInfo({ list, data: [{ permission }] });

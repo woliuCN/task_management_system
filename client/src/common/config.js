@@ -26,6 +26,20 @@ export const TASK_TYPE_CH = {
   1: '新增'
 };
 
+export const PERMISSION = {
+  // 普通用户
+  ORDINARY_USER: 0,
+
+  // 小组管理员
+  TEAM_MANAGER: 1,
+
+  // 部门管理员
+  DEPT_MANAGER: 2,
+
+  // 系统管理员
+  SYS_ADMIN: 3
+};
+
 // 员工就职状态
 export const USER_STATUS = {
   0: '离职',
@@ -96,14 +110,20 @@ export const REQUEST_URL = {
   // 获取项目子任务信息
   PROJECT_GETTASKBYPROJECT: '/project/getTaskByProject',
 
+  // 获取用户信息
+  USER_GETUSERINFO: '/user/getUserInfo',
+
   // 新增部门
   DEPARTMENT_ADDDEPT: '/department/addDepartMent',
 
   // 更新部门
   DEPARTMENT_UPDATEDEPT: '/department/updateDepartMent',
 
+  // 删除部门
+  DEPARTMENT_DELETEDEPARTMENT: '/department/deleteDepartMent',
+
   // 获取部门列表
-  DEPARTMENT_GETDEPT: '/department/getDepartMentList',
+  DEPARTMENT_GETDEPARTMENTLIST: '/department/getDepartMentList',
 
   // 获取部门所有员工
   DEPARTMENT_ALLUSER: '/department/getUserListByDept',
@@ -113,6 +133,9 @@ export const REQUEST_URL = {
 
   // 修改小组
   GROUP_UPDATEGROUP: '/group/updateGroup',
+
+  // 删除小组
+  GROUP_DELETEGROUP: '/group/deleteGroup',
 
   // 获取部门内所有小组
   GROUP_GETGROUPBYDEPT: '/group/getGroupListByDept',
