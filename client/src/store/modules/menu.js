@@ -8,7 +8,11 @@ const store = {
         icon: 'fa-group',
         children: [
           {
-            title: '分组管理',
+            title: '部门管理',
+            index: '/department'
+          },
+          {
+            title: '小组管理',
             index: '/group'
           },
           {

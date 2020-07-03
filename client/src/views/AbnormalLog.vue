@@ -75,7 +75,7 @@
 
 <script>
 import DataTable from '../components/DataTable';
-import { time } from '../filters/index.js';
+import { time } from '../utils/api.js';
 // import { Loading } from 'element-ui';
 export default {
   name: 'AbnormalLog',
@@ -124,10 +124,15 @@ export default {
     },
     async getLogsInfo(params = {}) {
       this.isLoading = true;
-      const res = await this.$http.getRequest('/log/getLogList', params);
+      let res;
+      try {
+        res = await this.$http.getRequest('/log/getLogList', params);
+      } catch (error) {
+        this.isLoading = false;
+      }
       this.total = res.totalCount;
       const { data, retCode } = res;
-      if (retCode === 200) {
+      if (retCode === 200 && data instanceof Array) {
         this.tableData = data.map((item) => {
           item.createTime = time(item.createTime, 'YYYY-MM-DD');
           if (item.sufferer === '') {

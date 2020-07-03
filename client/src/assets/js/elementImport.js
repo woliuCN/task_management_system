@@ -32,7 +32,8 @@ import {
   RadioGroup,
   Loading,
   Upload,
-  Avatar
+  Avatar,
+  Transfer
 } from 'element-ui';
 import Vue from 'vue';
 
@@ -67,7 +68,8 @@ const components = {
   Radio,
   RadioGroup,
   Upload,
-  Avatar
+  Avatar,
+  Transfer
 };
 
 for (const key in components) {

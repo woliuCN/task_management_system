@@ -14,11 +14,13 @@
       :isShowSearch="true"
       @search-content-changed="searchContent"
       @add-group="addGroup"
-      @allocate-group="allocateGroup"
+      @allocate-administrator="allocateAdministrator"
       @modification-group="modificationGroup"
       @delete-group="deleteGroup"
     >
     </data-table>
+
+    <!-- 信息弹窗 -->
     <my-dialog
       :visible.sync="visible"
       :tableData="dialogInfo"
@@ -29,7 +31,7 @@
 
     <!-- 分配管理员弹窗 -->
     <el-dialog
-      title="分配组长"
+      title="分配管理员"
       width="725px"
       :visible.sync="allocating"
     >
@@ -64,12 +66,10 @@ export default {
     return {
       // table抬头
       tableTitle: [
-        { label: '小组编号', prop: 'groupId' },
-        { label: '小组名', prop: 'groupName' },
-        { label: '所属部门', prop: 'deptName' },
+        { label: '部门ID', prop: 'deptId' },
+        { label: '部门名称', prop: 'deptName' },
         { label: '创建时间', prop: 'createTime' },
-        { label: '修改时间', prop: 'updateTime' },
-        { label: '备注', prop: 'remarks' }
+        { label: '修改时间', prop: 'updateTime' }
       ],
 
       // 源数据
@@ -84,10 +84,10 @@ export default {
       total: 0,
       isLoading: false,
 
-      // 是否显示弹窗
+      // 是否显示添加/修改信息弹窗
       visible: false,
 
-      // 是否显示分配组长弹窗
+      // 是否显示分配管理员弹窗
       allocating: false,
 
       // 弹窗的title
@@ -99,19 +99,15 @@ export default {
       // 所有用户
       allUsers: [],
 
-      // 选中分配的组长
+      // 被分配的管理员
       selectUsers: [],
 
-      // 部门列表
-      deptList: [],
-      trimDept: [],
-
       // 模糊搜索关键字
-      keyWords: ''
+      keywords: ''
     };
   },
   created() {
-    this.getGroupInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
+    this.getDepartmentInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex });
   },
   mounted() {
     this.initButtonList();
@@ -123,32 +119,17 @@ export default {
     initDialogInfo(str = '', typeOfUserId = 'input') {
       this.dialogInfo = [
         {
-          attrName: 'groupId',
+          attrName: 'deptId',
           label: 'ID',
           type: 'hidden',
           value: ''
         },
         {
-          attrName: 'groupName',
-          label: '小组名称',
+          attrName: 'deptName',
+          label: '部门名称',
           type: 'input',
           value: '',
           rules: { required: true, message: '请输入分组名称', trigger: 'blur' }
-        },
-        {
-          attrName: 'deptName',
-          label: '所属部门',
-          type: 'select',
-          options: this.deptList.filter(item => item !== undefined),
-          optionsName: this.deptList,
-          value: '',
-          rules: { required: true, message: '请选择所属部门', trigger: 'blur' }
-        },
-        {
-          attrName: 'remarks',
-          label: '备注',
-          type: 'input',
-          value: ''
         }
       ];
     },
@@ -157,16 +138,18 @@ export default {
     searchContent(value) {
       this.keyWords = value;
       if (value === '') {
-        this.pageSize = 10;
+        this.pageSize = 8;
         this.pageIndex = 1;
       }
-      this.getGroupInfo({ pageSize: this.pageSize, pageIndex: this.pageIndex, keyWords: value });
+      const pageSize = this.pageSize
+      const pageIndex = this.pageIndex
+      this.getDepartmentInfo({ pageSize, pageIndex, keyWords: value });
     },
 
-    // 获取分组列表
-    async getGroupInfo(params) {
+    // 获取部门列表
+    async getDepartmentInfo(params) {
       this.isLoading = true;
-      const res = await this.$http.getRequest('/group/getPaginGroup', params);
+      const res = await this.$http.getRequest('/department/getPaginDept', params);
       const { data, totalCount, retCode } = res;
       if (retCode === 200) {
         this.sourceData = data.map((item) => {
@@ -176,26 +159,6 @@ export default {
         });
         this.total = totalCount;
         this.tableData = copy(this.sourceData);
-        await this.getDept();
-      } else {
-        this.$message({
-          message: '获取分组列表失败',
-          type: 'error',
-          duration: 1000
-        });
-      }
-      this.isLoading = false;
-    },
-
-    // 获取部门列表
-    async getDept() {
-      const res = await this.$http.getRequest('/department/getDepartMentList');
-      const { data, retCode } = res;
-      if (retCode === 200) {
-        data.map((item) => {
-          this.deptList[item.deptId] = item.deptName;
-          this.trimDept[item.deptName] = item.deptId;
-        });
       } else {
         this.$message({
           message: '获取部门列表失败',
@@ -203,34 +166,35 @@ export default {
           duration: 1000
         });
       }
+      this.isLoading = false;
     },
 
     // 初始化按钮列表
     initButtonList() {
       this.buttonList = [
-        // 新增分组按钮
-        {
-          text: '添加',
-          event: 'add-group'
-        },
+        // // 新增分组按钮
+        // {
+        //   text: '添加',
+        //   event: 'add-group'
+        // },
 
-        // 修改分组按钮
-        {
-          text: '修改',
-          event: 'modification-group'
-        },
+        // // 修改分组按钮
+        // {
+        //   text: '修改',
+        //   event: 'modification-group'
+        // },
 
-        // 分配小组组长按钮
+        // 分配管理员按钮
         {
-          text: '分配组长',
-          event: 'allocate-group'
-        },
-
-        // 删除分组按钮
-        {
-          text: '删除',
-          event: 'delete-group'
+          text: '分配管理员',
+          event: 'allocate-administrator'
         }
+
+        // // 删除分组按钮
+        // {
+        //   text: '删除',
+        //   event: 'delete-group'
+        // }
       ];
     },
 
@@ -242,26 +206,25 @@ export default {
       //   duration: 1000
       // });
       this.initDialogInfo();
-      this.titleName = '添加分组';
+      this.titleName = '添加部门';
       this.visible = true;
-      console.log('添加分组');
+      console.log('添加部门');
     },
 
-    // 分配小组组长
-    allocateGroup(rows) {
+    // 分配管理员
+    allocateAdministrator(rows) {
       if (rows.length !== 1) {
         this.$message({
-          message: '一次只能为一个小组分配组长！',
+          message: '一次只能为一个部门分配管理员！',
           type: 'warning',
           duration: 1000
         });
         return -1;
       };
-      this.titleName = '分配组长';
+      this.titleName = '分配管理员';
       this.$rows = rows;
-      const { groupId } = rows[0];
-      console.log(REQUEST_URL)
-      this.$http.getRequest(REQUEST_URL.GROUP_ALLUSER, { groupId })
+      const { deptId } = rows[0]
+      this.$http.getRequest(REQUEST_URL.DEPARTMENT_ALLUSER, { deptId })
         .then((res) => {
           const { retCode, data } = res;
           if (retCode === 200) {
@@ -273,28 +236,26 @@ export default {
               }
             });
             this.selectUsers = data.filter((user) => {
-              return user.permission === USER_PERMISSION['组长'];
+              return user.permission === USER_PERMISSION['管理员'];
             }).map((user) => {
               return user.userId
             });
           }
         });
       this.allocating = true;
-      console.log('分配');
     },
 
     // 修改分组
     modificationGroup(rows) {
       if (rows.length !== 1) {
         this.$message({
-          message: '一次只能编辑一条小组信息！',
+          message: '一次只能编辑一条部门信息！',
           type: 'warning',
           duration: 1000
         });
         return -1;
       } else {
-        this.titleName = '修改分组';
-        this.initDialogInfo();
+        this.titleName = '修改部门';
         const rowInfo = copy(rows[0]);
         this.visible = true;
         this.dialogInfo.forEach((item, index) => {
@@ -311,36 +272,25 @@ export default {
         duration: 1000
       });
     },
-    success(value) {
-      console.log(value)
-      this.addOrUpdateOrDeleteGroupInfo(value);
-    },
-    close() {
+    success(valueInfo) {
+      console.log(valueInfo);
+      this.addOrUpdateOrAllocateAdmin(valueInfo);
     },
 
-    // 添加或更新小组信息
-    addOrUpdateOrDeleteGroupInfo(groupInfo, str = '') {
+    // 添加或更新部门信息或分配管理员
+    addOrUpdateOrAllocateAdmin(paramsObj, str = '') {
       let url = '';
       let params = {};
-      if (this.titleName === '添加分组') {
-        url = REQUEST_URL.GROUP_ADDGROUP;
-        const deptId = this.trimDept[groupInfo.deptName];
-        const group = {
-          groupName: groupInfo.groupName,
-          // deptName: groupInfo.deptName,
-          deptId
-        }
-        params = { group };
-      } else if (this.titleName === '修改分组') {
-        url = REQUEST_URL.GROUP_UPDATEGROUP;
-        delete groupInfo.deptName;
-        params = { group: groupInfo };
-      } else if (this.titleName === '删除') {
-        url = '/user/deleteUser';
-        params = { list: groupInfo };
-      } else if (this.titleName === '分配组长') {
+      if (this.titleName === '添加部门') {
+        url = REQUEST_URL.DEPARTMENT_ADDDEPT;
+        delete paramsObj.deptId;
+        params = { department: paramsObj };
+      } else if (this.titleName === '修改部门') {
+        url = REQUEST_URL.DEPARTMENT_UPDATEDEPT;
+        params = { department: paramsObj };
+      } else if (this.titleName === '分配管理员') {
         url = REQUEST_URL.USER_UPDATESTATE;
-        params = groupInfo;
+        params = paramsObj;
       }
       // 配置loading
       const loadingOptions = {
@@ -374,11 +324,13 @@ export default {
         })
         .finally(() => {
           this.loading.close && this.loading.close();
-          this.getGroupInfo(
+          this.getDepartmentInfo(
             this.pageIndex,
             this.pageSize,
             this.keyWords);
         })
+    },
+    close() {
     },
 
     // 分配的取消按钮事件
@@ -392,7 +344,7 @@ export default {
       let list = [];
       let permission = null;
       if (this.selectUsers.length > 0) {
-        permission = USER_PERMISSION['组长'];
+        permission = USER_PERMISSION['管理员'];
         list = this.selectUsers.map((user) => {
           return {
             userId: user
@@ -406,7 +358,7 @@ export default {
           }
         });
       };
-      this.addOrUpdateOrDeleteGroupInfo({ list, data: [{ permission }] });
+      this.addOrUpdateOrAllocateAdmin({ list, data: [{ permission }] });
       this.allocating = false;
       console.log(this.$rows, list);
       console.log('确定');

@@ -14,7 +14,7 @@
         :rules="item.rules"
         v-show="item.type !== 'hidden'"
       >
-        <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择">
+        <el-select v-if="item.type === 'select'" filterable v-model="item.value" @change="selected(item.value, item.event)" placeholder="请选择">
           <el-option
             v-for="(option, optionIdx) in item.options"
             :key="optionIdx"
@@ -73,6 +73,11 @@ export default {
     closeBtnName: {
       type: String,
       default: '取消'
+    },
+    // 是否启用选择框选中事件
+    isSelectedEvent: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -147,6 +152,13 @@ export default {
     // 初始化表单内容
     initTableData() {
       this.internalTableData = JSON.parse(JSON.stringify(this.tableData));
+    },
+
+    // 选择框选中
+    selected(value, e) {
+      if (this.isSelectedEvent && e) {
+        this.$emit(e, value);
+      }
     }
   }
 };
