@@ -526,7 +526,7 @@ export default {
           text: '完成',
           event: 'accomplish-task',
           limit: 1,
-          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-check'
         },
 
@@ -566,7 +566,7 @@ export default {
           text: '删除',
           event: 'delete-task',
           limit: 1,
-          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
         },
 

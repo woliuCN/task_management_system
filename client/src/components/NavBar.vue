@@ -10,9 +10,11 @@
           <transition-group name="breadcrumb">
             <el-breadcrumb-item :to="{ path: '/' }" key="/">首页</el-breadcrumb-item>
             <el-breadcrumb-item
-              v-for="(breadcrumb,index) in breadcrumbLists"
+              v-for="(breadcrumb, index) in breadcrumbLists"
               :key="index"
-            >{{breadcrumb}}</el-breadcrumb-item>
+            >
+              {{breadcrumb}}
+            </el-breadcrumb-item>
           </transition-group>
         </el-breadcrumb>
       </div>

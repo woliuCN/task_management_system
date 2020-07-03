@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="options">
+    <div class="options" v-if="$store.state.userInfo.userName !== ''">
       <slot name="tmp_search"></slot>
       <!-- 将父组件传过来的按钮数组实例化 -->
       <el-button
@@ -12,7 +12,7 @@
         v-has-permission="item.permission"
         @click="handleFunc(selectedData, item.event, item.limit)"
       >
-      {{ item.text }}
+        {{ item.text }}
       </el-button>
       <el-input
         v-if="isShowSearch"
