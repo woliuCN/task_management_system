@@ -58,7 +58,7 @@ const routes = [
         path: 'log',
         component: () => import('@/views/AbnormalLog'),
         name: 'AbnormalLog',
-        meta: { title: '异常日志', affix: true }
+        meta: { title: '系统日志', affix: true }
       }
     ]
   },
