@@ -68,6 +68,9 @@ export const REQUEST_URL = {
   // 生成月绩效地址
   TASK_MONTHPERFORMANCEDOWNLOAD: '/task/monthPerformanceDownload',
 
+  // 生成周计划
+  TASK_WEEKPLANDOWNLOAD: '/task/weekPlanDownload',
+
   // 获取项目数据
   PROJECT_GETPAGINPROJECT: '/project/getPaginProject',
 

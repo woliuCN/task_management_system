@@ -76,13 +76,6 @@ http.adornUrl = (actionName, params = {}) => {
  */
 http.getRequest = (url, params = {}) => {
   return http.get(url, { params });
-  // return new Promise((resolve, reject) => {
-  //   http.get(url, { params }).then(res => {
-  //     resolve(res.data);
-  //   }).catch(err => {
-  //     reject(err);
-  //   });
-  // });
 };
 
 /**
@@ -94,13 +87,6 @@ http.getRequest = (url, params = {}) => {
  */
 http.postRequest = (url, params) => {
   return http.post(url, params);
-  // return new Promise((resolve, reject) => {
-  //   http.post(url, params).then(res => {
-  //     resolve(res.data);
-  //   }).catch(err => {
-  //     reject(err);
-  //   });
-  // });
 };
 
 export default http;

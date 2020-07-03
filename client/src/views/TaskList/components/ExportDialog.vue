@@ -60,7 +60,8 @@
         </div>
         <div class="center">
           <el-button class="button-item" @click="personalPerformance">导出个人绩效</el-button>
-          <el-button class="button-item" @click="monthPerformance">导出月绩效</el-button>
+          <el-button class="button-item" @click="weeklyPlan">生成周计划</el-button>
+          <!-- <el-button class="button-item" @click="monthPerformance">导出月绩效</el-button> -->
         </div>
       </div>
       <div v-else class="center">
@@ -79,7 +80,7 @@
           @change="timePickerChanged"
         >
         </el-date-picker>
-        <el-button class="button-item" @click="weekreport">生成周报</el-button>
+        <el-button class="button-item" @click="weeklyPlan">生成周计划</el-button>
       </div>
     </el-dialog>
   </div>
@@ -161,10 +162,10 @@ export default {
       //
     },
     // 生成周报
-    weekreport() {
+    weeklyPlan() {
       const url = this.$http.adornUrl(
-        REQUEST_URL.TASK_WEEKLYDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime }
+        REQUEST_URL.TASK_WEEKPLANDOWNLOAD,
+        { startTime: this.startTime, endTime: this.endTime, ...this.seletedDept }
       );
       window.open(url);
     },
@@ -190,16 +191,16 @@ export default {
     },
 
     // 生成月绩效
-    monthPerformance() {
-      if (this.seletedDept.deptId === -1) {
-        return -1;
-      }
-      const url = this.$http.adornUrl(
-        REQUEST_URL.TASK_TEMPLATEDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime, ...this.seletedDept }
-      );
-      window.open(url);
-    },
+    // monthPerformance() {
+    //   if (this.seletedDept.deptId === -1) {
+    //     return -1;
+    //   }
+    //   const url = this.$http.adornUrl(
+    //     REQUEST_URL.TASK_TEMPLATEDOWNLOAD,
+    //     { startTime: this.startTime, endTime: this.endTime, ...this.seletedDept }
+    //   );
+    //   window.open(url);
+    // },
 
     formatDeptInfo(deptId) {
       this.deptList.find((dept) => {

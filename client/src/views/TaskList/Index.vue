@@ -568,15 +568,14 @@ export default {
           limit: 1,
           permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-delete'
-        },
-
-        // 生成周报按钮
-        {
-          text: '生成周报',
-          event: 'weekly-report',
-          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         }
 
+        // 生成周报按钮
+        // {
+        //   text: '生成周报',
+        //   event: 'weekly-report',
+        //   permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+        // }
       ];
     },
 
