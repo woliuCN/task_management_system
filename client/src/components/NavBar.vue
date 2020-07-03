@@ -121,7 +121,7 @@ export default {
       }
     };
     const validatePassword = (rule, value, callback) => {
-      const patt = /^[0-9a-zA-Z][0-9a-zA-Z._]*$/
+      const patt = /^[0-9a-zA-Z][0-9a-zA-Z._]*$/;
       if (!patt.test(value)) {
         return callback(new Error('密码必须以数字/字母开头并且不能包含空格等特殊字符'));
       }

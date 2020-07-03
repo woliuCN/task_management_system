@@ -1,4 +1,4 @@
-import { getUserInfo } from '@/utils/api.js'
+import { getUserInfo } from '@/utils/api.js';
 
 const store = {
   state: {

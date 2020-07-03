@@ -25,10 +25,16 @@ const routes = [
         meta: { title: '首页', affix: true }
       },
       {
+        path: 'department',
+        component: () => import('@/views/DepartmentManage'),
+        name: 'DepartmentManage',
+        meta: { title: '部门管理', affix: true }
+      },
+      {
         path: 'group',
         component: () => import('@/views/GroupManage'),
         name: 'GroupManage',
-        meta: { title: '分组管理', affix: true }
+        meta: { title: '小组管理', affix: true }
       },
       {
         path: 'member',

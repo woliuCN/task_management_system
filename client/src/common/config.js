@@ -40,6 +40,24 @@ export const PERMISSION = {
   SYS_ADMIN: 3
 };
 
+// 员工就职状态
+export const USER_STATUS = {
+  0: '离职',
+  1: '在职'
+};
+
+// 员工职位
+export const USER_PERMISSION = {
+  0: '组员',
+  1: '组长',
+  2: '管理员',
+  3: '超级管理员',
+  组员: 0,
+  组长: 1,
+  管理员: 2,
+  超级管理员: 3
+};
+
 export const REQUEST_URL = {
   // 获取任务数据
   TASK_GETPAGINTASK: '/task/getPaginTask',
@@ -98,6 +116,48 @@ export const REQUEST_URL = {
   // 获取用户信息
   USER_GETUSERINFO: '/user/getUserInfo',
 
+  // 新增部门
+  DEPARTMENT_ADDDEPT: '/department/addDepartMent',
+
+  // 更新部门
+  DEPARTMENT_UPDATEDEPT: '/department/updateDepartMent',
+
+  // 删除部门
+  DEPARTMENT_DELETEDEPARTMENT: '/department/deleteDepartMent',
+
   // 获取部门列表
-  DEPARTMENT_GETDEPARTMENTLIST: '/department/getDepartMentList'
+  DEPARTMENT_GETDEPARTMENTLIST: '/department/getDepartMentList',
+
+  // 获取部门所有员工
+  DEPARTMENT_ALLUSER: '/department/getUserListByDept',
+
+  // 添加小组
+  GROUP_ADDGROUP: '/group/addGroup',
+
+  // 修改小组
+  GROUP_UPDATEGROUP: '/group/updateGroup',
+
+  // 删除小组
+  GROUP_DELETEGROUP: '/group/deleteGroup',
+
+  // 获取部门内所有小组
+  GROUP_GETGROUPBYDEPT: '/group/getGroupListByDept',
+
+  // 获取小组内所有成员
+  GROUP_ALLUSER: '/group/getUserListByGroup',
+
+  // 添加员工
+  USER_ADDUSER: '/user/addUser',
+
+  // 修改员工
+  USER_UPDATEUSER: '/user/updateUser',
+
+  // 删除员工
+  USER_DELETEUSER: '/user/deleteUser',
+
+  // 更新员工就职状态
+  USER_UPDATESTATE: '/user/updateState',
+
+  // 初始化员工密码
+  USER_RESETPASSWORD: '/user/resetPassword'
 };

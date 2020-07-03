@@ -11,7 +11,7 @@ export default {
     const userInfo = store.state.userInfo;
     const userPermission = userInfo.permission || PERMISSION.ORDINARY_USER;
     const permissionList = binding.value || [];
-    const hasPermission = permissionList.indexOf(userPermission) === -1 ? false : true;
+    const hasPermission = permissionList.indexOf(userPermission) !== -1;
     if (!hasPermission) {
       el.remove();
     }

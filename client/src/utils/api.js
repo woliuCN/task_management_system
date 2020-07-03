@@ -1,4 +1,4 @@
-import { REQUEST_URL } from '../common/config.js'
+import { REQUEST_URL } from '../common/config.js';
 import http from '../lib/request.js';
 /**
  * 将时间戳格式化为具体日期格式
@@ -128,4 +128,4 @@ export const copy = function(obj) {
 export const getUserInfo = function() {
   const url = REQUEST_URL.USER_GETUSERINFO;
   return http.getRequest(url);
-}
+};

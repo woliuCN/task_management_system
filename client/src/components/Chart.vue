@@ -12,6 +12,42 @@
 
 <script>
 const echarts = require('echarts');
+const defaultOptions = {
+  title: {},
+  grid: {
+    left: 30,
+    right: 0,
+    top: 10,
+    bottom: 20
+  },
+  tooltip: {
+    formatter: function(param) {
+      return `<div>${param.value}</div>`;
+    }
+  },
+  legend: {},
+  xAxis: {
+    type: 'category'
+  },
+  yAxis: {
+    axisLine: {
+      show: false
+    },
+    splitLine: {
+      show: false
+    }
+  },
+  series: [{
+    type: 'bar',
+    data: [],
+    itemStyle: {
+      normal: {
+        color: '#2486b9',
+        shadowColor: 'rgba(0, 0, 0, 0.5)'
+      }
+    }
+  }]
+};
 export default {
   name: 'Chart',
   props: {
@@ -36,42 +72,6 @@ export default {
   data() {
     return {
       chart: null,
-      defaultOptions: {
-        title: {},
-        grid: {
-          left: 30,
-          right: 0,
-          top: 10,
-          bottom: 20
-        },
-        tooltip: {
-          formatter: function(param) {
-            return `<div>${param.value}</div>`;
-          }
-        },
-        legend: {},
-        xAxis: {
-          type: 'category'
-        },
-        yAxis: {
-          axisLine: {
-            show: false
-          },
-          splitLine: {
-            show: false
-          }
-        },
-        series: [{
-          type: 'bar',
-          data: [],
-          itemStyle: {
-            normal: {
-              color: '#2486b9',
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }]
-      },
       hasData: false,
       firstLoad: true,
       title: ''
@@ -114,13 +114,13 @@ export default {
 
     // 初始化options
     initOptions() {
-      Object.assign(this.defaultOptions, this.options);
+      Object.assign(defaultOptions, this.options);
     },
 
     // 配置图表信息
     setOptions() {
       this.initOptions();
-      this.chart.setOption(this.defaultOptions, true);
+      this.chart.setOption(defaultOptions, true);
     },
 
     // 图表大小重置
