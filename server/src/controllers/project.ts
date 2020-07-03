@@ -17,7 +17,7 @@ export default {
      * @return: 
     **/
     async addProject(params: any, ctx: any) {
-        let userName: string = ctx.session.userName;
+        let userName: string = ctx.session.user.userName;
         let project: Project = {} as Project;
         project = Object.assign(
             { ...params.project },
@@ -26,7 +26,7 @@ export default {
                 updateTime: new Date().getTime()
             }
         );
-        
+
         await Log.addLog(`${userName}添加了项目${params.project.projectName}`, userName);
         return await server.db.Insert<Project>(project, tbName);
     },
@@ -103,11 +103,10 @@ export default {
             projectId: parseInt(projectId),
             projectName
         }
-        project = JSON.stringify(project);
-        let keyWordsFields: Array<string> = ["belonger", "project", "content"];
-        
+        let keyWordsFields: Array<string> = ["belongerName", "projectName", "content"];
+
         //查询条件，其他约束
-        let { condition, constraint } = pagingQuery({ startTime, endTime, pageSize, pageIndex, keyWords, keyWordsFields, sortField: "taskId", associated: [{ project }] });
+        let { condition, constraint } = pagingQuery({ startTime, endTime, pageSize, pageIndex, keyWords, keyWordsFields, sortField: "taskId", associated: [{ ...project }] });
         await server.db.Find(['count(*) as totalCount'], TaskTbName, condition).then(data => {
             res = {
                 totalCount: data[0].totalCount,
@@ -134,7 +133,7 @@ export default {
      * @return: promise
      */
     async updateProject(params: any, ctx: any) {
-        let userName: string = ctx.session.userName;
+        let userName: string = ctx.session.user.userName;
         let project: Project = params.project;
         let condition: object = { projectId: project.projectId }; //更新条件 
         delete project.projectId;
@@ -159,7 +158,7 @@ export default {
     **/
     async updateState(params: any, ctx: any) {
         const stateMap = { 0: '运行', 1: '挂起', 2: '完成' };
-        let userName: string = ctx.session.userName;
+        let userName: string = ctx.session.user.userName;
         let projectList: Array<Project> = params.list;
         let dataArray: Array<any> = params.data;
         let projectNameStr: string = projectList.map((project: any) => {
@@ -179,7 +178,7 @@ export default {
      * @return: promise
     **/
     async deleteProject(params: { list: Array<Project> }, ctx: any) {
-        let userName: string = ctx.session.userName;
+        let userName: string = ctx.session.user.userName;
         let projectList: Array<Project> = params.list;
         let dataArray: Array<object> = [{ isDelete: 1 }];
         let projectNameStr: string = projectList.map((project: any) => {

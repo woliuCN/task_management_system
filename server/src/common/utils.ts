@@ -1,12 +1,12 @@
 // 格式化id函数的第一个参数的类型的类型别名
-type objInfo = {
-    userId: string,
-    userName?: string
-}
+// type objInfo = {
+//     userId: string,
+//     userName?: string
+// }
 
 //  格式化id函数约束接口
 interface formatFn {
-    (ob: objInfo, ct: number): string
+    (jobNo: string, ct: number): string
 }
 
 /**
@@ -14,7 +14,7 @@ interface formatFn {
     * @param {any} params 传入的body数据
     * @return: 
 **/
-const formatId: formatFn = (obj: objInfo, createTime: number) => {
+const formatId: formatFn = (jobNo: string, createTime: number) => {
     let time: Date = new Date(createTime);
     let year: string = time.getFullYear().toString();
     let month: string = time.getMonth() > 8
@@ -23,7 +23,7 @@ const formatId: formatFn = (obj: objInfo, createTime: number) => {
     let day: string = time.getDate() > 9
         ? `${time.getDate()}`
         : `0${time.getDate()}`;
-    let jobNo: string = obj.userId;
+    // let jobNo: string = obj.userId;
     return `${jobNo}${year}${month}${day}`;
 }
 
@@ -59,6 +59,7 @@ const pagingQuery: pagingQueryFn = (args: any) => {
     let keys: Array<string> = Object.keys(args);
     let { startTime, endTime, pageSize, pageIndex, keyWordsFields, keyWords, sortField, associated } = args;
     startTime = parseInt(startTime) || 0;
+    // endTime = parseInt(endTime) + 86399000 || null; //需要将时间转换为当天的23:59:59
     endTime = parseInt(endTime) || null;
     pageSize = parseInt(pageSize) || 10;
     pageIndex = parseInt(pageIndex) || 1;
@@ -78,7 +79,7 @@ const pagingQuery: pagingQueryFn = (args: any) => {
             condition += ` (${keyWordsFields.join(" or ")}) `;
         }
     }
-    if (associated) {  //如果有额外的关联的查询条件的话，因为表与表之间不仅有唯一id，还涉及到相关的内容，所以只能用 like来查询其id
+    if (associated) {
         associated = associated.map((item: any) => {
             let newItem: string = "";
             for (const key in item) {

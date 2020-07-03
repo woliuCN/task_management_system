@@ -13,7 +13,7 @@ const development = {
     SESSION_SIGNED_KET: ["task_manage"],
     SESSION_CONFIG: {
         key: 'LOGIN_TOKEN', /**  cookie的key。 (默认是 koa:sess) */
-        maxAge: 5 * 60 * 1000, /**  session 过期时间，以毫秒ms为单位计算 。*/
+        maxAge: 30 * 60 * 1000, /**  session 过期时间，以毫秒ms为单位计算 。*/
         autoCommit: true, /** 自动提交到响应头。(默认是 true) */
         overwrite: true, /** 是否允许重写 。(默认是 true) */
         httpOnly: true, /** 是否设置HttpOnly，如果在Cookie中设置了"HttpOnly"属性，那么通过程序(JS脚本、Applet等)将无法读取到Cookie信息，这样能有效的防止XSS攻击。  (默认 true) */
@@ -25,6 +25,17 @@ const development = {
         UNDELETED: 0, //未删除
         DELETED: 1,  //已删除
         BOTH: 2     //全部
+    },
+    TASK_STATE: {
+        ONGOING: 0, //进行中
+        COMPLETE: 1, //完成
+        HANG: 2 //挂起
+    },
+    PERMISSION: {
+        MEMBER: 0,
+        GROUP_LEADER: 1,
+        DEPT_LEADER: 2,
+        ADMIN: 3
     }
 
 }
