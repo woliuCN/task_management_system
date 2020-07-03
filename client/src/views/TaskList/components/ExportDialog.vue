@@ -40,13 +40,14 @@
           >
           </el-date-picker>
         </div>
-        <div class="export-info-item">
+        <div class="export-info-item" style="display: none;">
           <span>选择部门：</span>
           <el-select
-            v-model="seletedDept"
+            v-model="seletedDept.deptId"
             class="width-100"
             placeholder="选择部门"
             filterable
+            @change="formatDeptInfo"
           >
             <el-option
               v-for="dept in deptList"
@@ -113,7 +114,10 @@ export default {
 
       // 部门列表
       deptList: [],
-      seletedDept: 0
+      seletedDept: {
+        deptId: -1,
+        deptName: ''
+      }
     };
   },
   methods: {
@@ -175,20 +179,34 @@ export default {
 
     // 生成个人绩效
     personalPerformance() {
+      if (this.seletedDept.deptId === -1) {
+        return -1;
+      }
       const url = this.$http.adornUrl(
         REQUEST_URL.TASK_PERSONALPERFORMANCEDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime, dept: this.seletedDept }
+        { startTime: this.startTime, endTime: this.endTime, ...this.seletedDept }
       );
       window.open(url);
     },
 
     // 生成月绩效
     monthPerformance() {
+      if (this.seletedDept.deptId === -1) {
+        return -1;
+      }
       const url = this.$http.adornUrl(
         REQUEST_URL.TASK_TEMPLATEDOWNLOAD,
-        { startTime: this.startTime, endTime: this.endTime, dept: this.seletedDept }
+        { startTime: this.startTime, endTime: this.endTime, ...this.seletedDept }
       );
       window.open(url);
+    },
+
+    formatDeptInfo(deptId) {
+      this.deptList.find((dept) => {
+        if (dept.deptId === deptId) {
+          this.seletedDept.deptName = dept.deptName;
+        }
+      });
     }
   },
   computed: {
@@ -222,8 +240,8 @@ export default {
     this.$http.getRequest(url)
       .then(res => {
         this.deptList = res.data;
-        this.seletedDept = this.deptList[0].deptId;
-      });
+        this.seletedDept = { ...this.deptList[0] }
+      })
   },
   watch: {
     isShow(val) {

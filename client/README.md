@@ -1,124 +1,76 @@
-# 系统客户端
-
-### 组件使用稳定
-```
-src/components/DataTable.vue
-【功能】 用于系统内表单展示
-
-【使用说明】
-tableTitle(必填)：
-    表单抬头，格式为[{prop, label, id, width, fixed}]。
-    其中width和fixed为必填，prop必须与tableData对应。
-    demo：tableTitle: [
-            { label: '日期', prop: 'date', id: '1', fixed: true, width: 200 },
-            { label: '姓名', prop: 'name', id: '2', fixed: false },
-            { label: '省份', prop: 'province', id: '3' },
-            { label: '市区', prop: 'city', id: '4' },
-            { label: '详细地址', prop: 'address', id: '5', width: 500 },
-            { label: '邮编', prop: 'zip', id: '6' }
-         ]
-
-tableData(必填)：
-    表单数据，数据的键名必须与title中的prop对应，才能在相应的列中显示。
-    demo：tableData: [
-            {
-                date: '2016-05-03',
-                name: '王小虎',
-                province: '上海',
-                city: '普陀区',
-                address: '上海市普陀区金沙江路 1518 弄',
-                zip: 200333
-            }, {
-                date: '2016-05-02',
-                name: '王小虎',
-                province: '上海',
-                city: '普陀区',
-                address: '上海市普陀区金沙江路 1518 弄',
-                zip: 200333
-            }
-         ]
-
-maxHeight(选填)：
-    表单最大高度
-
-isSelection(选填，默认false)：
-    是否在表单左边显示多选按钮
-
-buttonList(选填，默认[])：
-    是否在表单上方自定义按钮组。
-    按钮可自定义type（选填）、size（选填）、text（选填）、event（必填）。
-    其中event为事件名，在组件内会通过$emit分发给父组件，所以在父组件中需要先做好事件处理来接收从本组件中分发出来的数据。
-    demo：buttonList: [
-            {
-            type: 'danger',
-            text: '删除',
-            event: 'deletefn',
-            size: 'mini'
-            },
-            {
-            text: '查看',
-            event: 'showfn',
-            size: 'mini',
-            icon: 'el-icon-search'
-            }
-         ]
-
-src/components/Chart.vue
-【功能】 用于系统内图表展示
-
-【使用说明】
-domName(必填):
-    ECharts图表标识，同一页面使用多个Chart组件，每个domName是必须唯一值。
-    demo: 
-          <chart domName="_one">
-          <chart domName="_two">
-
-options(选填，默认{}):
-    ECharts展示配置对象, 组件内初始化了options，包括grid、tooltip、yAxis、series属性。
-    demo： options: {
-            title: {
-              show: true,
-              text: '过去一年项目情况',
-              textStyle: {
-                // color: 'pick',
-                fontStyle: 'solid',
-                fontSize: 20
-              },
-              left: 'center',
-              bottom: 0
-            },
-            xAxis: {
-              type: 'category'
-            },
-            yAxis: {
-              splitLine: {
-                show: false
-              },
-              axisLine: {
-                show: false
-              },
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                formatter: function() {
-                  return '';
-                }
-              }
-            },
-            series: [{
-              data: [120, 200, 150, 80, 70, 110, 130, 0, 0, 0, 0, 0, 0],
-              type: 'bar',
-              itemStyle: {
-                normal: {
-                  color: '#2486b9',
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-              }
-            }]
-          }
-
-minHeight(选填，默认高度200px)
-    图表最小高度
-
+```markdown
+.
+├── README.md
+├── babel.config.js
+├── package-lock.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   └── index.html
+├── src
+│   ├── App.vue
+│   ├── assets      // 静态资源
+│   │   ├── css
+│   │   │   ├── common-variables.scss   // 公共样式文件
+│   │   │   └── reset.scss
+│   │   ├── images
+│   │   │   ├── avator.gif        // 头像
+│   │   │   ├── background.jpg    // 登录页背景
+│   │   │   ├── blindfold.png     // 登录页窗口图片 - 输入密码时显示
+│   │   │   ├── greeting.png      // 登录页窗口图片 - 输入账号时显示
+│   │   │   └── normal.png        // 登录页窗口图片 - 正常
+│   │   ├── js
+│   │   │   └── elementImport.js  // ElementUI引入配置
+│   │   └── logo.png
+│   ├── common                // 公共文件
+│   │   └── config.js         // 公共常数声明
+│   ├── components            // 自定义组件
+│   │   ├── Cards.vue
+│   │   ├── Chart.vue
+│   │   ├── DataTable.vue     // 公共表格组件，用于展示任务、项目等数据
+│   │   ├── HeaderSearch.vue  // Header中的搜索框
+│   │   ├── MyDialog.vue
+│   │   ├── NavBar.vue
+│   │   ├── SideBar.vue
+│   │   └── Tags.vue
+│   ├── directives            // 自定义指令
+│   │   ├── haspermission.js  // 判断组件是否用哟
+│   │   └── index.js          // 配置自定义指令并引入
+│   ├── filters
+│   │   └── index.js
+│   ├── lib
+│   │   └── request.js        // 封装axios请求
+│   ├── main.js
+│   ├── router                // router配置
+│   │   └── index.js
+│   ├── store                 // Vuex配置
+│   │   ├── index.js
+│   │   └── modules
+│   │       ├── menu.js
+│   │       ├── tags.js
+│   │       └── userInfo.js
+│   ├── utils
+│   │   ├── api.js          // 公用函数配置，如时间戳格式化等
+│   │   ├── filtrateDateFromData.js
+│   │   └── timePickerConfig.js   // timePicker配置文件
+│   └── views         // 界面相关
+│       ├── AbnormalLog.vue
+│       ├── DashBoard.vue
+│       ├── GroupManage.vue
+│       ├── Home.vue
+│       ├── Login.vue
+│       ├── MemberManage.vue
+│       ├── ProjectManage   // 项目管理界面
+│       │   ├── Index.vue   // 入口
+│       │   └── components
+│       │       ├── AccomplishDialog.vue    // 完成任务时弹窗
+│       │       ├── EditDialog.vue          // 新增/完成项目相关弹窗
+│       │       └── ProjectDetail.vue       // 查看项目子任务弹窗
+│       └── TaskList        // 任务展示界面
+│           ├── Index.vue   // 入口
+│           └── components
+│               ├── AccomplishDialog.vue    // 完成任务时弹窗
+│               ├── EditDialog.vue          // 新增/完成任务相关弹窗
+│               └── ExportDialog.vue        // 导出文件弹窗
+└── vue.config.js
 ```

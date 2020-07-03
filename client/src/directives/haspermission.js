@@ -8,7 +8,6 @@ import store from '../store';
  */
 export default {
   inserted(el, binding, vnode) {
-    // const userInfo = [...store.state.userInfo];
     const userInfo = store.state.userInfo;
     const userPermission = userInfo.permission || PERMISSION.ORDINARY_USER;
     const permissionList = binding.value || [];
