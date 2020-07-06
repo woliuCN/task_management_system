@@ -62,6 +62,9 @@ export const REQUEST_URL = {
   // 获取任务数据
   TASK_GETPAGINTASK: '/task/getPaginTask',
 
+  // 获取所有任务
+  TASK_GETTOTALTASH: '/task/getTotalTask',
+
   // 增加任务
   TASK_ADDTASK: '/task/addTask',
 
@@ -107,8 +110,14 @@ export const REQUEST_URL = {
   // 获取用户列表 - 只有username和userid，用于新增负责人时展示列表
   USER_GETTOTALUSER_OPTIONS: '/user/getTotalUser/options',
 
+  // 获取所有用户
+  USER_GETTOTALUSER: '/user/getTotalUser',
+
   // 获取项目列表 - 只有projectName和projectId，用于新增任务时展示列表
   PROJECT_GETTOTALPROJECT_OPTIONS: '/project/getTotalProject/options',
+
+  // 获取所有项目
+  PROJECT_GETTOTALPROJECT: '/project/getTotalProject',
 
   // 获取项目子任务信息
   PROJECT_GETTASKBYPROJECT: '/project/getTaskByProject',

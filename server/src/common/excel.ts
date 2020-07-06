@@ -1,6 +1,8 @@
 import Excel from 'exceljs';
 const path = require('path');
 const fs = require('fs');
+const config = require('../config/index');
+const TASK_STATE = config.TASK_STATE;
 /*-----------------------------------------------------------------*/
 type column = {
     header: string,
@@ -39,17 +41,17 @@ const exportPerformanceExcel = async (sheetName: string, columns: Array<column>,
         row.getCell(rowNumber).font = { bold: true };
     })
     if (sheetName === '个人绩效') {
-        let nowValue = sheet.getRow(2).getCell(1).value; //当前的值，比较得出是否要切换背景色跟合并cell
+        let currentValue = sheet.getRow(2).getCell(1).value; //当前的值，比较得出是否要切换背景色跟合并cell
         let flag: boolean = false;  //是否要切换背景色
-        let mergeIndex = 2; //合并的起始下标
+        // let mergeIndex = 2; //合并的起始下标
         for (let i = 0; i < data.length; i++) {
             const row = sheet.getRow(i + 2);
             let value = row.getCell(1).value;
-            if (value != nowValue) {
+            if (value != currentValue) {
                 flag = !flag;
-                nowValue = value;
-                sheet.mergeCells(`A${mergeIndex}:A${i + 1}`);
-                mergeIndex = i + 2;
+                currentValue = value;
+                // sheet.mergeCells(`A${mergeIndex}:A${i + 1}`);
+                // mergeIndex = i + 2;
             }
             if (flag) {
                 row.eachCell((cell, rowNumber) => {
@@ -62,12 +64,15 @@ const exportPerformanceExcel = async (sheetName: string, columns: Array<column>,
                 })
             }
         }
-        sheet.mergeCells(`A${mergeIndex}:A${data.length + 1}`);
+        // sheet.mergeCells(`A${mergeIndex}:A${data.length + 1}`);
     } else {
         sheet.autoFilter = "B1:E1"; //给月绩效添加过滤条件的选择
     }
     return workBook.xlsx.writeFile(path.resolve(__dirname, `../attachement/${sheetName}.xlsx`));
 }
+
+
+
 
 
 /**
@@ -205,6 +210,130 @@ const exportWeeklyExcel = async (sheetName: string, taskList: any, startTime: nu
 }
 
 
+
+
+
+
+/**
+    * @description: 导出周计划函数
+    * @param {string} sheetName 表名
+    * @param {string} deptName 部门名称
+    * @param {any} taskList task表数据
+    * @param {number} startTime 开始时间
+    * @param {number} endTime 结束时间
+    * 
+**/
+const exportWeekPlanExcel = async (sheetName: string, deptName: string, taskList: any, startTime: number, endTime: number) => {
+    // 初始化 建立工作区
+    const workBook = new Excel.Workbook();
+    workBook.creator = 'cn';
+    workBook.lastModifiedBy = 'cn';
+    workBook.created = new Date();
+    workBook.modified = new Date();
+
+
+    //颜色
+    const color = {
+        "blue": "5ACAFA",
+        "green": "75FA4C"
+    }
+    // 新建sheet表
+    const sheet = workBook.addWorksheet(sheetName, { properties: { defaultColWidth: 20 } });
+    const DAY: number = 24 * 3600 * 1000; //一天的毫秒值
+    const WEEKEN: number = 7;
+    const durationDay: number = Math.round((endTime - startTime) / DAY); //相差的天数
+    let week_num: number = Math.round((startTime - new Date(`${new Date().getFullYear()}/1/1`).getTime()) / DAY / WEEKEN); //计算第几周
+    let week_days: Array<string> = []; //日期时间数组
+    for (let i = 0; i < durationDay; i++) {
+        let time: string = new Date(startTime + DAY * i).toLocaleDateString();
+        week_days.push(time);
+    }
+
+    //初始化第一行
+    const serial: string = String.fromCharCode(66 + durationDay); //计算合并的列号，66是B的ASCII
+    sheet.getCell('A1').value = deptName;
+    sheet.getCell('C1').value = `第${week_num}周`;
+    sheet.mergeCells('A1:B1');
+    sheet.mergeCells(`C1:${serial}1`);
+
+    //初始化第二行
+    sheet.getCell('A2').value = "序号";
+    sheet.getCell('B2').value = "成员";
+    week_days.map((day: string, idx: number) => {
+        let startLetter: string = `${String.fromCharCode(67 + idx)}2`; //67是C的ASCII
+        sheet.getCell(startLetter).value = day; //遍历渲染日期
+
+    })
+
+    let mergeIndex: number = 3; //合并的起始下标
+    let index = 1; //序号
+    let columIndex: number = 3; //填入task数据的列的开始下标
+    let curBelongerId: string = ""; //当前的负责人的id
+
+    //第一次先写第一列第二列的数据
+    taskList.map((task: any) => {
+        if (curBelongerId !== task.belongerId) {
+            let oldMergeIndex: number = mergeIndex;
+            sheet.getRow(mergeIndex).getCell(1).value = index; //序号
+            sheet.getRow(mergeIndex).getCell(2).value = task.belongerName; //人员
+            index++;
+            mergeIndex = 3 * index;  //三行一个轮回
+            sheet.mergeCells(`A${oldMergeIndex}:A${mergeIndex - 1}`); //A列为序号
+            sheet.mergeCells(`B${oldMergeIndex}:B${mergeIndex - 1}`); //B列为人员
+            curBelongerId = task.belongerId;
+        }
+    })
+
+    index = 1;
+    mergeIndex = 3;
+    curBelongerId = taskList[0].belongerId;
+    taskList.map((task: any) => {
+        if (curBelongerId !== task.belongerId) {
+            curBelongerId = task.belongerId;
+            index++;
+            columIndex = 3; //负责人不一样的时候需要重置到第三列开始写
+            mergeIndex = 3 * index;  //三行一个轮回
+        }
+        sheet.getRow(mergeIndex).getCell(columIndex).value = task.taskId;  //任务id的行
+        sheet.getRow(mergeIndex).getCell(columIndex).fill = {           //任务id加颜色
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: color["blue"] },
+        };
+        sheet.getRow(mergeIndex + 1).getCell(columIndex).value = task.projectName;  //任务所属项目
+        sheet.getRow(mergeIndex + 2).getCell(columIndex).value = task.content;  //任务内容
+        if (task.state === TASK_STATE.COMPLETE) { //如果任务是完成的就设置为绿色
+            sheet.getRow(mergeIndex + 2).getCell(columIndex).fill = {           //任务id加颜色
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: color["green"] },
+            };
+        }
+        columIndex++;
+    })
+
+
+    // 设置每一列样式
+    const row = sheet.getRow(1);
+    row.eachCell((cell, colNumber) => {
+        sheet.getColumn(colNumber).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }
+        sheet.getColumn(colNumber).font = { size: 9, family: 2 };
+        if (colNumber > 2) {
+            sheet.getColumn(colNumber).width = 22;
+        }
+    })
+    sheet.eachRow((row, rowNumber) => {
+        sheet.getRow(rowNumber).height = 60;
+    })
+
+
+
+    return workBook.xlsx.writeFile(path.resolve(__dirname, `../attachement/${sheetName}.xlsx`));
+
+
+}
+
+
 /**
     * @description: 导入excel数据处理函数
     * @param {string} filePath 导入的表的路径
@@ -259,26 +388,30 @@ const importTaskExcel = async (filePath: string, fileds: Array<string>, userMap:
         })
     });
     for (const name in map) {
-        let belonger: string = name;
+        let belongerName: string = name;
         let task: object = map[name]
         for (const time in task) {
             let startTime: number = parseInt(time);
             let endTime: number = parseInt(time);
             data.push({
                 ...task[time],
-                belonger,
+                belongerName,
                 startTime,
                 endTime,
-                state: 1,
-                workingHours: 8,
-
+                state: 0,
             })
 
         }
     }
     data = data.map((item: any) => {
-        item.project = JSON.stringify(projectMap.find((project: any) => { return project.projectName === item.project }));
-        item.belonger = JSON.stringify(userMap.find((user: any) => { return user.userName === item.belonger }));
+        let project: any = projectMap.find((project: any) => { return project.projectName === item.projectName });
+        let belonger: any = userMap.find((user: any) => { return user.userName === item.belongerName });
+        item.projectName = project.projectName;
+        item.projectId = project.projectId;
+        item.belongerId = belonger.userId;
+        item.belongerName = belonger.userName;
+        // item.project = JSON.stringify(projectMap.find((project: any) => { return project.projectName === item.project }));
+        // item.belonger = JSON.stringify(userMap.find((user: any) => { return user.userName === item.belonger }));
         item.createTime = new Date().getTime();
         item.updateTime = new Date().getTime();
         return item;
@@ -293,7 +426,8 @@ const importTaskExcel = async (filePath: string, fileds: Array<string>, userMap:
 
 type week = {
     startTime: string,
-    endTime: string
+    endTime: string,
+    weeks: number //第几周
 }
 /**
     * @description: 根据时间间隔求出所含有的周数组
@@ -308,15 +442,18 @@ const getWeeksByTime = (startTime: number, endTime: number): Array<week> => {
     while (startTime <= endTime) {
         let weekday: number = new Date(startTime).getDay();
         let distanceDay: number = WEEKEN - (weekday % WEEKEN);
+        let weeks = Math.round((startTime - new Date(`${new Date().getFullYear()}/1/1`).getTime()) / DAY / WEEKEN);
         if (startTime + distanceDay * DAY < endTime) {
             res.push({
                 startTime: new Date(startTime).toLocaleDateString().replace(/\//g, '-'),
-                endTime: new Date(startTime + distanceDay * DAY).toLocaleDateString().replace(/\//g, '-')
+                endTime: new Date(startTime + distanceDay * DAY).toLocaleDateString().replace(/\//g, '-'),
+                weeks
             });
         } else {
             res.push({
                 startTime: new Date(startTime).toLocaleDateString().replace(/\//g, '-'),
                 endTime: new Date(endTime).toLocaleDateString().replace(/\//g, '-'),
+                weeks
             });
         }
         startTime += (distanceDay + 1) * DAY;
@@ -329,5 +466,6 @@ export {
     exportPerformanceExcel,
     getWeeksByTime,
     exportWeeklyExcel,
+    exportWeekPlanExcel,
     importTaskExcel
 }

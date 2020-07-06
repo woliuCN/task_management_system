@@ -129,3 +129,18 @@ export const getUserInfo = function() {
   const url = REQUEST_URL.USER_GETUSERINFO;
   return http.getRequest(url);
 };
+
+export const getTasks = function() {
+  const url = REQUEST_URL.TASK_GETTOTALTASH;
+  return http.getRequest(url);
+};
+
+export const getProjects = function() {
+  const url = REQUEST_URL.PROJECT_GETTOTALPROJECT;
+  return http.getRequest(url);
+};
+
+export const getUsers = function() {
+  const url = REQUEST_URL.USER_GETTOTALUSER;
+  return http.getRequest(url);
+};

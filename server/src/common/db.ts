@@ -170,10 +170,11 @@ export default {
     * @param {any} dataArray 更新的字段及其数据
     */
     async BatchUpdate<T>(tbName: string, conditions: Array<T>, dataArray: any) {
+        let reg = /id$/i;
         let conditionStr: string = "";  //条件字符串
         let conditionArr: Array<string | number> = [];
         let dataObjStr: string = "";  //更新的数据对象字符串
-        let field: string = Object.keys(conditions[0]).find(item => { return item.indexOf('id') }) as string;
+        let field: string = Object.keys(conditions[0]).find(item => { return reg.test(item) }) as string;
         let res: object = {};
         let message: string = "更新";
         for (let item of conditions) {
@@ -187,7 +188,7 @@ export default {
         dataArray = dataArray.map((data: any) => {
             let str: string = "";
             for (let key in data) {
-                str = `${key} = ${data[key]}`
+                str = `${key} = ${typeof data[key] === 'string' ? "'" + data[key] + "'" : data[key]}`
                 if (key === 'isDelete') {
                     message = "删除"
                 }
@@ -218,7 +219,7 @@ export default {
     *          delete('Users',"id in(1,2,3)") 删除多条记录
     */
     async Delete(tbName: string, conditions: string) {
-        let sqlStr = `delete from  ${tbName} where ${conditions}`;
+        let sqlStr: string = `delete from  ${tbName} where ${conditions}`;
         let res: object = {};
         await this.sql(sqlStr).then((data: any) => {
             res = {
@@ -232,6 +233,49 @@ export default {
             }
         });
         return res;
+    },
+
+
+    /**
+    * @description: 内连接查询
+    * @param {string} tb1 表名1
+    * @param {string} tb2 表名2
+    * @param {Array<string>} tb1Fileds 表1字段数组
+    * @param {Array<string>} tb2Fileds 表2字段数组
+    * @param {string} joinType 连接类型  
+    * @param {string} joinFiled  连接的条件字段
+    * @param {string} whereConditions  where 条件
+    * @param {string} constrain 额外条件，如limit
+    */
+    async JoinFind(
+        tb1: string,
+        tb2: string,
+        tb1Fileds: Array<string>,
+        tb2Fileds: Array<string>,
+        joinType: string,
+        joinFiled: string,
+        whereConditions: string = '',
+        constrain: string = ''
+    ) {
+        let fileds: string = ""; //字段
+        let sqlStr: string = "";
+        tb1Fileds = tb1Fileds.map((item: string) => {
+            return `${tb1}.${item}`
+        });
+        tb2Fileds = tb2Fileds.map((item: string) => {
+            return `${tb2}.${item}`
+        });
+        fileds = [...tb1Fileds, ...tb2Fileds].join(",");
+        sqlStr = ` select ${fileds} from ${tb1} ${joinType} join ${tb2} on ${tb1}.${joinFiled} = ${tb2}.${joinFiled} `;
+        if (whereConditions) {
+            sqlStr += ` where ${whereConditions} `;
+        }
+        if (constrain) {
+            sqlStr += constrain;
+        }
+        return await this.sql(sqlStr);
+
+
     },
 
     /**

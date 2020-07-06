@@ -25,6 +25,17 @@ const product = {
         UNDELETED: 0, //未删除
         DELETED: 1,  //已删除
         BOTH: 2     //全部
+    },
+    TASK_STATE:{
+        ONGOING:0, //进行中
+        COMPLETE:1, //完成
+        HANG:2 //挂起
+    },
+    PERMISSION: {
+        MEMBER: 0,
+        GROUP_LEADER: 1,
+        DEPT_LEADER: 2,
+        ADMIN: 3
     }
 }
 

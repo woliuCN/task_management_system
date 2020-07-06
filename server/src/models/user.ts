@@ -10,7 +10,8 @@ interface User {
     userId: string,  //账号/工号
     passwords: string, //密码
     permission: number, //用户权限
-    userGroup: string,  //分组id+分组名称
+    deptId:number, //部门id
+    groupId: number, //分组id
     userName: string,   //姓名  
     state: number,  //状态 ps:1-在职 0-离职
     createTime: number, //创建时间

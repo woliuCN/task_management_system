@@ -241,8 +241,8 @@ export default {
     this.$http.getRequest(url)
       .then(res => {
         this.deptList = res.data;
-        this.seletedDept = { ...this.deptList[0] }
-      })
+        this.seletedDept = { ...this.deptList[0] };
+      });
   },
   watch: {
     isShow(val) {

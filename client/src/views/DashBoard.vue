@@ -145,11 +145,10 @@ export default {
       data: [0],
       type: 'line'
     });
+    // this.$store.dispatch('asyncGetTasks');
     try {
-      await this.getTasks();
-      await this.getProjects();
-      await this.getUser();
-      await this.initCardInfo();
+      await this.getStoreState();
+      this.initCardInfo();
     } catch (error) {
       this.$message({
         message: '老铁，你这网络不行啊！等网络好了再来吧',
@@ -231,7 +230,7 @@ export default {
     },
 
     // 初始化卡片
-    async initCardInfo() {
+    initCardInfo() {
       // 在职员工
       const onJob = this.sourceData.users.data.filter((item) => {
         return item.state === 1;
@@ -242,7 +241,7 @@ export default {
       const project = resProject.data;
       this.cardList = [
         {
-          num: await getCurrentWeekTaskNum(this.sourceData.tasks),
+          num: getCurrentWeekTaskNum(this.sourceData.tasks),
           name: '本周任务',
           icon: 'fa-calendar-minus-o',
           color: '#c72d1a'
@@ -280,6 +279,7 @@ export default {
       this.loadingOfUserInLastYear = true;
       const url = '/task/getTotalTask';
       this.sourceData.tasks = await this.$http.getRequest(url);
+      this.$store.commit('setTasks', this.sourceData.tasks);
     },
 
     // 获取项目数据
@@ -287,6 +287,7 @@ export default {
       this.loadingOfProject = true;
       const url = '/project/getTotalProject';
       this.sourceData.projects = await this.$http.getRequest(url);
+      this.$store.commit('setProject', this.sourceData.projects);
     },
 
     // 获取人员数据
@@ -294,9 +295,26 @@ export default {
       this.loadingOfUserInLastYear = true;
       const url = '/user/getTotalUser ';
       this.sourceData.users = await this.$http.getRequest(url);
+      this.$store.commit('setUsers', this.sourceData.users);
       this.onJobPeople = this.sourceData.users.data.filter(user => {
         return user.state === 1;
       });
+    },
+
+    // 读取state数据
+    async getStoreState() {
+      this.sourceData.tasks = this.$store.getters.getTasks;
+      this.sourceData.projects = this.$store.getters.getProjects;
+      this.sourceData.users = this.$store.getters.getUsers;
+      if (this.sourceData.tasks.length === 0) {
+        await this.getTasks();
+      };
+      if (this.sourceData.projects.length === 0) {
+        await this.getProjects();
+      };
+      if (this.sourceData.users.length === 0) {
+        await this.getUser();
+      };
     },
 
     // 获取过去一年任务情况
