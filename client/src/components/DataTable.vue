@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { debounce } from '../filters/index';
+import { debounce } from '../utils/api';
 export default {
   props: {
     // 表单的首行，格式为[{prop, label, id, width, fixed}]，其中width和fixed为必填，prop必须与tableData对应
