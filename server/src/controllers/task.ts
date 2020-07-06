@@ -27,12 +27,7 @@ export default {
     async getUserIdListByDeptId(deptId: number){
         let users: Array<User>;
         let userIdList: Array<string>
-        // let groups: Array<Group>;
-        // let groupIdList: Array<number>;
-        // groups = await server.db.Find([], groupTbName, ` deptId = ${deptId} `);
-        // groupIdList = groups.map((group: Group) => {
-        //     return group.groupId;
-        // })
+      
         users = await server.db.Find([], userTbName, ` deptId = ${deptId}`);
         userIdList = users.map((user: User) => {
             return `'${user.userId}'`;
@@ -119,18 +114,9 @@ export default {
                 condition += ` and belongerId in (${userIdList.join(",")}) `;
                 break;
             case PERMISSION.DEPT_LEADER: //如果是部门管理员的话,需要查询到旗下所有小组的所有成员的任务
-                // let groups: Array<Group> = await server.db.Find([], groupTbName, ` groupId = ${userInfo.groupId} `);
-                // let deptId: number = groups[0].deptId;
+               
                 let deptId: number = userInfo.deptId;
-                // let groupIdList: Array<number>;
-                // groups = await server.db.Find([], groupTbName, ` deptId = ${deptId} `);
-                // groupIdList = groups.map((group: Group) => {
-                //     return group.groupId;
-                // })
-                // users = await server.db.Find([], userTbName, ` groupId in (${groupIdList.join(",")})`);
-                // userIdList = users.map((user: User) => {
-                //     return `'${user.userId}'`;
-                // })
+                
                 userIdList = await this.getUserIdListByDeptId(deptId);
                 condition += ` and belongerId in (${userIdList.join(",")}) `;
                 break;

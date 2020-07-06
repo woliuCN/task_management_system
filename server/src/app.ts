@@ -38,7 +38,7 @@ app.use(koaBody({
 app.use(session);
 app.use(sessionMiddleWare);
 
-// app.use(permissionIntercept);
+app.use(permissionIntercept);
 app.use(router);
 
 app.listen(config.SERVER_PORT, () => {

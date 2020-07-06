@@ -33,9 +33,6 @@ export default {
                         };
                         ctx.session.user = data[0];
                         ctx.session.Logining = true;
-                        // ctx.session.userId = userId;
-                        // ctx.session.userName = data[0].userName;
-                        // ctx.session.permission = data[0].permission;
                         Log.addLog(`${data[0].userName}登录成功`, data[0].userName);
                     } else {
                         res = {
@@ -62,9 +59,6 @@ export default {
         let userName: string = ctx.session.userName;
         ctx.session.Logining = null;
         ctx.session.user = null;
-        // ctx.session.userId = null;
-        // ctx.session.userName = null;
-        // ctx.session.permission = null;
         await Log.addLog(`${userName}退出登录`, userName);
         return {
             retCode: 200,
@@ -139,7 +133,7 @@ export default {
                 updateTime: new Date().getTime()
             }
         );
-        // await Log.addLog(`${userName}添加了新用户${user.userName}`, userName, user.userName)
+        await Log.addLog(`${userName}添加了新用户${user.userName}`, userName, user.userName)
         return await server.db.Insert<User>(user, tbName);
     },
     /**
@@ -251,13 +245,13 @@ export default {
      * @return: promise
     **/
     async updateState(params: any, ctx: any) {
-        // let userName: string = ctx.session.user.userName;
+        let userName: string = ctx.session.user.userName;
         let userList: Array<User> = params.list;
         let dataArray: Array<any> = params.data;
         let sufferStr: string = userList.map(user => {
             return user.userName
         }).join(','); //批量更新的人群
-        // await Log.addLog(`${userName}更新了用户${sufferStr}的状态为${dataArray[0].state === 0 ? "离职" : "在职"}`, userName, sufferStr);
+        await Log.addLog(`${userName}更新了用户${sufferStr}的状态为${dataArray[0].state === 0 ? "离职" : "在职"}`, userName, sufferStr);
         return await server.db.BatchUpdate<User>(tbName, userList, dataArray);
     },
 

@@ -23,7 +23,7 @@ export default {
             createTime: new Date().getTime()
         } as Log;
         let res: object = await server.db.Insert(obj, tbName);
-        console.log(res);
+        // console.log(res);
     },
     /**
     * @description: get请求获取log表数据

@@ -5,6 +5,7 @@ import server from '../common/index';
 import { Group, tbName } from '../models/group';
 import { User, tbName as userTbName } from '../models/user';
 import { tbName as DeptTbName } from '../models/department';
+import Log from '../controllers/log';
 const config = require('../config/index');
 const PERMISSION = config.PERMISSION;
 export default {
@@ -93,6 +94,7 @@ export default {
                 updateTime: new Date().getTime(),
             }
         );
+        await Log.addLog(`${userName}添加了分组${group.groupName}`, userName);
         return await server.db.Insert<Group>(group, tbName);
     },
 
@@ -102,8 +104,8 @@ export default {
     * @return: 
     **/
     async updateGroup(params: any, ctx: any) {
-        // let userName: string = ctx.session.user.userName;
-        let userInfo:User = ctx.session.user;
+        let userName: string = ctx.session.user.userName;
+        let userInfo: User = ctx.session.user;
         let userGroupId: number = ctx.session.user.groupId; //自己的id
         let group: Group = params.group;
         let condition: object = { groupId: group.groupId }; //更新条件 
@@ -122,6 +124,7 @@ export default {
                 updateTime: new Date().getTime(),
             }
         );
+        await Log.addLog(`${userName}修改了分组${group.groupName}`, userName);
         return await server.db.Update(group, tbName, condition);
     },
 
@@ -145,6 +148,7 @@ export default {
         } else {
             res = await server.db.Delete(tbName, condition)
         }
+        await Log.addLog(`${userName}删除了分组${group.groupName}`, userName);
         return res
     },
     /**
