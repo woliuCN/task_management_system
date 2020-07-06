@@ -707,6 +707,7 @@ export default {
               type: 'success',
               duration: 1000
             });
+            this.$store.dispatch('asyncGetUsers');
           } else {
             this.$message({
               message: `更新出现问题⊙.⊙！${res.message}`,
