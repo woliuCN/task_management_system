@@ -24,8 +24,8 @@ const store = {
     setProject(state, projects) {
       state.projects = projects;
     },
-    setUsers(state, projects) {
-      state.projects = projects;
+    setUsers(state, users) {
+      state.users = users;
     }
   },
   actions: {

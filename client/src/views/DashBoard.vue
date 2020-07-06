@@ -52,7 +52,7 @@
 <script>
 import Chart from '../components/Chart.vue';
 import Cards from '../components/Cards.vue';
-// getOnJobOfMonthInlastYear
+import { REQUEST_URL } from '../common/config.js';
 import { filtrateDateFromTasks, filtrateDateFromProjects, filtrateDateFromTasksInCurrentMonth, weekTasksInThisYear, getCurrentWeekTaskNum, getOnJobOfMonthInlastYear } from '../utils/filtrateDateFromData.js';
 export default {
   components: {
@@ -277,7 +277,7 @@ export default {
       this.loadingOfTasksInThisYear = true;
       this.loadingOfProject = true;
       this.loadingOfUserInLastYear = true;
-      const url = '/task/getTotalTask';
+      const url = REQUEST_URL.TASK_GETTOTALTASH;
       this.sourceData.tasks = await this.$http.getRequest(url);
       this.$store.commit('setTasks', this.sourceData.tasks);
     },
@@ -285,20 +285,18 @@ export default {
     // 获取项目数据
     async getProjects() {
       this.loadingOfProject = true;
-      const url = '/project/getTotalProject';
+      const url = REQUEST_URL.PROJECT_GETTOTALPROJECT;
       this.sourceData.projects = await this.$http.getRequest(url);
+      console.log(this.sourceData.projects);
       this.$store.commit('setProject', this.sourceData.projects);
     },
 
     // 获取人员数据
     async getUser() {
       this.loadingOfUserInLastYear = true;
-      const url = '/user/getTotalUser ';
+      const url = REQUEST_URL.USER_GETTOTALUSER;
       this.sourceData.users = await this.$http.getRequest(url);
       this.$store.commit('setUsers', this.sourceData.users);
-      this.onJobPeople = this.sourceData.users.data.filter(user => {
-        return user.state === 1;
-      });
     },
 
     // 读取state数据
@@ -315,6 +313,9 @@ export default {
       if (this.sourceData.users.length === 0) {
         await this.getUser();
       };
+      this.onJobPeople = this.sourceData.users.data.filter(user => {
+        return user.state === 1;
+      });
     },
 
     // 获取过去一年任务情况
