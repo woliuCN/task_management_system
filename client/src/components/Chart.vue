@@ -17,7 +17,7 @@ const defaultOptions = {
   grid: {
     left: 30,
     right: 0,
-    top: 10,
+    top: 20,
     bottom: 20
   },
   tooltip: {
@@ -25,7 +25,9 @@ const defaultOptions = {
       return `<div>${param.value}</div>`;
     }
   },
-  legend: {},
+  legend: {
+    top: 'auto'
+  },
   xAxis: {
     type: 'category'
   },

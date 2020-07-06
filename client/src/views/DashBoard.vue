@@ -52,7 +52,7 @@
 <script>
 import Chart from '../components/Chart.vue';
 import Cards from '../components/Cards.vue';
-// getOnJobOfMonthInlastYear
+import { REQUEST_URL } from '../common/config.js';
 import { filtrateDateFromTasks, filtrateDateFromProjects, filtrateDateFromTasksInCurrentMonth, weekTasksInThisYear, getCurrentWeekTaskNum, getOnJobOfMonthInlastYear } from '../utils/filtrateDateFromData.js';
 export default {
   components: {
@@ -145,11 +145,10 @@ export default {
       data: [0],
       type: 'line'
     });
+    // this.$store.dispatch('asyncGetTasks');
     try {
-      await this.getTasks();
-      await this.getProjects();
-      await this.getUser();
-      await this.initCardInfo();
+      await this.getStoreState();
+      this.initCardInfo();
     } catch (error) {
       this.$message({
         message: '老铁，你这网络不行啊！等网络好了再来吧',
@@ -231,7 +230,7 @@ export default {
     },
 
     // 初始化卡片
-    async initCardInfo() {
+    initCardInfo() {
       // 在职员工
       const onJob = this.sourceData.users.data.filter((item) => {
         return item.state === 1;
@@ -242,7 +241,7 @@ export default {
       const project = resProject.data;
       this.cardList = [
         {
-          num: await getCurrentWeekTaskNum(this.sourceData.tasks),
+          num: getCurrentWeekTaskNum(this.sourceData.tasks),
           name: '本周任务',
           icon: 'fa-calendar-minus-o',
           color: '#c72d1a'
@@ -278,22 +277,42 @@ export default {
       this.loadingOfTasksInThisYear = true;
       this.loadingOfProject = true;
       this.loadingOfUserInLastYear = true;
-      const url = '/task/getTotalTask';
+      const url = REQUEST_URL.TASK_GETTOTALTASH;
       this.sourceData.tasks = await this.$http.getRequest(url);
+      this.$store.commit('setTasks', this.sourceData.tasks);
     },
 
     // 获取项目数据
     async getProjects() {
       this.loadingOfProject = true;
-      const url = '/project/getTotalProject';
+      const url = REQUEST_URL.PROJECT_GETTOTALPROJECT;
       this.sourceData.projects = await this.$http.getRequest(url);
+      console.log(this.sourceData.projects);
+      this.$store.commit('setProject', this.sourceData.projects);
     },
 
     // 获取人员数据
     async getUser() {
       this.loadingOfUserInLastYear = true;
-      const url = '/user/getTotalUser ';
+      const url = REQUEST_URL.USER_GETTOTALUSER;
       this.sourceData.users = await this.$http.getRequest(url);
+      this.$store.commit('setUsers', this.sourceData.users);
+    },
+
+    // 读取state数据
+    async getStoreState() {
+      this.sourceData.tasks = this.$store.getters.getTasks;
+      this.sourceData.projects = this.$store.getters.getProjects;
+      this.sourceData.users = this.$store.getters.getUsers;
+      if (this.sourceData.tasks.length === 0) {
+        await this.getTasks();
+      };
+      if (this.sourceData.projects.length === 0) {
+        await this.getProjects();
+      };
+      if (this.sourceData.users.length === 0) {
+        await this.getUser();
+      };
       this.onJobPeople = this.sourceData.users.data.filter(user => {
         return user.state === 1;
       });

@@ -11,6 +11,7 @@
       :total="total"
       :isSelection="true"
       :isShowSearch="true"
+      searchPlaceholder="输入名称/小组名/部门名搜索"
       @search-content-changed="searchContent"
       @add-user="addUser"
       @modification-user="modificationUser"
@@ -206,14 +207,14 @@ export default {
             tableData[index].userId = tableItem.userId;
             tableData[index].userName = tableItem.userName;
             tableData[index].groupId = tableItem.groupId;
-            tableData[index].groupName = tableItem.groupName || '-';
+            tableData[index].groupName = tableItem.groupName;
             tableData[index].permission = USER_PERMISSION[tableItem.permission];
             tableData[index].remarks = tableItem.remarks;
             if (tableItem.deptId) {
               tableData[index].deptId = tableItem.deptId;
               tableData[index].deptName = this.deptIdTodeptName(tableItem.deptId);
             } else {
-              tableData[index].deptName = '-';
+              tableData[index].deptName = '';
             }
           });
           this.tableData = tableData;
@@ -707,6 +708,7 @@ export default {
               type: 'success',
               duration: 1000
             });
+            this.$store.dispatch('asyncGetUsers');
           } else {
             this.$message({
               message: `更新出现问题⊙.⊙！${res.message}`,

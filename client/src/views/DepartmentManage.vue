@@ -228,6 +228,7 @@ export default {
       this.titleName = '分配管理员';
       this.$rows = rows;
       const { deptId } = rows[0];
+      console.log(deptId);
       this.$http.getRequest(REQUEST_URL.DEPARTMENT_ALLUSER, { deptId })
         .then((res) => {
           const { retCode, data } = res;

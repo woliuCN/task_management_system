@@ -12,6 +12,7 @@
       v-loading="isLoading"
       :isSelection="true"
       :isShowSearch="true"
+      searchPlaceholder="输入小组名/部门名搜索"
       @search-content-changed="searchContent"
       @add-group="addGroup"
       @allocate-group="allocateGroup"
@@ -267,7 +268,9 @@ export default {
           const { retCode, data } = res;
           if (retCode === 200) {
             console.log(data);
-            this.allUsers = data.map((user) => {
+            this.allUsers = data.filter((user) => {
+              return user.permission < USER_PERMISSION['管理员'];
+            }).map((user) => {
               return {
                 label: user.userName,
                 key: user.userId
