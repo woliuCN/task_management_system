@@ -239,7 +239,7 @@ export default {
         successMessage = '增加任务成功';
         errorMessage = '增加任务失败';
       } else {
-        url = REQUEST_URL.UPDATETASK;
+        url = REQUEST_URL.TASK_UPDATETASK;
         successMessage = '修改任务成功';
         errorMessage = '修改任务失败';
       }
