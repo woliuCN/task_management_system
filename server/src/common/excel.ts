@@ -1,4 +1,5 @@
 import Excel from 'exceljs';
+import { Task } from '../models/task';
 const path = require('path');
 const fs = require('fs');
 const config = require('../config/index');
@@ -269,7 +270,7 @@ const exportWeekPlanExcel = async (sheetName: string, deptName: string, taskList
     let index = 1; //序号
     let columIndex: number = 3; //填入task数据的列的开始下标
     let curBelongerId: string = ""; //当前的负责人的id
-
+    let extraTaks: Array<Task> = []; //新增的任务列表
     //第一次先写第一列第二列的数据
     taskList.map((task: any) => {
         if (curBelongerId !== task.belongerId) {
@@ -287,21 +288,46 @@ const exportWeekPlanExcel = async (sheetName: string, deptName: string, taskList
     index = 1;
     mergeIndex = 3;
     curBelongerId = taskList[0].belongerId;
-    taskList.map((task: any) => {
+    for (let task of taskList) {
         if (curBelongerId !== task.belongerId) {
             curBelongerId = task.belongerId;
+            if (extraTaks.length > 0) {
+                extraTaks.forEach((task: Task) => {
+                    sheet.getRow(mergeIndex).getCell(columIndex).value = '新增';  //新增任务统一叫新增
+                    sheet.getRow(mergeIndex + 1).getCell(columIndex).value = task.projectName;  //任务所属项目
+                    sheet.getRow(mergeIndex + 2).getCell(columIndex).value = task.content;  //任务内容
+                    if (task.state === TASK_STATE.COMPLETE) { //如果任务是完成的就设置为绿色
+                        sheet.getRow(mergeIndex + 2).getCell(columIndex).fill = {
+                            type: 'pattern',
+                            pattern: 'solid',
+                            fgColor: { argb: color["green"] },
+                        };
+                    }
+                    columIndex++;
+                })
+                extraTaks = [];
+            }
             index++;
             columIndex = 3; //负责人不一样的时候需要重置到第三列开始写
             mergeIndex = 3 * index;  //三行一个轮回
         }
-        sheet.getRow(mergeIndex).getCell(columIndex).value = task.taskId;  //任务id的行
-        sheet.getRow(mergeIndex).getCell(columIndex).fill = {           //任务id加颜色
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: color["blue"] },
-        };
-        sheet.getRow(mergeIndex + 1).getCell(columIndex).value = task.projectName;  //任务所属项目
-        sheet.getRow(mergeIndex + 2).getCell(columIndex).value = task.content;  //任务内容
+
+        //如果是新增的计划的话
+        if (task.taskType === 1) {
+            extraTaks.push(task);
+            continue;
+        }
+        else {
+            sheet.getRow(mergeIndex).getCell(columIndex).value = task.taskId;  //任务id的行
+            sheet.getRow(mergeIndex).getCell(columIndex).fill = {           //任务id加颜色
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: color["blue"] },
+            };
+            sheet.getRow(mergeIndex + 1).getCell(columIndex).value = task.projectName;  //任务所属项目
+            sheet.getRow(mergeIndex + 2).getCell(columIndex).value = task.content;  //任务内容
+
+        }
         if (task.state === TASK_STATE.COMPLETE) { //如果任务是完成的就设置为绿色
             sheet.getRow(mergeIndex + 2).getCell(columIndex).fill = {           //任务id加颜色
                 type: 'pattern',
@@ -310,21 +336,40 @@ const exportWeekPlanExcel = async (sheetName: string, deptName: string, taskList
             };
         }
         columIndex++;
-    })
 
+    }
+    //如果是一个人或者是最后一个人有新增任务的话。需要写加趋
+    if (extraTaks.length > 0) {
+        extraTaks.forEach((task: Task) => {
+            sheet.getRow(mergeIndex).getCell(columIndex).value = '新增';  //新增任务统一叫新增
+            sheet.getRow(mergeIndex + 1).getCell(columIndex).value = task.projectName;  //任务所属项目
+            sheet.getRow(mergeIndex + 2).getCell(columIndex).value = task.content;  //任务内容
+            if (task.state === TASK_STATE.COMPLETE) { //如果任务是完成的就设置为绿色
+                sheet.getRow(mergeIndex + 2).getCell(columIndex).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: color["green"] },
+                };
+            }
+            columIndex++;
+        })
+        extraTaks = [];
+    }
 
     // 设置每一列样式
-    const row = sheet.getRow(1);
-    row.eachCell((cell, colNumber) => {
-        sheet.getColumn(colNumber).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }
-        sheet.getColumn(colNumber).font = { size: 9, family: 2 };
-        if (colNumber > 2) {
-            sheet.getColumn(colNumber).width = 22;
-        }
-    })
     sheet.eachRow((row, rowNumber) => {
         sheet.getRow(rowNumber).height = 60;
+        sheet.getRow(rowNumber).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        sheet.getRow(rowNumber).font = { size: 9, family: 2 };
+
     })
+    const row = sheet.getRow(1);
+    row.eachCell((cell, colNumber) => {
+        if (colNumber <= 2) {
+            sheet.getColumn(colNumber).width = 10;
+        }
+    })
+
 
 
 
@@ -410,8 +455,6 @@ const importTaskExcel = async (filePath: string, fileds: Array<string>, userMap:
         item.projectId = project.projectId;
         item.belongerId = belonger.userId;
         item.belongerName = belonger.userName;
-        // item.project = JSON.stringify(projectMap.find((project: any) => { return project.projectName === item.project }));
-        // item.belonger = JSON.stringify(userMap.find((user: any) => { return user.userName === item.belonger }));
         item.createTime = new Date().getTime();
         item.updateTime = new Date().getTime();
         return item;

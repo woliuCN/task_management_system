@@ -17,17 +17,17 @@ const TASK_STATE = config.TASK_STATE;
 const PERMISSION = config.PERMISSION;
 export default {
     routerName: 'task',
-    
+
 
     /**
      * @description: 根据deptId查询部门成员
      * @param {Number} deptId 部门id 
      * @return: 
      */
-    async getUserIdListByDeptId(deptId: number){
+    async getUserIdListByDeptId(deptId: number) {
         let users: Array<User>;
         let userIdList: Array<string>
-      
+
         users = await server.db.Find([], userTbName, ` deptId = ${deptId}`);
         userIdList = users.map((user: User) => {
             return `'${user.userId}'`;
@@ -47,12 +47,14 @@ export default {
         let taskId: string = '';
         let createTime: number = new Date().getTime(); //创建时间
         let updateTime: number = new Date().getTime(); //修改时间
-        taskId = formatId(params.task.belongerId, params.task.startTime)
-        // let duplicateLength: number = 0; //重复的数据的长度
-        // await server.db.Find(['taskId'], tbName, `taskId like "%${taskId}%"`, ISDELETE_FLAG.BOTH).then((data: Array<string>) => {
-        //     duplicateLength = data.length;
-        // });
-        // taskId = duplicateLength === 0 ? taskId : `${taskId}${duplicateLength - 1}`;
+        taskId = formatId(params.task.belongerId, params.task.startTime);
+        if (params.task.taskType === 1) { //如果是新增任务的话
+            let duplicateLength: number = 0; //重复的数据的长度
+            await server.db.Find(['taskId'], tbName, `taskId like "%${taskId}%"`, ISDELETE_FLAG.BOTH).then((data: Array<string>) => {
+                duplicateLength = data.length;
+            });
+            taskId = duplicateLength === 0 ? taskId : `${taskId}${duplicateLength - 1}`;
+        }
         task = Object.assign(
             {
                 taskId,
@@ -114,9 +116,9 @@ export default {
                 condition += ` and belongerId in (${userIdList.join(",")}) `;
                 break;
             case PERMISSION.DEPT_LEADER: //如果是部门管理员的话,需要查询到旗下所有小组的所有成员的任务
-               
+
                 let deptId: number = userInfo.deptId;
-                
+
                 userIdList = await this.getUserIdListByDeptId(deptId);
                 condition += ` and belongerId in (${userIdList.join(",")}) `;
                 break;
@@ -209,7 +211,7 @@ export default {
      * @return: promise
     **/
     async personalPerformanceDownload(request: any, ctx: any) {
-        let { startTime, endTime ,deptId} = request.query;
+        let { startTime, endTime, deptId } = request.query;
         let userName: string = ctx.session.user.userName;
         startTime = parseInt(startTime);
         endTime = parseInt(endTime);
@@ -232,7 +234,7 @@ export default {
             { header: '任务分数', key: 'task_score', width: 10 },
         ];
 
-        userIdList = await this.getUserIdListByDeptId(deptId);
+        userIdList = await this.getUserIdListByDeptId(deptId); //获取部门内部的成员
         //分组获取每段时间的任务
         promiseAll = weeks.map((week: any) => {
             //要处理结束时间是当天的23:59:59
@@ -241,16 +243,18 @@ export default {
         })
         await Promise.all(promiseAll).then((res: any) => {
             for (let i = 0; i < weeks.length; i++) {
-                res[i] = res[i].map((item: any) => {
-                    let commonScore: number = 0 //常规分数,如果计划的任务数目为0的话,需要判空处理，一般不会
-                    if (item.plan_task_num !== 0) {
-                        commonScore = Math.floor((item.completed_task_num / item.plan_task_num) * 100)
-                    }
-                    item.task_score = commonScore + item.add_task_num * 10;
-                    item.weeks = weeks[i].weeks
-                    return item;
-                })
-                data = [...data, ...res[i]];
+                if (typeof (res[i]) !== 'undefined') {
+                    res[i] = res[i].map((item: any) => {
+                        let commonScore: number = 0 //常规分数,如果计划的任务数目为0的话,需要判空处理，一般不会
+                        if (item.plan_task_num !== 0) {
+                            commonScore = Math.floor((item.completed_task_num / item.plan_task_num) * 100)
+                        }
+                        item.task_score = commonScore + item.add_task_num * 10;
+                        item.weeks = weeks[i].weeks
+                        return item;
+                    })
+                    data = [...data, ...res[i]];
+                }
             }
         })
 
@@ -297,7 +301,7 @@ export default {
         await server.db.Find(fields, tbName, condition, ISDELETE_FLAG.UNDELETED, constrain).then((res: any) => {
             data = res.map((item: any, index: number) => {
                 item.index = index + 1;
-                item.userName =item.userName;
+                item.userName = item.userName;
                 item.state = item.state == TASK_STATE.COMPLETE ? '完成' : '未完成'
                 return item;
             })
@@ -388,7 +392,7 @@ export default {
         let userName: string = ctx.session.user.userName;
         let userIdList: Array<string>
         let tasks: Array<Task>
-    
+
         let res: any; //返回的数据
         let condition: string = "";
         let sheetName: string = '周计划';
@@ -398,7 +402,7 @@ export default {
         endTime = parseInt(endTime);
         deptId = parseInt(deptId);
 
-      
+
         userIdList = await this.getUserIdListByDeptId(deptId);
         condition = ` (startTime >= ${startTime} and endTime <= ${endTime}) and belongerId in (${userIdList.join(",")}) `;
 

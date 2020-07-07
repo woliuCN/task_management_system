@@ -71,17 +71,17 @@ export default {
      * @param {any} request 
      * @return: 
     **/
-    async getUserInfo(request: any, ctx: any){
+    async getUserInfo(request: any, ctx: any) {
         const userInfo: User = ctx.session.user;
         return {
             retCode: 200,
-            data:{
-                userId:userInfo.userId,
-                userName:userInfo.userName,
-                permission:userInfo.permission,
+            data: {
+                userId: userInfo.userId,
+                userName: userInfo.userName,
+                permission: userInfo.permission,
                 deptId: userInfo.deptId
             },
-            message:'获取成功'
+            message: '获取成功'
         }
     },
 
@@ -171,7 +171,7 @@ export default {
      * @return:promise
     **/
     async getPaginUser(request: any, ctx: any) {
-        let userFileds: string[] = ["userId", "userName", "groupId", "state", "createTime", "updateTime", "remarks", "permission","deptId"];
+        let userFileds: string[] = ["userId", "userName", "groupId", "state", "createTime", "updateTime", "remarks", "permission", "deptId"];
         let groupFileds: string[] = ["groupName"];
         let joinType: string = "left"; //连接类型
         let joinFiled: string = "groupId";  //连接字段
@@ -191,9 +191,9 @@ export default {
         let constraint: string = `limit ${(pageIndex - 1) * pageSize},${pageSize} `;
         //要排除admin权限的人。
         if (keyWords) {
-            condition += ` and permission <${PERMISSION.ADMIN} and users.isDelete = ${ISDELETE_FLAG.UNDELETED} `;
+            condition += ` and permission <${PERMISSION.ADMIN} and users.isDelete = ${ISDELETE_FLAG.UNDELETED} order by createTime desc`;
         } else {
-            condition += ` permission <${PERMISSION.ADMIN} and users.isDelete = ${ISDELETE_FLAG.UNDELETED} `;
+            condition += ` permission <${PERMISSION.ADMIN} and users.isDelete = ${ISDELETE_FLAG.UNDELETED} order by createTime desc`;
         }
         await server.db.JoinFind(tbName, groupTbName, userFileds, groupFileds, joinType, joinFiled, condition)
             .then(data => {
@@ -264,12 +264,15 @@ export default {
     async deleteUser(params: { list: Array<User> }, ctx: any) {
         let userName: string = ctx.session.user.userName;
         let userList: Array<User> = params.list;
-        let dataArray: Array<object> = [{ isDelete: 1 }, { deleteTime: new Date().getTime() }, { state: 0 }];
+        // let dataArray: Array<object> = [{ isDelete: 1 }, { deleteTime: new Date().getTime() }, { state: 0 }];
         let sufferStr: string = userList.map(user => {
             return user.userName
         }).join(','); //批量更新的人群
+        let userIds: string = userList.map(user => {
+            return `'${user.userId}'`
+        }).join(',');
         await Log.addLog(`${userName}删除了用户${sufferStr}`, userName, sufferStr);
-        return await server.db.BatchUpdate(tbName, userList, dataArray);
+        return await server.db.Delete(tbName, `userId in (${userIds})`);
     },
 
 
@@ -283,10 +286,12 @@ export default {
         let userList: Array<User> = params.list;
         let dataArray: Array<object> = [{ passwords: '123456' }];
         let sufferStr: string = userList.map(user => {
-            return user.userName
+            return user.userName;
         }).join(','); //批量更新的人群
         await Log.addLog(`${userName}重置了用户${sufferStr}的密码`, userName, sufferStr);
-        return await server.db.BatchUpdate(tbName, userList, dataArray);
+        let res: any = await server.db.BatchUpdate(tbName, userList, dataArray);
+        res.message = '重置成功,密码为123456';
+        return res;
     }
 
 }

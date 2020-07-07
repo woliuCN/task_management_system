@@ -124,7 +124,6 @@ export default {
                     message: '插入失败'
                 }
             })
-        console.log(res);
         return res;
     },
 
