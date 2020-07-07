@@ -153,8 +153,8 @@ export default {
         this.pageIndex = 0;
         this.pageSize = 8;
         this.keyWords = '';
-        this.startTime = 0;
-        this.endTime = undefined;
+        // this.startTime = 0;
+        // this.endTime = undefined;
       }
       const { pageIndex, pageSize, startTime, endTime, keyWords } = this;
       const query = { pageIndex, pageSize, startTime, endTime, keyWords };
@@ -517,7 +517,7 @@ export default {
         {
           text: '新增',
           event: 'add-task',
-          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
         },
 
         // 完成任务按钮
@@ -526,7 +526,7 @@ export default {
           text: '完成',
           event: 'accomplish-task',
           limit: 1,
-          permission: [PERMISSION.ORDINARY_USER, PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
+          permission: [PERMISSION.TEAM_MANAGER, PERMISSION.DEPT_MANAGER, PERMISSION.SYS_ADMIN]
           // icon: 'el-icon-check'
         },
 
@@ -633,6 +633,19 @@ export default {
     this.initTaskInfo();
   },
   mounted() {
+    // 将时间初始化为本周范围
+    const start = new Date();
+    const end = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * (start.getDay() - 1));
+    end.setTime(start.getTime() + 3600 * 1000 * 24 * 6);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+
+    this.timeInterval = [start, end];
+    this.startTime = start.getTime();
+    this.endTime = end.getTime();
+
+    // 获取任务数据
     this.getTableData();
   },
   beforeDestroy() {
