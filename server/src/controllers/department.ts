@@ -6,6 +6,7 @@ import { DepartMent, tbName } from '../models/department';
 import { Group, tbName as groupTbName } from '../models/group';
 import { tbName as userTbName, User } from '../models/user';
 import { pagingQuery } from '../common/utils';
+import Log from '../controllers/log';
 const config = require('../config/index');
 const ISDELETE_FLAG = config.ISDELETE_FLAG;
 const PERMISSION = config.PERMISSION;
@@ -113,6 +114,7 @@ export default {
                 updateTime: new Date().getTime(),
             }
         );
+        await Log.addLog(`${userName}添加了部门${department.deptName}`, userName);
         return await server.db.Insert<DepartMent>(department, tbName);
     },
 
@@ -123,7 +125,7 @@ export default {
     * @return:promise
     */
     async updateDepartMent(params: any, ctx: any) {
-        // let userName: string = ctx.session.user.userName;
+        let userName: string = ctx.session.user.userName;
         let userInfo: User = ctx.session.user;
         let department: DepartMent = params.department;
         let condition: object = { deptId: department.deptId }; //更新条件 
@@ -143,7 +145,7 @@ export default {
 
             }
         );
-        // await Log.addLog(`${userName}修改了${sufferer}的任务相关信息,任务ID是${params.task.taskId}`, userName, sufferer);
+        await Log.addLog(`${userName}修改了${department.deptName}的信息`, userName);
         return await server.db.Update(department, tbName, condition);
     },
 
@@ -167,7 +169,7 @@ export default {
         } else {
             res = await server.db.Delete(tbName, condition)
         }
-
+        await Log.addLog(`${userName}删除了${department.deptName}`, userName);
         return res
     }
 }

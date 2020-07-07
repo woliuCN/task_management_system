@@ -1,6 +1,7 @@
 //权限白名单
 const blackList = {
     0: [
+        //user表权限
         "loginValidation",
         "logOut",
         "changePassword",
@@ -8,6 +9,8 @@ const blackList = {
         "getPaginUser",
         "getUserInfo",
         "updateUser",
+
+        //task表权限
         "getTotalTask",
         "getPaginTask",
         "updateTask",
@@ -17,14 +20,19 @@ const blackList = {
         "weeklyDownload",
         "weekPlanDownload",
         "templateDownload",
+
+        //project表权限
         "getTotalProject",
         "getPaginProject",
         "getTaskByProject",
+
+        //group、dept表权限
         "getPaginGroup",
         "getDepartMentList",
         "getPaginDept",
     ],
     1: [
+        //user表权限
         "loginValidation",
         "logOut",
         "changePassword",
@@ -36,6 +44,8 @@ const blackList = {
         "updateState",
         "deleteUser",
         "resetPassword",
+
+        //task表权限
         "addTask",
         "getTotalTask",
         "getPaginTask",
@@ -47,6 +57,8 @@ const blackList = {
         "weekPlanDownload",
         "templateDownload",
         "uploadFile",
+
+        //project表权限
         "addProject",
         "getTotalProject",
         "getPaginProject",
@@ -54,6 +66,8 @@ const blackList = {
         "updateProject",
         "updateState",
         "deleteProject",
+
+        //group、dept表权限
         "getPaginGroup",
         "getGroupListByDept",
         "updateGroup",
@@ -64,6 +78,8 @@ const blackList = {
 
     ],
     2: [
+
+        //user表权限
         "loginValidation",
         "logOut",
         "changePassword",
@@ -75,6 +91,8 @@ const blackList = {
         "updateState",
         "deleteUser",
         "resetPassword",
+
+        //task表权限
         "addTask",
         "getTotalTask",
         "getPaginTask",
@@ -86,6 +104,8 @@ const blackList = {
         "weekPlanDownload",
         "templateDownload",
         "uploadFile",
+
+        //project表权限
         "addProject",
         "getTotalProject",
         "getPaginProject",
@@ -93,6 +113,8 @@ const blackList = {
         "updateProject",
         "updateState",
         "deleteProject",
+
+        //group、dept表权限
         "getPaginGroup",
         "getGroupListByDept",
         "addGroup",
@@ -104,7 +126,7 @@ const blackList = {
         "getUserListByDept",
         "updateDepartMent",
     ],
-    3:[
+    3: [
         "loginValidation",
         "logOut",
         "changePassword",
@@ -158,7 +180,7 @@ const blackList = {
 const permissionIntercept = async (ctx: any, next: any) => {
     if (ctx.path === '/favicon.ico') return;
     let fn: string = ctx.url.split("/")[3].split("?")[0]; //获取请求的方法
-    let permission = ctx.session.user.permission;
+    let permission = ctx.session.user ? ctx.session.user.permission : 0;
     //没有权限的请求方法
     if (fn !== 'loginValidation' && !blackList[permission].includes(fn)) {
         ctx.body = {
