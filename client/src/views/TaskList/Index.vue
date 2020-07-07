@@ -81,7 +81,7 @@ import ExportDialog from './components/ExportDialog';
 import AccomplishDialog from './components/AccomplishDialog';
 import { time, debounce, copy } from '../../utils/api.js';
 import { initTimePicker } from '../../utils/timePickerConfig.js';
-import { STATUS, STATUS_CH, TASK_TYPE, TASK_TYPE_CH, REQUEST_URL, PERMISSION } from '../../common/config';
+import { STATUS, STATUS_CH, TASK_TYPE, REQUEST_URL, PERMISSION } from '../../common/config';
 export default {
   components: {
     DataTable,
@@ -188,7 +188,8 @@ export default {
             tableItem._startTime = this.time(tableItem.startTime, 'YYYY-MM-DD');
             tableItem._endTime = this.time(tableItem.endTime, 'YYYY-MM-DD');
             tableItem._state = STATUS_CH[tableItem.state];
-            tableItem._type = TASK_TYPE_CH[tableItem.taskType];
+            // tableItem._type = TASK_TYPE_CH[tableItem.taskType];
+            tableItem._taskId = tableItem.taskType === TASK_TYPE.PLAN ? tableItem.taskId : '新增任务';
           });
           this.tableData = tableData;
           this.total = res.totalCount;
@@ -224,7 +225,8 @@ export default {
       delete taskInfo._state;
       delete taskInfo._startTime;
       delete taskInfo._endTime;
-      delete taskInfo._type;
+      // delete taskInfo._type;
+      delete taskInfo._taskId;
 
       // 通过taskInfo是否存在taskID来判断是进行新增操作还是更新操作
       let url;
@@ -398,7 +400,8 @@ export default {
             delete taskItem._state;
             delete taskItem._startTime;
             delete taskItem._endTime;
-            delete taskItem._type;
+            // delete taskItem._type;
+            delete taskItem._taskId;
           });
           let message;
           let type;
@@ -583,8 +586,8 @@ export default {
     tableTitle() {
       return [
         { label: '开始时间', prop: '_startTime', width: 150 },
-        { label: '任务类型', prop: '_type', width: 100 },
-        { label: '任务编号', prop: 'taskId', width: 150 },
+        // { label: '任务类型', prop: '_type', width: 100 },
+        { label: '任务编号', prop: '_taskId', width: 150 },
         { label: '任务名', prop: 'content', width: 250 },
         { label: '所属项目', prop: 'projectName', width: 200 },
         { label: '负责人', prop: 'belongerName', width: 100 },
