@@ -58,7 +58,8 @@
             type="password"
             v-model="passwordForm.orginPassword"
             autocomplete="off"
-            >
+            ref="orginPassword"
+          >
             </el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
@@ -66,7 +67,7 @@
             type="password"
             v-model="passwordForm.newPassword"
             autocomplete="off"
-            >
+          >
             </el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkNewPassword">
@@ -74,7 +75,7 @@
             type="password"
             v-model="passwordForm.checkNewPassword"
             autocomplete="off"
-            >
+          >
             </el-input>
         </el-form-item>
 
@@ -96,29 +97,27 @@ export default {
   data() {
     const validateOrginPass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入原密码'));
-      } else {
-        callback();
+        return callback(new Error('请输入原密码'));
       }
+      callback();
     };
     const validateNewPass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入新密码'));
-      } else {
-        if (this.passwordForm.newPassword !== '') {
-          this.$refs.passwordForm.validateField('checkNewPassword');
-        }
-        callback();
+        return callback(new Error('请输入新密码'));
       }
+      const orginPassword = this.$refs.orginPassword.value;
+      if (value === orginPassword) {
+        return callback(new Error('新密码不能与旧密码相同'));
+      }
+      callback();
     };
     const validateNewPass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'));
+        return callback(new Error('请再次输入密码'));
       } else if (value !== this.passwordForm.newPassword) {
-        callback(new Error('两次输入密码不一致!'));
-      } else {
-        callback();
+        return callback(new Error('两次输入密码不一致!'));
       }
+      callback();
     };
     const validatePassword = (rule, value, callback) => {
       const patt = /^[0-9a-zA-Z][0-9a-zA-Z._]*$/;
@@ -136,19 +135,19 @@ export default {
       },
       passwordFormRules: {
         orginPassword: [
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
-          { validator: validatePassword, trigger: 'blur' },
-          { validator: validateOrginPass, trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: ['blur', 'change'] },
+          { validator: validatePassword, trigger: ['blur', 'change'] },
+          { validator: validateOrginPass, trigger: ['blur', 'change'] }
         ],
         newPassword: [
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
-          { validator: validatePassword, trigger: 'blur' },
-          { validator: validateNewPass, trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: ['blur', 'change'] },
+          { validator: validatePassword, trigger: ['blur', 'change'] },
+          { validator: validateNewPass, trigger: ['blur', 'change'] }
         ],
         checkNewPassword: [
-          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: 'blur' },
-          { validator: validatePassword, trigger: 'blur' },
-          { validator: validateNewPass2, trigger: 'blur' }
+          { min: 6, max: 12, message: '密码长度必须为 6 到 12 个字符', trigger: ['blur', 'change'] },
+          { validator: validatePassword, trigger: ['blur', 'change'] },
+          { validator: validateNewPass2, trigger: ['blur', 'change'] }
         ]
       }
     };
@@ -221,9 +220,15 @@ export default {
                 });
               } else {
                 this.$message({
-                  message: '修改成功',
+                  message: '修改成功，请重新登录。',
                   type: 'success',
-                  duration: 1000
+                  duration: 1000,
+                  onClose: () => {
+                    this.$http.getRequest('/user/logOut')
+                      .finally(_ => {
+                        this.$router.push('/login');
+                      });
+                  }
                 });
               }
 
